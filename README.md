@@ -1,15 +1,16 @@
 Phonegap Parse.com Plugin
 =========================
 
-Phonegap 3.0.0 plugin for Parse.com push service
+Phonegap 3.x plugin for Parse.com push service.
 
-Using [Parse.com's](http://parse.com) REST API for push requires the installation id, which isn't available in JS
+Using [Parse.com's](http://parse.com) REST API for push requires the installation id, which isn't available in JS.
+For Android, this plugin leverages Parse.com's Android SDK v1.7.1. This means GCM is used and the background process PushService is no longer running.
 
 This plugin exposes the four native Android API push services to JS:
-* <a href="https://www.parse.com/docs/android/api/com/parse/ParseInstallation.html#getInstallationId()">getInstallationId</a>
-* <a href="https://www.parse.com/docs/android/api/com/parse/PushService.html#getSubscriptions(android.content.Context)">getSubscriptions</a>
-* <a href="https://www.parse.com/docs/android/api/com/parse/PushService.html#subscribe(android.content.Context, java.lang.String, java.lang.Class, int)">subscribe</a>
-* <a href="https://www.parse.com/docs/android/api/com/parse/PushService.html#unsubscribe(android.content.Context, java.lang.String)">unsubscribe</a>
+* getInstallationId()
+* getSubscriptions()
+* subscribe( channel )
+* unsubscribe( channel )
 
 Installation
 ------------
@@ -17,8 +18,8 @@ Installation
 Pick one of these two commands:
 
 ```
-phonegap local plugin add https://github.com/benjie/phonegap-parse-plugin
-cordova plugin add https://github.com/benjie/phonegap-parse-plugin
+phonegap local plugin add https://github.com/taivo/phonegap-parse-plugin
+cordova plugin add https://github.com/taivo/phonegap-parse-plugin
 ```
 
 Initial Setup
