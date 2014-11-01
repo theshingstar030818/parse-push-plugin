@@ -23,7 +23,7 @@ cordova plugin add https://github.com/taivo/phonegap-parse-plugin
 ```
 
 ####Android devices without Google Cloud Messaging:
-If you only care about GCM devices, you're good to go. Move on to the [Javascript Setup](#jsSetup) section. 
+If you only care about GCM devices, you're good to go. Move on to the [Javascript Setup](#javascript-setup) section. 
 
 The automatic setup above does not work for non-GCM devices. To support them, the `ParseBroadcastReceiver`
 must be setup to work properly. My guess is this receiver takes care of establishing a persistent connection that will
@@ -72,7 +72,7 @@ In the `<application>` tag, add the attribute `android:name="MainApplication"`. 
 to name your application class this way, but you have to use the same name in step 3 and 4. 
 
 
-<a name="jsSetup"> Javascript Setup
+Javascript Setup
 ------------------------
 
 Once the device is ready, call ```parsePlugin.initialize()```. This will register the device with Parse, you should see this reflected in your Parse control panel. After this runs you probably want to save the installationID somewhere, and perhaps subscribe the user to a few channels. Here is a contrived example.
