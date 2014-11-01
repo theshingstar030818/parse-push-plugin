@@ -35,12 +35,12 @@ handle push notifications without GCM. Follow these steps for `ParseBroadcastRec
 
 1. Add the following to your AndroidManifest.xml, inside the `<application>` tag
     ```xml
-        <receiver android:name="com.parse.ParseBroadcastReceiver">
-           <intent-filter>
-              <action android:name="android.intent.action.BOOT_COMPLETED" />
-              <action android:name="android.intent.action.USER_PRESENT" />
-           </intent-filter>
-        </receiver>
+    <receiver android:name="com.parse.ParseBroadcastReceiver">
+       <intent-filter>
+          <action android:name="android.intent.action.BOOT_COMPLETED" />
+          <action android:name="android.intent.action.USER_PRESENT" />
+       </intent-filter>
+    </receiver>
     ```
     
 2. Add the following permission to AndroidManifest.xml, as a sibling of the `<application>` tag
@@ -73,7 +73,7 @@ named MainApplication.java and define it this way
     ```
 4. The final step is to register MainApplication in AndroidManifest.xml so it's used instead of the default.
 In the `<application>` tag, add the attribute `android:name="MainApplication"`. Obviously, you don't have
-to name your application class this way, but you have to use the same name in step 3 and 4. 
+to name your application class this way, but you have to use the same name in 3 and 4. 
 
 
 Javascript Setup
