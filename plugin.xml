@@ -18,28 +18,6 @@
         </config-file>
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
           <service android:name="com.parse.PushService" />
-          
-          <-- 
-          --------------------------------------------------------
-          NOTE: if you want to also support non GCM devices, do this:
-          -- 1. copy-and-paste the receiver declaration for ParseBroadcastReceiver
-                below the service PushService tag in your AndroidManifest.xml
-          -- 2. copy and paste the RECEIVE_BOOT_COMPLETED permission to the permission section of your AndroidManifest.xml
-          -- 3. in your platforms/android/src/com/yourapp, where phonegap automatically
-                generated the java class for your android Activity, create an android Application
-                class called MainApplication.java
-             4. in AndroidManifest.xml, add the attribute android:name="MainApplication" to your <application> tag
-             5. A more thorough explanation is in the README file
-	          <receiver android:name="com.parse.ParseBroadcastReceiver">
-	            <intent-filter>
-	              <action android:name="android.intent.action.BOOT_COMPLETED" />
-	              <action android:name="android.intent.action.USER_PRESENT" />
-	            </intent-filter>
-	          </receiver>
-	          <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-          ---------------------------------------------------- 
-          -->
-          
           <receiver android:exported="false" android:name="org.apache.cordova.core.ParsePluginReceiver">
             <intent-filter>
                 <action android:name="com.parse.push.intent.RECEIVE" />

@@ -105,7 +105,7 @@ parsePlugin.initialize(appId, clientKey, function() {
 
 Usage
 -----
-```
+```javascript
 <script type="text/javascript>
 	parsePlugin.initialize(appId, clientKey, function() {
 		alert('success');
