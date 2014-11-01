@@ -3,8 +3,12 @@ Phonegap Parse.com Plugin
 
 Phonegap 3.x plugin for Parse.com push service.
 
-Using [Parse.com's](http://parse.com) REST API for push requires the installation id, which isn't available in JS.
-For Android, this plugin leverages Parse.com's Android SDK v1.7.1. This means GCM is used and the background process PushService is out.
+[Parse.com's](http://parse.com) JS API has no mechanism to register a device for or receive push notifications, which
+makes it fairly useless for PN in Phonegap/Cordova. This plugin bridges the gap by leveraging native Parse.com SDKs
+to register/receive PNs and allow a few essential methods to be accessible from Javascript.
+
+For Android, Parse SDK v1.7.1 is used. This means GCM support and no more background process `PushService` unnecessarily
+taps device battery to duplicate what GCM already provides.
 
 This plugin exposes the four native Android API push services to JS:
 * getInstallationId()
@@ -83,16 +87,7 @@ parsePlugin.initialize(appId, clientKey, function() {
 	parsePlugin.subscribe('SampleChannel', function() {
 		
 		parsePlugin.getInstallationId(function(id) {
-		
-			/**
-			 * Now you can construct an object and save it to your own services, or Parse, and corrilate users to parse installations
-			 * 
-			 var install_data = {
-			  	installation_id: id,
-			  	channels: ['SampleChannel']
-			 }
-			 *
-			 */
+			alert('obtained installation id: ' + id);
 
 		}, function(e) {
 			alert('error');
