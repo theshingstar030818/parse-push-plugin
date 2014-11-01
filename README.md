@@ -22,14 +22,12 @@ phonegap local plugin add https://github.com/taivo/phonegap-parse-plugin
 cordova plugin add https://github.com/taivo/phonegap-parse-plugin
 ```
 
-####Android notes:
+####Android devices without Google Cloud Messaging:
 If you only care about GCM devices, you're good to go. Move on to the [Javascript Setup](#jsSetup) section. 
 
-The automatic setup above does not work for non-GCM devices. If you want to provide Parse push notification
-for Android devices that do not have GCM, there are a few extra steps to get the `ParseBroadcastReceiver`
-working properly. My guess is this receiver takes care of establishing a persistent connection that will
-handle push notifications without GCM. To enable support for non-GCM devices (in addition to GCM), follow
-these steps:
+The automatic setup above does not work for non-GCM devices. To support them, the `ParseBroadcastReceiver`
+must be setup to work properly. My guess is this receiver takes care of establishing a persistent connection that will
+handle push notifications without GCM. Follow these steps for `ParseBroadcastReceiver` setup:
 
 1. Add the following to your AndroidManifest.xml, inside the `<application>` tag
     ```xml
@@ -41,7 +39,7 @@ these steps:
         </receiver>
     ```
     
-2. Add the following permission to AndroidManifest.xml, as a siblling of the `<application>` tag
+2. Add the following permission to AndroidManifest.xml, as a sibling of the `<application>` tag
     ```xml
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     ```
