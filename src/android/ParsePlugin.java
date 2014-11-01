@@ -22,7 +22,7 @@ public class ParsePlugin extends CordovaPlugin {
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
         if (action.equals(ACTION_INITIALIZE)) {
-            this.initialize(callbackContext, args);
+            this.initializeParse(callbackContext, args);
             return true;
         }
         if (action.equals(ACTION_GET_INSTALLATION_ID)) {
@@ -49,7 +49,7 @@ public class ParsePlugin extends CordovaPlugin {
         return false;
     }
 
-    private void initialize(final CallbackContext callbackContext, final JSONArray args) {
+    private void initializeParse(final CallbackContext callbackContext, final JSONArray args) {
         cordova.getThreadPool().execute(new Runnable() {
             public void run() {
                 try {

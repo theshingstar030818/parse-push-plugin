@@ -4,7 +4,7 @@ Phonegap Parse.com Plugin
 Phonegap 3.x plugin for Parse.com push service.
 
 Using [Parse.com's](http://parse.com) REST API for push requires the installation id, which isn't available in JS.
-For Android, this plugin leverages Parse.com's Android SDK v1.7.1. This means GCM is used and the background process PushService is no longer running.
+For Android, this plugin leverages Parse.com's Android SDK v1.7.1. This means GCM is used and the background process PushService is out.
 
 This plugin exposes the four native Android API push services to JS:
 * getInstallationId()
