@@ -86,7 +86,9 @@ After successful registration, you can call any of the other available methods.
 
 ```javascript
 <script type="text/javascript">
-	ParsePushPlugin.register({appId:"PARSE_APPID", clientKey:"PARSE_CLIENT_KEY", ecb:"onNotification"}, function() {
+	ParsePushPlugin.register({
+	appId:"PARSE_APPID", clientKey:"PARSE_CLIENT_KEY", ecb:"onNotification"}, 
+	function() {
 		alert('successfully registered device!');
 		doWhatever();
 	}, function(e) {
