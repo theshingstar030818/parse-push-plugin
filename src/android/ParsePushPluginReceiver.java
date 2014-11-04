@@ -1,4 +1,4 @@
-package org.apache.cordova.core;
+package com.phonegap.plugins;
 
 import com.parse.ParsePushBroadcastReceiver;
 import com.parse.ParseAnalytics;
@@ -14,8 +14,17 @@ import android.util.Log;
 import org.json.JSONObject;
 import org.json.JSONException;
 
-public class ParsePluginReceiver extends ParsePushBroadcastReceiver
+public class ParsePushPluginReceiver extends ParsePushBroadcastReceiver
 {	
+	public static final String LOGTAG = "ParsePushPluginReceiver";
+	
+	@Override
+	protected void onPushReceive(Context context, Intent intent) {
+		super.onPushReceive(context, intent);
+		JSONObject pushData = getPushData(intent);
+		if(pushData != null) ParsePushPlugin.javascriptECB( pushData );
+	}
+	
 	@Override
     protected void onPushOpen(Context context, Intent intent) {
 		//
@@ -24,18 +33,12 @@ public class ParsePluginReceiver extends ParsePushBroadcastReceiver
 		//
         ParseAnalytics.trackAppOpenedInBackground(intent);
 
-        String uriString = null;
-        try {
-            JSONObject pushData = new JSONObject(intent.getStringExtra("com.parse.Data"));
-            uriString = pushData.optString("uri");
-        } catch (JSONException e) {
-            Log.w("com.parse.ParsePushBroadcastReceiver", "Unexpected JSONException when receiving push data in subclass of ParsePushBroadcastReceiver: ", e);
-        }
-        
+        JSONObject pushData = getPushData(intent);
+        String uriString = pushData.optString("uri");
         Class<? extends Activity> cls = getActivity(context, intent);
         
         Intent activityIntent;
-        if (uriString != null && !uriString.isEmpty()) {
+        if (!uriString.isEmpty()) {
             activityIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uriString));
         } else {
             activityIntent = new Intent(context, cls);
@@ -52,4 +55,15 @@ public class ParsePluginReceiver extends ParsePushBroadcastReceiver
             context.startActivity(activityIntent);
         }
     }
+	
+	private static JSONObject getPushData(Intent intent){
+		JSONObject pushData = null;
+		try {
+            pushData = new JSONObject(intent.getStringExtra("com.parse.Data"));
+        } catch (JSONException e) {
+            Log.e(LOGTAG, "JSONException while parsing push data:", e);
+        } finally{
+        	return pushData;
+        }
+	}
 }

@@ -3,18 +3,21 @@ Phonegap Parse.com Plugin
 
 Phonegap 3.x plugin for Parse.com push service.
 
-[Parse.com's](http://parse.com) JS API has no mechanism to register a device for or receive push notifications, which
+[Parse.com's](http://parse.com) Javascript API has no mechanism to register a device for or receive push notifications, which
 makes it fairly useless for PN in Phonegap/Cordova. This plugin bridges the gap by leveraging native Parse.com SDKs
-to register/receive PNs and allow a few essential methods to be accessible from Javascript.
+to register/receive PNs and allow a few essential methods to be accessible from Javascript. 
+
+_Please note that I've only worked on the Android aspect of this fork. The iOS side is not yet up to date._
 
 For Android, Parse SDK v1.7.1 is used. This means GCM support and no more background process `PushService` unnecessarily
 taps device battery to duplicate what GCM already provides.
 
 This plugin exposes the four native Android API push services to JS:
-* getInstallationId()
-* getSubscriptions()
-* subscribe( channel )
-* unsubscribe( channel )
+* register(options, successCB, errorCB)   -- register the device + a JS event callback (when a PN is received)
+* getInstallationId(successCB, errorCB)
+* getSubscriptions(successCB, errorCB)
+* subscribe(channel, successCB, errorCB)
+* unsubscribe(channel, successCB, errorCB)
 
 Installation
 ------------
@@ -22,8 +25,8 @@ Installation
 Pick one of these two commands:
 
 ```
-phonegap local plugin add https://github.com/taivo/phonegap-parse-plugin
-cordova plugin add https://github.com/taivo/phonegap-parse-plugin
+phonegap local plugin add https://github.com/taivo/parse-push-plugin
+cordova plugin add https://github.com/taivo/parse-push-plugin
 ```
 
 ####Android devices without Google Cloud Messaging:
@@ -79,14 +82,16 @@ to name your application class this way, but you have to use the same name in 3 
 Javascript Setup
 ------------------------
 
-Once the device is ready, call ```parsePlugin.initialize()```. This will register the device with Parse, you should see this reflected in your Parse control panel. After this runs you probably want to save the installationID somewhere, and perhaps subscribe the user to a few channels. Here is a contrived example.
+Once the device is ready, call ```ParsePushPlugin.register()```. This will register the device with Parse, you should see this reflected in your Parse control panel.
+You can optionally specify an event callback to be invoked when a push notification is received. 
+After this runs you probably want to save the installationID somewhere, and perhaps subscribe the user to a few channels. Here is a contrived example.
 
 ```javascript
-parsePlugin.initialize(appId, clientKey, function() {
+ParsePushPlugin.register({appId:"PARSE_APPID", clientKey:"PARSE_CLIENT_KEY", ecb:"onNotification"}, function() {
 
-	parsePlugin.subscribe('SampleChannel', function() {
+	ParsePushPlugin.subscribe('SampleChannel', function() {
 		
-		parsePlugin.getInstallationId(function(id) {
+		ParsePushPlugin.getInstallationId(function(id) {
 			alert('obtained installation id: ' + id);
 
 		}, function(e) {
@@ -101,41 +106,49 @@ parsePlugin.initialize(appId, clientKey, function() {
 	alert('error');
 });
 
+function onNotification(e){
+    alert("received pn: " + JSON.stringify(e));
+}
+
 ```
 
 Usage
 -----
 ```javascript
-<script type="text/javascript>
-	parsePlugin.initialize(appId, clientKey, function() {
+<script type="text/javascript">
+	ParsePushPlugin.register({appId:"PARSE_APPID", clientKey:"PARSE_CLIENT_KEY", ecb:"onNotification"}, function() {
 		alert('success');
 	}, function(e) {
 		alert('error');
 	});
   
-	parsePlugin.getInstallationId(function(id) {
+	ParsePushPlugin.getInstallationId(function(id) {
 		alert(id);
 	}, function(e) {
 		alert('error');
 	});
 	
-	parsePlugin.getSubscriptions(function(subscriptions) {
+	ParsePushPlugin.getSubscriptions(function(subscriptions) {
 		alert(subscriptions);
 	}, function(e) {
 		alert('error');
 	});
 	
-	parsePlugin.subscribe('SampleChannel', function() {
+	ParsePushPlugin.subscribe('SampleChannel', function() {
 		alert('OK');
 	}, function(e) {
 		alert('error');
 	});
 	
-	parsePlugin.unsubscribe('SampleChannel', function(msg) {
+	ParsePushPlugin.unsubscribe('SampleChannel', function(msg) {
 		alert('OK');
 	}, function(e) {
 		alert('error');
 	});
+	
+	function onNotification(e){
+    	alert("received pn: " + JSON.stringify(e));
+	}
 </script>
 ```
 

@@ -1,40 +1,32 @@
-var parsePlugin = {
-    initialize: function(appId, clientKey, successCallback, errorCallback) {
+var ParsePushPlugin = {
+    register: function(regParams, successCallback, errorCallback) {
         cordova.exec(
-            successCallback,
-            errorCallback,
-            'ParsePlugin',
-            'initialize',
-            [appId, clientKey]
+            successCallback, errorCallback,
+            'ParsePushPlugin', 'register',
+            [regParams]
         );
     },
 
     getInstallationId: function(successCallback, errorCallback) {
         cordova.exec(
-            successCallback,
-            errorCallback,
-            'ParsePlugin',
-            'getInstallationId',
+            successCallback, errorCallback,
+            'ParsePushPlugin', 'getInstallationId',
             []
         );
     },
 
     getInstallationObjectId: function(successCallback, errorCallback) {
         cordova.exec(
-            successCallback,
-            errorCallback,
-            'ParsePlugin',
-            'getInstallationObjectId',
+            successCallback, errorCallback,
+            'ParsePushPlugin', 'getInstallationObjectId',
             []
         );
     },
 
     getSubscriptions: function(successCallback, errorCallback) {
         cordova.exec(
-            successCallback,
-            errorCallback,
-            'ParsePlugin',
-            'getSubscriptions',
+            successCallback, errorCallback,
+            'ParsePushPlugin', 'getSubscriptions',
             []
         );
     },
@@ -43,7 +35,7 @@ var parsePlugin = {
         cordova.exec(
             successCallback,
             errorCallback,
-            'ParsePlugin',
+            'ParsePushPlugin',
             'subscribe',
             [ channel ]
         );
@@ -53,10 +45,10 @@ var parsePlugin = {
         cordova.exec(
             successCallback,
             errorCallback,
-            'ParsePlugin',
+            'ParsePushPlugin',
             'unsubscribe',
             [ channel ]
         );
     }
 };
-module.exports = parsePlugin;
+module.exports = ParsePushPlugin;
