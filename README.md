@@ -13,11 +13,11 @@ For Android, Parse SDK v1.7.1 is used. This means GCM support and no more backgr
 taps device battery to duplicate what GCM already provides.
 
 This plugin exposes the four native Android API push services to JS:
-* register(options, successCB, errorCB)   -- register the device + a JS event callback (when a PN is received)
-* getInstallationId(successCB, errorCB)
-* getSubscriptions(successCB, errorCB)
-* subscribe(channel, successCB, errorCB)
-* unsubscribe(channel, successCB, errorCB)
+* **register**( options, successCB, errorCB )   -- register the device + a JS event callback (when a PN is received)
+* **getInstallationId**( successCB, errorCB )
+* **getSubscriptions**( successCB, errorCB )
+* **subscribe**( channel, successCB, errorCB )
+* **unsubscribe**( channel, successCB, errorCB )
 
 Installation
 ------------
@@ -30,7 +30,7 @@ cordova plugin add https://github.com/taivo/parse-push-plugin
 ```
 
 ####Android devices without Google Cloud Messaging:
-If you only care about GCM devices, you're good to go. Move on to the [Javascript Setup](#javascript-setup) section. 
+If you only care about GCM devices, you're good to go. Move on to the [Usage](#usage) section. 
 
 The automatic setup above does not work for non-GCM devices. To support them, the `ParseBroadcastReceiver`
 must be setup to work properly. My guess is this receiver takes care of establishing a persistent connection that will
@@ -78,79 +78,59 @@ named MainApplication.java and define it this way
 In the `<application>` tag, add the attribute `android:name="MainApplication"`. Obviously, you don't have
 to name your application class this way, but you have to use the same name in 3 and 4. 
 
-
-Javascript Setup
-------------------------
-
-Once the device is ready, call ```ParsePushPlugin.register()```. This will register the device with Parse, you should see this reflected in your Parse control panel.
-You can optionally specify an event callback to be invoked when a push notification is received. 
-After this runs you probably want to save the installationID somewhere, and perhaps subscribe the user to a few channels. Here is a contrived example.
-
-```javascript
-ParsePushPlugin.register({appId:"PARSE_APPID", clientKey:"PARSE_CLIENT_KEY", ecb:"onNotification"}, function() {
-
-	ParsePushPlugin.subscribe('SampleChannel', function() {
-		
-		ParsePushPlugin.getInstallationId(function(id) {
-			alert('obtained installation id: ' + id);
-
-		}, function(e) {
-			alert('error');
-		});
-
-	}, function(e) {
-		alert('error');
-	});
-	
-}, function(e) {
-	alert('error');
-});
-
-function onNotification(e){
-    alert("received pn: " + JSON.stringify(e));
-}
-
-```
-
 Usage
 -----
+Once the device is ready, call ```ParsePushPlugin.register()```. This will register the device with Parse, you should see this reflected in your Parse control panel.
+You can optionally specify an event callback to be invoked when a push notification is received.
+After successful registration, you can call any of the other available methods.
+
 ```javascript
 <script type="text/javascript">
 	ParsePushPlugin.register({appId:"PARSE_APPID", clientKey:"PARSE_CLIENT_KEY", ecb:"onNotification"}, function() {
-		alert('success');
+		alert('successfully registered device!');
+		doWhatever();
 	}, function(e) {
-		alert('error');
-	});
-  
-	ParsePushPlugin.getInstallationId(function(id) {
-		alert(id);
-	}, function(e) {
-		alert('error');
+		alert('error registering device: ' + e);
 	});
 	
-	ParsePushPlugin.getSubscriptions(function(subscriptions) {
-		alert(subscriptions);
-	}, function(e) {
-		alert('error');
-	});
+	function doWhatever(){
+	    ParsePushPlugin.getInstallationId(function(id) {
+		    alert(id);
+	    }, function(e) {
+		    alert('error');
+	    });
+	    
+	    ParsePushPlugin.getSubscriptions(function(subscriptions) {
+		    alert(subscriptions);
+	    }, function(e) {
+		    alert('error');
+	    });
 	
-	ParsePushPlugin.subscribe('SampleChannel', function() {
-		alert('OK');
-	}, function(e) {
-		alert('error');
-	});
+	    ParsePushPlugin.subscribe('SampleChannel', function() {
+		    alert('OK');
+	    }, function(e) {
+		    alert('error');
+	    });
 	
-	ParsePushPlugin.unsubscribe('SampleChannel', function(msg) {
-		alert('OK');
-	}, function(e) {
-		alert('error');
-	});
+	    ParsePushPlugin.unsubscribe('SampleChannel', function(msg) {
+		    alert('OK');
+	    }, function(e) {
+		    alert('error');
+	    });
+	}
 	
-	function onNotification(e){
-    	alert("received pn: " + JSON.stringify(e));
+	function onNotification(pnObj){
+    	alert("received pn: " + JSON.stringify(pnObj));
 	}
 </script>
 ```
+
+Silent Notifications
+--------------------
+For Android, a silent notification can be sent if you omit the `title` and `alert` fields in the
+JSON payload. If you register an **ecb** as shown above, it will still be invoked and you can
+do whatever processing needed on the other fields of the payload.
+
 
 Compatibility
 -------------
