@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
-        id="com.phonegap.plugins.ParsePushPlugin" version="0.2.0">
+        id="com.phonegap.plugins.ParsePushPlugin" version="0.2.1">
     <name>ParsePushPlugin</name>
     <description>Phonegap plugin for Parse.com push notification</description>
 
@@ -45,8 +45,8 @@
           <uses-permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" />
         </config-file>
 
-        <source-file src="src/android/parse/Parse-1.7.1.jar" target-dir="libs" framework="true" />
-        <source-file src="src/android/parse/bolts-android-1.1.3.jar" target-dir="libs" framework="true" />
+        <source-file src="src/android/parse/Parse-1.8.1.jar" target-dir="libs" framework="true" />
+        <source-file src="src/android/parse/bolts-android-1.1.4.jar" target-dir="libs" framework="true" />
         <source-file src="src/android/ParsePushPlugin.java" target-dir="src/com/phonegap/plugins" />
         <source-file src="src/android/ParsePushPluginReceiver.java" target-dir="src/com/phonegap/plugins" />      
      </platform>
