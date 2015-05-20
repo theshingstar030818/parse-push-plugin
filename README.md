@@ -110,29 +110,29 @@ app before having to tinker with the Android setup steps involving `MainApplicat
 
 After the registration is completed successfully (it's successCB has been called), you can do any of the following
 ```javascript
-    ParsePushPlugin.getInstallationId(function(id) {
-	    alert(id);
-    }, function(e) {
-	    alert('error');
-    });
-    
-    ParsePushPlugin.getSubscriptions(function(subscriptions) {
-	    alert(subscriptions);
-    }, function(e) {
-	    alert('error');
-    });
+ParsePushPlugin.getInstallationId(function(id) {
+    alert(id);
+}, function(e) {
+    alert('error');
+});
 
-    ParsePushPlugin.subscribe('SampleChannel', function(msg) {
-	    alert('OK');
-    }, function(e) {
-	    alert('error');
-    });
+ParsePushPlugin.getSubscriptions(function(subscriptions) {
+    alert(subscriptions);
+}, function(e) {
+    alert('error');
+});
 
-    ParsePushPlugin.unsubscribe('SampleChannel', function(msg) {
-	    alert('OK');
-    }, function(e) {
-	    alert('error');
-    });
+ParsePushPlugin.subscribe('SampleChannel', function(msg) {
+    alert('OK');
+}, function(e) {
+    alert('error');
+});
+
+ParsePushPlugin.unsubscribe('SampleChannel', function(msg) {
+    alert('OK');
+}, function(e) {
+    alert('error');
+});
 ```
 
 
@@ -146,7 +146,7 @@ if(window.ParsePushPlugin){
 	});
 	
 	//
-	//you can also listen to your own custom subevents if you have already registered eventKey
+	//you can also listen to your own custom subevents if you registered eventKey
 	//
 	ParsePushPlugin.on('receivePN:chat', chatEventHandler);
 	ParsePushPlugin.on('receivePN:serverMaintenance', serverMaintenanceHandler);
