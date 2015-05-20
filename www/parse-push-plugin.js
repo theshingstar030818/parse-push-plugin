@@ -11,9 +11,9 @@ var ParsePushPlugin = {
 		 // say eventKey is 'evt' and we have just received a push notification 
 		 // PN {evt: 'chat', foo:'bar'}, _onReceive will then trigger 
 		 // 'receivePN' as well as 'receivePN:chat'.
-   	 //
+		 //
 		 // This compartmentalizes the event handling task for various parts of your app
-   	 // By default, event key is 'event' but it can be overrided via the register function
+   	 // By default, eventKey is undefined (no custom handling) but it can be overridden via the register function
 		 var base = 'receivePN';
 		 this.trigger(base, pn);
 		 if(this._eventKey && pn[this._eventKey]){
@@ -22,9 +22,9 @@ var ParsePushPlugin = {
 	 },
 	 
     register: function(regParams, successCb, errorCb) {
-   	 if(regParams.eventKey) this._eventKey = regParams.eventKey;
+       var params = _.extend({ecb: serviceName + '._onReceive'}, regParams || {});
+   	 this._eventKey = params.eventKey || null;
    	 
-   	 var params = _.extend(regParams, {ecb: serviceName + '._onReceive'});
        cordova.exec(successCb, errorCb, serviceName, 'register', [params]);
     },
 

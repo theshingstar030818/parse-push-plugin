@@ -62,17 +62,26 @@ public class ParsePushPlugin extends CordovaPlugin {
     private void registerDevice(final CallbackContext callbackContext, final JSONArray args) {
     	try {
         	JSONObject jo = args.getJSONObject(0);
-            String appId = jo.getString("appId");
-            String clientKey = jo.getString("clientKey");
-            
+        	
         	//
-        	// initialize Parse
-            Parse.initialize(cordova.getActivity(), appId, clientKey);
-            ParseInstallation.getCurrentInstallation().saveInBackground();
-            
-            //
             // register callbacks for notification events
             gECB = jo.optString("ecb");
+        	
+        	
+            String appId = jo.optString("appId");
+            String clientKey = jo.optString("clientKey");
+            if(!appId.isEmpty() && !clientKey.isEmpty()){
+            	// To quickly test if application is properly setup for push notification, user can
+            	// initialize Parse via the register() function in this plugin's js api by
+            	// specifying appId and clientKey.
+            	// Note: this is for quickstart testing only because this solution only works
+            	// while the app is running. It will crash when a pn arrives and the app is not running.
+            	// See docs for the real solution involving a MainApplication Java class
+                Parse.initialize(cordova.getActivity(), appId, clientKey);
+                ParseInstallation.getCurrentInstallation().saveInBackground();
+            }
+            
+            
             
             callbackContext.success();
         } catch (JSONException e) {
