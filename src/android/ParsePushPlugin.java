@@ -24,8 +24,9 @@ public class ParsePushPlugin extends CordovaPlugin {
     public static final String ACTION_SUBSCRIBE = "subscribe";
     public static final String ACTION_UNSUBSCRIBE = "unsubscribe";
     
-    private static CordovaWebView gWebView;
     private static String gECB;
+    private static CordovaWebView gWebView;
+    private static boolean gForeground = false;
     
     public static final String LOGTAG = "ParsePushPlugin";
 
@@ -63,22 +64,19 @@ public class ParsePushPlugin extends CordovaPlugin {
     	try {
         	JSONObject jo = args.getJSONObject(0);
         	
-        	
-        	String appId = jo.optString("appId");
-            String clientKey = jo.optString("clientKey");
-            if(!appId.isEmpty() && !clientKey.isEmpty()){
+            if(!jo.optString("appId").isEmpty() && !jo.optString("clientKey").isEmpty()){
             	// To quickly test if application is properly setup for push notification, user can
             	// initialize Parse via the register() function in this plugin's js api by
             	// specifying appId and clientKey.
             	// Note: this is for quickstart testing only because this solution only works
             	// while the app is running. It will crash when a pn arrives and the app is not running.
             	// See docs for the real solution involving a MainApplication Java class
-                Parse.initialize(cordova.getActivity(), appId, clientKey);
+                Parse.initialize(cordova.getActivity(), jo.optString("appId"), jo.optString("clientKey"));
                 ParseInstallation.getCurrentInstallation().saveInBackground();
             }
             
             //
-            // register callbacks for notification events
+            // register javascript event callbacks for notification events
             gECB = jo.optString("ecb");
             
             callbackContext.success();
@@ -130,22 +128,46 @@ public class ParsePushPlugin extends CordovaPlugin {
     * Use the cordova bridge to call the jsCB and pass it _json as param
     */
     public static void javascriptECB(JSONObject _json){
-    	if (gECB != null && !gECB.isEmpty() && gWebView != null){
+    	if ( isReady() ){
     		String snippet = "javascript:" + gECB + "(" + _json.toString() + ")";
     		gWebView.sendJavascript(snippet);
     	}
     }
     
-    @Override
-    protected void pluginInitialize() {
-    	gECB = null;
-    	gWebView = this.webView;
+    public static boolean isReady(){
+    	return gECB != null && !gECB.isEmpty() && gWebView != null;
     }
     
     @Override
+    protected void pluginInitialize() {
+    	gECB = null;
+    	gWebView = this.webView;  
+    	gForeground = true;
+    }
+    
+    @Override
+    public void onPause(boolean multitasking) {
+        super.onPause(multitasking);
+        gForeground = false;
+    }
+
+    @Override
+    public void onResume(boolean multitasking) {
+        super.onResume(multitasking);
+        gForeground = true;
+    }
+    
+    
+    @Override
     public void onDestroy() {
-    	super.onDestroy();
     	gECB = null;
     	gWebView = null;
+    	gForeground = false;
+    	
+    	super.onDestroy();
+    }
+    
+    public static boolean isInForeground(){
+      return gForeground;
     }
 }

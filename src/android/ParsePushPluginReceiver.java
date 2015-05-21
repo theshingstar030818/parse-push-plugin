@@ -31,12 +31,16 @@ public class ParsePushPluginReceiver extends ParsePushBroadcastReceiver
 	protected void onPushReceive(Context context, Intent intent) {
 		Log.d(LOGTAG, "onPushReceive - context: " + context);
 		
-		NotificationManager notifManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-		
-		//
-		// use tag + notification id=0 to limit the number of notifications on the tray
-		// (older messages with the same tag and notification id will be replaced)
-		notifManager.notify(getNotificationTag(context, intent), 0, getNotification(context, intent));
+		if(!ParsePushPlugin.isInForeground()){
+			//
+			// only create entry for notification tray if plugin/application is
+			// not running in foreground.
+			//
+			// use tag + notification id=0 to limit the number of notifications on the tray
+			// (older messages with the same tag and notification id will be replaced)
+			NotificationManager notifManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+			notifManager.notify(getNotificationTag(context, intent), 0, getNotification(context, intent));
+		}
 		
 	    //
 	    // relay the push notification data to the javascript
