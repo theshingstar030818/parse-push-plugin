@@ -7,20 +7,42 @@ Phonegap 3.x plugin for Parse.com push service.
 makes it fairly useless for PN in Phonegap/Cordova. This plugin bridges the gap by leveraging native Parse.com SDKs
 to register/receive PNs and allow a few essential methods to be accessible from Javascript. 
 
-_Please note that I've only worked on the Android aspect of this fork. The iOS side is not yet up to date._
+How Is This Fork Different?
+--------------------------
 
-For Android, Parse SDK v1.8.1 is used. This means GCM support. No more background process `PushService` tapping 
-device battery to duplicate what GCM already provides.
+**API**
 
-This plugin exposes the four native Android API push services to JS:
+This plugin exposes the following native Android API push services to JS:
+
 * **register**( options, successCB, errorCB )   -- register the device to receive PN
 * **getInstallationId**( successCB, errorCB )
 * **getSubscriptions**( successCB, errorCB )
 * **subscribe**( channel, successCB, errorCB )
 * **unsubscribe**( channel, successCB, errorCB )
 
-This plugin also handles multiple notifications from your app by retaining only the last PN with the same `title`.
-For messages without the `title` field, the application name will be used.
+The plugin object itself inherits from Parse.Event, thus allowing PN handling to be done this way
+```javascript
+ParsePushPlugin.on('receivePN', function(pn){
+	console.log('yo i got this push notification:' + JSON.stringify(pn));
+});
+
+ParsePushPlugin.on('receivePN:chat', function(pn){
+	console.log('yo i can also use custom event to keep things like chat modularized');
+});
+```
+
+**Handles multiple notifications**
+
+Prevents flooding the notification tray by retaining only the last PN with the same `title` field. 
+For messages without the `title` field, the application name is used.
+
+**Platforms**
+
+For Android, Parse SDK v1.8.1 is used. This means GCM support. No more background process `PushService` tapping 
+device battery to duplicate what GCM already provides.
+
+_I've only worked on the Android support for this fork. The iOS side is not yet up to date._
+
 
 Installation
 ------------
@@ -32,7 +54,7 @@ phonegap local plugin add https://github.com/taivo/parse-push-plugin
 cordova plugin add https://github.com/taivo/parse-push-plugin
 ```
 
-####Android setup:
+####Android Setup:
 Phonegap/Cordova doesn't define a custom `android.app.Application`, it only defines an android `Activity`. With an `Activity` alone,
 we should be able to receive PNs just fine while our app is running. However, if a PN arrives when the app is not running, 
 the app will be automatically invoked, and this plugin's `ParsePushPluginReceiver` runs before the `Activity` class or any javascript code
@@ -61,7 +83,7 @@ In the `<application>` tag, add the attribute `android:name="MainApplication"`. 
 to name your application class this way, but you have to use the same name in 1 and 2.
 
 
-####Android without Google Cloud Messaging:
+####Android Without GCM support:
 If you only care about GCM devices, you're good to go. Move on to the [Usage](#usage) section. 
 
 The setup above is not enough for non-GCM devices. To support them, `ParseBroadcastReceiver`
