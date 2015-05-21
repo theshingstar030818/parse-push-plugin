@@ -19,6 +19,9 @@ This plugin exposes the four native Android API push services to JS:
 * **subscribe**( channel, successCB, errorCB )
 * **unsubscribe**( channel, successCB, errorCB )
 
+This plugin also handles multiple notifications from your app by retaining only the last PN with the same `title`.
+For messages without the `title` field, the application name will be used.
+
 Installation
 ------------
 
@@ -58,7 +61,7 @@ In the `<application>` tag, add the attribute `android:name="MainApplication"`. 
 to name your application class this way, but you have to use the same name in 1 and 2.
 
 
-####Android devices without Google Cloud Messaging:
+####Android without Google Cloud Messaging:
 If you only care about GCM devices, you're good to go. Move on to the [Usage](#usage) section. 
 
 The setup above is not enough for non-GCM devices. To support them, `ParseBroadcastReceiver`
