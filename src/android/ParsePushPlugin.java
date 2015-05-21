@@ -1,4 +1,4 @@
-package com.phonegap.plugins;
+package com.phonegap.parsepushplugin;
 
 import java.util.List;
 import java.lang.Exception;
@@ -63,12 +63,8 @@ public class ParsePushPlugin extends CordovaPlugin {
     	try {
         	JSONObject jo = args.getJSONObject(0);
         	
-        	//
-            // register callbacks for notification events
-            gECB = jo.optString("ecb");
         	
-        	
-            String appId = jo.optString("appId");
+        	String appId = jo.optString("appId");
             String clientKey = jo.optString("clientKey");
             if(!appId.isEmpty() && !clientKey.isEmpty()){
             	// To quickly test if application is properly setup for push notification, user can
@@ -81,7 +77,9 @@ public class ParsePushPlugin extends CordovaPlugin {
                 ParseInstallation.getCurrentInstallation().saveInBackground();
             }
             
-            
+            //
+            // register callbacks for notification events
+            gECB = jo.optString("ecb");
             
             callbackContext.success();
         } catch (JSONException e) {
@@ -132,10 +130,10 @@ public class ParsePushPlugin extends CordovaPlugin {
     * Use the cordova bridge to call the jsCB and pass it _json as param
     */
     public static void javascriptECB(JSONObject _json){
-    	String snippet = "javascript:" + gECB + "(" + _json.toString() + ")";
-    	Log.v(LOGTAG, "javascriptCB: " + snippet);
-    	
-    	if (gECB != null && !gECB.isEmpty() && gWebView != null) gWebView.sendJavascript(snippet);
+    	if (gECB != null && !gECB.isEmpty() && gWebView != null){
+    		String snippet = "javascript:" + gECB + "(" + _json.toString() + ")";
+    		gWebView.sendJavascript(snippet);
+    	}
     }
     
     @Override

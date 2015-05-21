@@ -20,7 +20,7 @@ This plugin exposes the following native Android API push services to JS:
 * **subscribe**( channel, successCB, errorCB )
 * **unsubscribe**( channel, successCB, errorCB )
 
-The plugin object itself inherits from Parse.Event, thus allowing PN handling to be done this way
+The plugin object itself inherits from Parse.Events, thus allowing PN handling to be done this way on the JS side.
 ```javascript
 ParsePushPlugin.on('receivePN', function(pn){
 	console.log('yo i got this push notification:' + JSON.stringify(pn));
@@ -34,7 +34,8 @@ ParsePushPlugin.on('receivePN:chat', function(pn){
 **Handles multiple notifications**
 
 Prevents flooding the notification tray by retaining only the last PN with the same `title` field. 
-For messages without the `title` field, the application name is used.
+For messages without the `title` field, the application name is used. A count of unopened PNs is
+also shown.
 
 **Platforms**
 
@@ -47,10 +48,7 @@ _I've only worked on the Android support for this fork. The iOS side is not yet 
 Installation
 ------------
 
-Pick one of these two commands:
-
 ```
-phonegap local plugin add https://github.com/taivo/parse-push-plugin
 cordova plugin add https://github.com/taivo/parse-push-plugin
 ```
 
