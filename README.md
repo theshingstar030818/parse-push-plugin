@@ -39,8 +39,8 @@ also shown.
 
 **Foreground vs. Background**
 
-Only add entry to notification tray if the application is not in foreground. However, as expected,
-the actual PN payload is always forwarded to your javascript when it is received.
+Only add an entry to the notification tray if the application is not running in foreground.
+The actual PN payload is always forwarded to your javascript when it is received.
 
 **Platforms**
 
