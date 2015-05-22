@@ -3,17 +3,16 @@ package com.phonegap.parsepushplugin;
 import com.parse.ParsePushBroadcastReceiver;
 
 import android.app.Activity;
-import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
-import android.net.Uri;
-import android.util.Log;
-
+import android.app.PendingIntent;
 import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
+
 import android.support.v4.app.NotificationCompat;
+
+import android.net.Uri;
+import android.util.Log;
 
 import org.json.JSONObject;
 import org.json.JSONException;
@@ -52,28 +51,16 @@ public class ParsePushPluginReceiver extends ParsePushBroadcastReceiver
 		Log.d(LOGTAG, "onPushOpen - context: " + context);
 		
         JSONObject pnData = getPushData(intent);
-        
         resetCount(getNotificationTag(context, pnData));
         
         String uriString = pnData.optString("uri");
-        Class<? extends Activity> cls = getActivity(context, intent);
+        Intent activityIntent = uriString.isEmpty() ? new Intent(context, getActivity(context, intent))
+                                                    : new Intent(Intent.ACTION_VIEW, Uri.parse(uriString));
+        		
+        activityIntent.putExtras(intent)
+                      .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
         
-        Intent activityIntent;
-        if (!uriString.isEmpty()) {
-            activityIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uriString));
-        } else {
-            activityIntent = new Intent(context, cls);
-        }
-        activityIntent.putExtras(intent.getExtras());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-            stackBuilder.addParentStack(cls);
-            stackBuilder.addNextIntent(activityIntent);
-            stackBuilder.startActivities();
-        } else {
-            activityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(activityIntent);
-        }
+        context.startActivity(activityIntent);
     }
 	
 	@Override

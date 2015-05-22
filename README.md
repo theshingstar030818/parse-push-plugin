@@ -38,6 +38,7 @@ For messages without the `title` field, the application name is used. A count of
 also shown.
 
 **Foreground vs. Background**
+
 Only add entry to notification tray if the application is not in foreground. However, as expected,
 the actual PN payload is always forwarded to your javascript.
 

@@ -11,8 +11,8 @@ import org.json.JSONObject;
 import org.json.JSONException;
 
 import com.parse.Parse;
-import com.parse.ParseInstallation;
 import com.parse.ParsePush;
+import com.parse.ParseInstallation;
 
 import android.util.Log;
 
