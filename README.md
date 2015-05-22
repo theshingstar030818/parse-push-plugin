@@ -33,14 +33,14 @@ ParsePushPlugin.on('receivePN:chat', function(pn){
 
 **Multiple notifications**
 
-Prevents flooding the notification tray by retaining only the last PN with the same `title` field. 
+Prevent flooding the notification tray by retaining only the last PN with the same `title` field. 
 For messages without the `title` field, the application name is used. A count of unopened PNs is
 also shown.
 
 **Foreground vs. Background**
 
 Only add entry to notification tray if the application is not in foreground. However, as expected,
-the actual PN payload is always forwarded to your javascript.
+the actual PN payload is always forwarded to your javascript when it is received.
 
 **Platforms**
 
