@@ -20,7 +20,7 @@ This plugin exposes the following native Android API push services to JS:
 * **subscribe**( channel, successCB, errorCB )
 * **unsubscribe**( channel, successCB, errorCB )
 
-Made ParsePushPlugin inherit from Parse.Events, thus allowing PN handling to be done this way on the JS side.
+Made ParsePushPlugin inherit from Parse.Events, thus making this possible in JS.
 ```javascript
 ParsePushPlugin.on('receivePN', function(pn){
 	console.log('yo i got this push notification:' + JSON.stringify(pn));
