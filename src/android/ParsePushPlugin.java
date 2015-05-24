@@ -128,13 +128,20 @@ public class ParsePushPlugin extends CordovaPlugin {
     * Use the cordova bridge to call the jsCB and pass it _json as param
     */
     public static void javascriptECB(JSONObject _json){
-    	if ( isReady() ){
-    		String snippet = "javascript:" + gECB + "(" + _json.toString() + ")";
+    	javascriptECB(_json, "RECEIVE");
+    }
+    public static void javascriptECB(JSONObject _json, String pushAction){
+    	boolean isOkAction = pushAction == "RECEIVE" || pushAction == "OPEN";
+    	
+    	if( isJavascriptReady() && isOkAction ){
+    		String snippet = "javascript:" + gECB + "(" + _json.toString() + ",'" + pushAction + "'" + ")";
+    		
+    		Log.d(LOGTAG, "javascriptECB snippet " + snippet);
     		gWebView.sendJavascript(snippet);
     	}
     }
     
-    public static boolean isReady(){
+    public static boolean isJavascriptReady(){
     	return gECB != null && !gECB.isEmpty() && gWebView != null;
     }
     

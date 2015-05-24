@@ -4,25 +4,33 @@ var _ = window._ ? window._ : Parse._;
 
 var ParsePushPlugin = {
 	 _eventKey: null,
-	 _onReceive: function(pn){
-		 //
-		 // an eventKey can be registered with the register() function. The eventKey 
-		 // will be used to trigger additional callbacks for this app. Let's 
-		 // say eventKey is 'evt' and we have just received a push notification 
-		 // PN {evt: 'chat', foo:'bar'}, _onReceive will then trigger 
-		 // 'receivePN' as well as 'receivePN:chat'.
-		 //
-		 // This compartmentalizes the event handling task for various parts of your app
-   	 // By default, eventKey is undefined (no custom handling) but it can be overridden via the register function
-		 var base = 'receivePN';
-		 this.trigger(base, pn);
-		 if(this._eventKey && pn[this._eventKey]){
-			 this.trigger(base + ':' + pn[this._eventKey], pn);
+	 _onNotify: function(pn, pushAction){
+		 if(pushAction === 'OPEN'){
+			 //
+			 // trigger a callback when user click open a notification.
+			 // One usecase for this pertains a cordova app that is already running in the background.
+			 // Relaying a push OPEN action, allows the app to resume and use javascript to navigate
+			 // to a different screen.
+			 //
+			 this.trigger('openPN', pn);
+		 } else{
+			 //
+			 //an eventKey can be registered with the register() function to trigger
+			 //additional javascript callbacks when a notification is received.
+			 //This helps modularizes notification handling for different aspects
+			 //of your javascript app, e.g., receivePN:chat, receivePN:system, etc.
+			 //
+			 var base = 'receivePN';
+			 this.trigger(base, pn);
+			 if(this._eventKey && pn[this._eventKey]){
+				 this.trigger(base + ':' + pn[this._eventKey], pn);
+			 }
 		 }
+		 
 	 },
 	 
     register: function(regParams, successCb, errorCb) {
-       var params = _.extend({ecb: serviceName + '._onReceive'}, regParams || {});
+       var params = _.extend({ecb: serviceName + '._onNotify'}, regParams || {});
    	 this._eventKey = params.eventKey || null;
    	 
        cordova.exec(successCb, errorCb, serviceName, 'register', [params]);

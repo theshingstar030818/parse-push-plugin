@@ -29,6 +29,11 @@ ParsePushPlugin.on('receivePN', function(pn){
 ParsePushPlugin.on('receivePN:chat', function(pn){
 	console.log('yo i can also use custom event to keep things like chat modularized');
 });
+
+ParsePushPlugin.on('openPN', function(pn){
+	//you can do things like navigating to a different view here
+	console.log('Yo, I get this when the user clicks open a notification from the tray');
+});
 ```
 
 **Multiple notifications**
@@ -41,6 +46,39 @@ also shown.
 
 Only add an entry to the notification tray if the application is not running in foreground.
 The actual PN payload is always forwarded to your javascript when it is received.
+
+**Navigate to a specific view when user opens a notification**
+
+Simply add a `urlHash` field in your PN payload that contains either a url hash, i.e. #myhash,
+or a url parameter string, i.e. ?param1=a&param2=b. If `urlHash` starts with "#" or "?", 
+this plugin will pass it along as an extra in the android intent to launch your MainActivity. 
+
+For the cold start case, simply do this in your `MainActivity.onCreate()`:
+
+```java
+@Override
+public void onCreate(Bundle savedInstanceState)
+{
+    //
+    // your code...
+    //
+    
+    String urlHash = intent.hasExtra("urlHash") ? intent.getStringExtra("urlHash") : "";
+    loadUrl(launchUrl + urlHash);
+}
+```
+
+If your app is already running (in the background, for example), and you want the PN open
+action to trigger navigation to a different page/view within your app, just set a handler
+for the `openPN` event, like so:
+
+```javascript
+ParsePushPlugin.on('openPN', function(pn){
+	if(pn.urlHash){
+		window.location.hash = hash;
+	}
+});
+```
 
 **Platforms**
 
