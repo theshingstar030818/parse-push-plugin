@@ -136,7 +136,7 @@ public class ParsePushPlugin extends CordovaPlugin {
     	if( isJavascriptReady() && isOkAction ){
     		String snippet = "javascript:" + gECB + "(" + _json.toString() + ",'" + pushAction + "'" + ")";
     		
-    		Log.d(LOGTAG, "javascriptECB snippet " + snippet);
+    		//Log.d(LOGTAG, "javascriptECB snippet " + snippet);
     		gWebView.sendJavascript(snippet);
     	}
     }
