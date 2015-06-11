@@ -116,7 +116,7 @@ e.g., `platforms/android/src/com/example/app`, create a file named MainApplicati
 
     import android.app.Application;
     import com.parse.Parse;
-		import com.parse.ParseInstallation;
+    import com.parse.ParseInstallation;
 
     public class MainApplication extends Application {
 	    @Override
