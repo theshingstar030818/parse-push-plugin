@@ -235,6 +235,14 @@ JSON payload. This means the push notification will not be shown in the system t
 payload will still be delivered to your `receivePN` and `receivePN:customEvt` handlers.
 
 
+**Troubleshooting**
+Starting with the Parse Android SDK v1.10.1 update, your app may crash at start and the log says
+something about a missing method in OkHttpClient. Just update the cordova libs of your project
+via `cordova platform update android`. If your previous cordova libs are old, you may run into
+further compilation errors that has to do with the new cordova libs setting your android target
+to be 22 or higher. Look at file `platforms/android/project.properties` and make sure that is
+consistent with your `config.xml`
+
 Compatibility
 -------------
 Phonegap/Cordova > 3.0.0
