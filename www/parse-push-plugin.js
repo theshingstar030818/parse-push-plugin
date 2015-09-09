@@ -16,7 +16,7 @@ require('cordova/channel').onCordovaReady.subscribe(function() {
 			 // Relaying a push OPEN action, allows the app to resume and use javascript to navigate
 			 // to a different screen.
 			 //
-			 ParsePushPlugin.trigger('openPN', pn);
+			 ParsePushPlugin.trigger(ParsePushPlugin._openEvent, pn);
 		 } else{
 			 //
 			 //an eventKey can be registered with the register() function to trigger
@@ -24,17 +24,22 @@ require('cordova/channel').onCordovaReady.subscribe(function() {
 			 //This helps modularizes notification handling for different aspects
 			 //of your javascript app, e.g., receivePN:chat, receivePN:system, etc.
 			 //
-			 var base = 'receivePN';
+			 var base = ParsePushPlugin._receiveEvent;
+			 var customEventKey = ParsePushPlugin._customEventKey;
+			 
 			 ParsePushPlugin.trigger(base, pn);
-			 if(ParsePushPlugin._eventKey && pn[this._eventKey]){
-				 ParsePushPlugin.trigger(base + ':' + pn[this._eventKey], pn);
+			 if(customEventKey && pn[customEventKey]){
+				 ParsePushPlugin.trigger(base + ':' + pn[customEventKey], pn);
 			 }
 		 }
    }
 });
 
 var ParsePushPlugin = {
-	 _eventKey: null,
+	 _openEvent: 'openPN',
+	 _receiveEvent: 'receivePN',
+	 _customEventKey: 'event', //default key for custom events associated with each PN, set this to anything you see fit
+	 
     getInstallationId: function(successCb, errorCb) {
        cordova.exec(successCb, errorCb, serviceName, 'getInstallationId', []);
     },

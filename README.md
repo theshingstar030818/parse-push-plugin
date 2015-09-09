@@ -202,7 +202,7 @@ if(window.ParsePushPlugin){
 	});
 
 	//
-	//you can also listen to your own custom subevents if you registered eventKey
+	//you can also listen to your own custom subevents
 	//
 	ParsePushPlugin.on('receivePN:chat', chatEventHandler);
 	ParsePushPlugin.on('receivePN:serverMaintenance', serverMaintenanceHandler);
