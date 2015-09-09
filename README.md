@@ -82,7 +82,7 @@ ParsePushPlugin.on('openPN', function(pn){
 
 **Platforms**
 
-For Android, Parse SDK v1.8.1 is used. This means GCM support. No more background process `PushService` tapping
+For Android, Parse SDK v1.10.1 is used. This means GCM support. No more background process `PushService` tapping
 device battery to duplicate what GCM already provides.
 
 _I've only worked on the Android support for this fork. The iOS side is not yet up to date._
@@ -94,12 +94,6 @@ Installation
 ```
 cordova plugin add https://github.com/taivo/parse-push-plugin
 ```
-### JavaScript Libraries
-
-Add following libraries in your `index.html`
-
-1. [Parse.js](https://parse.com/downloads/javascript/parse-1.4.2.min.js)
-2. [Underscore.js](http://underscorejs.org/underscore-min.js) (Recommended by Parse)
 
 
 ####Android Setup:
