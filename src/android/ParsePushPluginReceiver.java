@@ -43,7 +43,7 @@ public class ParsePushPluginReceiver extends ParsePushBroadcastReceiver
 		
 	    //
 	    // relay the push notification data to the javascript
-		ParsePushPlugin.javascriptECB( getPushData(intent) );
+		ParsePushPlugin.jsCallback( getPushData(intent) );
 	}
 	
 	@Override
@@ -74,7 +74,7 @@ public class ParsePushPluginReceiver extends ParsePushBroadcastReceiver
         //
 	    // relay the push notification data to the javascript in case the
         // app is already running when this push is open.
-		ParsePushPlugin.javascriptECB(getPushData(intent), "OPEN");
+		ParsePushPlugin.jsCallback(getPushData(intent), "OPEN");
     }
 	
 	@Override

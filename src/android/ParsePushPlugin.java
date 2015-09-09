@@ -1,11 +1,13 @@
 package com.phonegap.parsepushplugin;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.lang.Exception;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CordovaWebView;
+import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONException;
@@ -23,8 +25,11 @@ public class ParsePushPlugin extends CordovaPlugin {
     public static final String ACTION_GET_SUBSCRIPTIONS = "getSubscriptions";
     public static final String ACTION_SUBSCRIBE = "subscribe";
     public static final String ACTION_UNSUBSCRIBE = "unsubscribe";
+    public static final String ACTION_SET_EVENT_CALLBACK = "setEventCallback";
+    		
+    private static CallbackContext gEventCallback = null;
     
-    private static String gECB;
+    //////private static String gECB;
     private static CordovaWebView gWebView;
     private static boolean gForeground = false;
     
@@ -32,6 +37,10 @@ public class ParsePushPlugin extends CordovaPlugin {
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
+    	if (action.equals(ACTION_SET_EVENT_CALLBACK)){
+    		gEventCallback = callbackContext;
+    		return true;
+    	}
     	if (action.equals(ACTION_REGISTER)) {
             this.registerDevice(callbackContext, args);
             return true;
@@ -74,10 +83,6 @@ public class ParsePushPlugin extends CordovaPlugin {
                 Parse.initialize(cordova.getActivity(), jo.optString("appId"), jo.optString("clientKey"));
                 ParseInstallation.getCurrentInstallation().saveInBackground();
             }
-            
-            //
-            // register javascript event callbacks for notification events
-            gECB = jo.optString("ecb");
             
             callbackContext.success();
         } catch (JSONException e) {
@@ -124,30 +129,31 @@ public class ParsePushPlugin extends CordovaPlugin {
         callbackContext.success();
     }
     
-    /*
-    * Use the cordova bridge to call the jsCB and pass it _json as param
-    */
-    public static void javascriptECB(JSONObject _json){
-    	javascriptECB(_json, "RECEIVE");
+    /* 
+     * keep reusing the saved callback context to call the javascript PN handler
+     */
+    public static void jsCallback(JSONObject _json){
+    	jsCallback(_json, "RECEIVE");
     }
-    public static void javascriptECB(JSONObject _json, String pushAction){
-    	boolean isOkAction = pushAction == "RECEIVE" || pushAction == "OPEN";
+    public static void jsCallback(JSONObject _json, String pushAction){
+    	List<PluginResult> cbParams = new ArrayList<PluginResult>();
+    	cbParams.add(new PluginResult(PluginResult.Status.OK, _json));
+    	cbParams.add(new PluginResult(PluginResult.Status.OK, pushAction));
     	
-    	if( isJavascriptReady() && isOkAction ){
-    		String snippet = "javascript:" + gECB + "(" + _json.toString() + ",'" + pushAction + "'" + ")";
-    		
-    		//Log.d(LOGTAG, "javascriptECB snippet " + snippet);
-    		gWebView.sendJavascript(snippet);
-    	}
+    	PluginResult dataResult = new PluginResult(PluginResult.Status.OK, cbParams);
+        dataResult.setKeepCallback(true);
+        gEventCallback.sendPluginResult(dataResult);
     }
+
     
     public static boolean isJavascriptReady(){
-    	return gECB != null && !gECB.isEmpty() && gWebView != null;
+    	/////return gECB != null && !gECB.isEmpty() && gWebView != null;
+    	return gWebView != null;
     }
     
     @Override
     protected void pluginInitialize() {
-    	gECB = null;
+    	/////gECB = null;
     	gWebView = this.webView;  
     	gForeground = true;
     }
@@ -167,7 +173,7 @@ public class ParsePushPlugin extends CordovaPlugin {
     
     @Override
     public void onDestroy() {
-    	gECB = null;
+    	/////gECB = null;
     	gWebView = null;
     	gForeground = false;
     	
