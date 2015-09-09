@@ -14,18 +14,20 @@ How Is This Fork Different?
 
 This plugin exposes the following native Android API push services to JS:
 
-* **register**( options, successCB, errorCB )   -- register the device to receive PN
 * **getInstallationId**( successCB, errorCB )
 * **getSubscriptions**( successCB, errorCB )
 * **subscribe**( channel, successCB, errorCB )
 * **unsubscribe**( channel, successCB, errorCB )
 
-Made ParsePushPlugin inherit from Parse.Events, thus making this possible in JS.
+ParsePushPlugin extends Parse.Events, and makes these notification events available:
+`openPN, receivePN, receivePN:customEvt`. To handle notification events in JS, you can do this:
+
 ```javascript
 ParsePushPlugin.on('receivePN', function(pn){
 	console.log('yo i got this push notification:' + JSON.stringify(pn));
 });
 
+//customEvt can be any string of your choosing, i.e., chat, system, upvote, etc.
 ParsePushPlugin.on('receivePN:chat', function(pn){
 	console.log('yo i can also use custom event to keep things like chat modularized');
 });
@@ -35,6 +37,8 @@ ParsePushPlugin.on('openPN', function(pn){
 	console.log('Yo, I get this when the user clicks open a notification from the tray');
 });
 ```
+
+
 
 **Multiple notifications**
 
@@ -153,30 +157,14 @@ Usage
 -----
 **Registering device**
 
-Once the device is ready, call ```ParsePushPlugin.register()```. This will register the device with Parse,
-you should see this reflected in your Parse control panel. Once registered, the ParsePushPlugin object
-will trigger the ```receivePN``` event and optionally the ```receivePN:customEvt``` event. ```customEvt```
-is the string value of a special key in your push notification. You can set that key in ```register()``` with
-the option ```eventKey```.
+Calls to register the device with Parse is done in java in the android MainApplication code.
+It has to be this way because notifications can arrive and need to be handled when the webview 
+and this javascript plugin are not yet loaded. See [Android Setup](#androidsetup).
 
-```javascript
-ParsePushPlugin.register({eventKey:"myEventKey"}, //will trigger receivePN[pnObj.myEventKey]
-function() {
-	alert('successfully registered device!');
-}, function(e) {
-	alert('error registering device: ' + e);
-});
-```
+**API**
 
-During initial setup, it may be useful to confirm that your push notification is hooked up properly for your
-app before having to tinker with the Android setup steps involving `MainApplication.java`. You can do so by adding the keys
-`appId:"PARSE_APPID", clientKey:"PARSE_CLIENT_KEY"` to the first parameter of register()
+You can do any of the following
 
-
-
-**Registering device**
-
-After the registration is completed successfully (it's successCB has been called), you can do any of the following
 ```javascript
 ParsePushPlugin.getInstallationId(function(id) {
     alert(id);

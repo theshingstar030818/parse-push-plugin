@@ -19,13 +19,12 @@ import com.parse.ParseInstallation;
 import android.util.Log;
 
 public class ParsePushPlugin extends CordovaPlugin {
-    public static final String ACTION_REGISTER = "register";
     public static final String ACTION_GET_INSTALLATION_ID = "getInstallationId";
     public static final String ACTION_GET_INSTALLATION_OBJECT_ID = "getInstallationObjectId";
     public static final String ACTION_GET_SUBSCRIPTIONS = "getSubscriptions";
     public static final String ACTION_SUBSCRIBE = "subscribe";
     public static final String ACTION_UNSUBSCRIBE = "unsubscribe";
-    public static final String ACTION_SET_EVENT_CALLBACK = "setEventCallback";
+    public static final String ACTION_REGISTER_CALLBACK = "registerCallback";
     		
     private static CallbackContext gEventCallback = null;
     
@@ -37,14 +36,11 @@ public class ParsePushPlugin extends CordovaPlugin {
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
-    	if (action.equals(ACTION_SET_EVENT_CALLBACK)){
+    	if (action.equals(ACTION_REGISTER_CALLBACK)){
     		gEventCallback = callbackContext;
     		return true;
     	}
-    	if (action.equals(ACTION_REGISTER)) {
-            this.registerDevice(callbackContext, args);
-            return true;
-        }
+
         if (action.equals(ACTION_GET_INSTALLATION_ID)) {
             this.getInstallationId(callbackContext);
             return true;
@@ -69,28 +65,6 @@ public class ParsePushPlugin extends CordovaPlugin {
         return false;
     }
 
-    private void registerDevice(final CallbackContext callbackContext, final JSONArray args) {
-    	try {
-        	JSONObject jo = args.getJSONObject(0);
-        	
-            if(!jo.optString("appId").isEmpty() && !jo.optString("clientKey").isEmpty()){
-            	// To quickly test if application is properly setup for push notification, user can
-            	// initialize Parse via the register() function in this plugin's js api by
-            	// specifying appId and clientKey.
-            	// Note: this is for quickstart testing only because this solution only works
-            	// while the app is running. It will crash when a pn arrives and the app is not running.
-            	// See docs for the real solution involving a MainApplication Java class
-                Parse.initialize(cordova.getActivity(), jo.optString("appId"), jo.optString("clientKey"));
-                ParseInstallation.getCurrentInstallation().saveInBackground();
-            }
-            
-            callbackContext.success();
-        } catch (JSONException e) {
-            callbackContext.error("JSONException: " + e.toString());
-        } catch(Exception e){
-        	callbackContext.error(e.toString());
-        }
-    }
 
     private void getInstallationId(final CallbackContext callbackContext) {
         cordova.getThreadPool().execute(new Runnable() {

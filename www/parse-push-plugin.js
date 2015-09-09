@@ -6,7 +6,7 @@ var _ = window._ ? window._ : Parse._;
 // when a PN event occurs
 //
 require('cordova/channel').onCordovaReady.subscribe(function() {
-	require('cordova/exec')(jsCallback, null, serviceName, 'setEventCallback', []);
+	require('cordova/exec')(jsCallback, null, serviceName, 'registerCallback', []);
 	
 	function jsCallback(pn, pushAction) {
 		if(pushAction === 'OPEN'){
@@ -35,12 +35,6 @@ require('cordova/channel').onCordovaReady.subscribe(function() {
 
 var ParsePushPlugin = {
 	 _eventKey: null,
-    register: function(regParams, successCb, errorCb) {
-   	 var params = regParams || {};
-   	 this._eventKey = params.eventKey || null;
-   	 cordova.exec(successCb, errorCb, serviceName, 'register', [params]);
-    },
-
     getInstallationId: function(successCb, errorCb) {
        cordova.exec(successCb, errorCb, serviceName, 'getInstallationId', []);
     },
