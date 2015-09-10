@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<plugin xmlns="http://www.phonegap.com/ns/plugins/1.0" id="com.phonegap.parsepushplugin" version="0.6.0">
+<plugin xmlns="http://www.phonegap.com/ns/plugins/1.0" id="com.phonegap.parsepushplugin" version="0.6.1">
     <name>ParsePushPlugin</name>
     <description>Phonegap plugin for Parse.com push notification</description>
 
