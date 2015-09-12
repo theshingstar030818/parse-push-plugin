@@ -25,13 +25,13 @@ public class ParsePushPlugin extends CordovaPlugin {
     public static final String ACTION_SUBSCRIBE = "subscribe";
     public static final String ACTION_UNSUBSCRIBE = "unsubscribe";
     public static final String ACTION_REGISTER_CALLBACK = "registerCallback";
-    		
+
     private static CallbackContext gEventCallback = null;
-    
+
     //////private static String gECB;
     private static CordovaWebView gWebView;
     private static boolean gForeground = false;
-    
+
     public static final String LOGTAG = "ParsePushPlugin";
 
     @Override
@@ -102,8 +102,8 @@ public class ParsePushPlugin extends CordovaPlugin {
     	ParsePush.unsubscribeInBackground(channel);
         callbackContext.success();
     }
-    
-    /* 
+
+    /*
      * keep reusing the saved callback context to call the javascript PN handler
      */
     public static void jsCallback(JSONObject _json){
@@ -113,25 +113,28 @@ public class ParsePushPlugin extends CordovaPlugin {
     	List<PluginResult> cbParams = new ArrayList<PluginResult>();
     	cbParams.add(new PluginResult(PluginResult.Status.OK, _json));
     	cbParams.add(new PluginResult(PluginResult.Status.OK, pushAction));
-    	
+
     	PluginResult dataResult = new PluginResult(PluginResult.Status.OK, cbParams);
         dataResult.setKeepCallback(true);
-        gEventCallback.sendPluginResult(dataResult);
+
+        if(gEventCallback != null){
+            gEventCallback.sendPluginResult(dataResult);
+        }
     }
 
-    
+
     public static boolean isJavascriptReady(){
     	/////return gECB != null && !gECB.isEmpty() && gWebView != null;
     	return gWebView != null;
     }
-    
+
     @Override
     protected void pluginInitialize() {
     	/////gECB = null;
-    	gWebView = this.webView;  
+    	gWebView = this.webView;
     	gForeground = true;
     }
-    
+
     @Override
     public void onPause(boolean multitasking) {
         super.onPause(multitasking);
@@ -143,17 +146,17 @@ public class ParsePushPlugin extends CordovaPlugin {
         super.onResume(multitasking);
         gForeground = true;
     }
-    
-    
+
+
     @Override
     public void onDestroy() {
     	/////gECB = null;
     	gWebView = null;
     	gForeground = false;
-    	
+
     	super.onDestroy();
     }
-    
+
     public static boolean isInForeground(){
       return gForeground;
     }
