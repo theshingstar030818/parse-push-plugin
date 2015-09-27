@@ -104,6 +104,10 @@ public class ParsePushPluginReceiver extends ParsePushBroadcastReceiver
 			builder.setContentText(pnData.optString("alert"));
 		}
 		
+		if (!ParsePushPlugin.isInForeground()) { 
+			builder.setSound(android.provider.Settings.System.DEFAULT_NOTIFICATION_URI);
+		}
+		
 		builder.setSmallIcon(getSmallIconId(context, intent))
 		       .setLargeIcon(getLargeIcon(context, intent))
 		       .setNumber(nextCount(pnTag))
