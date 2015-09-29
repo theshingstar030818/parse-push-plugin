@@ -129,6 +129,17 @@ e.g., `platforms/android/src/com/example/app`, create a file named MainApplicati
 In the `<application>` tag, add the attribute `android:name="MainApplication"`. Obviously, you don't have
 to name your application class this way, but you have to use the same name in 1 and 2.
 
+3. Optional. To customize background color for the push notification icon in Android Lollipop, go to
+your `platforms/android/res/values` folder and create a file named `colors.xml`. Paste the following
+content in it and replace the hex color value of the form `#AARRGGBB` to your liking.
+
+    ```xml
+	<?xml version="1.0" encoding="utf-8"?>
+    <resources>
+        <color name="parse_push_icon_color">#ff112233</color>
+    </resources>
+    ```
+
 
 ####Android Without GCM support:
 If you only care about GCM devices, you're good to go. Move on to the [Usage](#usage) section.
@@ -159,7 +170,7 @@ Usage
 
 Calls to register the device with Parse is done in java in the android MainApplication code.
 It has to be this way because notifications can arrive and need to be handled when the webview 
-and this javascript plugin are not yet loaded. See [Android Setup](#androidsetup).
+and this javascript plugin are not yet loaded. See [Android Setup](#android-setup).
 
 **API**
 

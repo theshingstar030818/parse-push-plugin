@@ -22,6 +22,7 @@ public class ParsePushPluginReceiver extends ParsePushBroadcastReceiver
 {	
 	public static final String LOGTAG = "ParsePushPluginReceiver";
 	public static final String PARSE_DATA_KEY = "com.parse.Data";
+	public static final String RESOURCE_PUSH_ICON_COLOR = "parse_push_icon_color";
 	
 	private static JSONObject MSG_COUNTS = new JSONObject();
 	
@@ -114,6 +115,11 @@ public class ParsePushPluginReceiver extends ParsePushBroadcastReceiver
 		       .setContentIntent(contentIntent)
 		       .setDeleteIntent(deleteIntent)
 	           .setAutoCancel(true);
+		
+		int colorId = context.getResources().getIdentifier(RESOURCE_PUSH_ICON_COLOR, "color", context.getPackageName());
+		if( colorId != 0){
+			builder.setColor(context.getResources().getColor(colorId));
+		}
     
 	    return builder.build();
 	}

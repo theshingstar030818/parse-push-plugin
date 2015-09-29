@@ -28,7 +28,6 @@ public class ParsePushPlugin extends CordovaPlugin {
 
     private static CallbackContext gEventCallback = null;
 
-    //////private static String gECB;
     private static CordovaWebView gWebView;
     private static boolean gForeground = false;
 
@@ -123,14 +122,8 @@ public class ParsePushPlugin extends CordovaPlugin {
     }
 
 
-    public static boolean isJavascriptReady(){
-    	/////return gECB != null && !gECB.isEmpty() && gWebView != null;
-    	return gWebView != null;
-    }
-
     @Override
     protected void pluginInitialize() {
-    	/////gECB = null;
     	gWebView = this.webView;
     	gForeground = true;
     }
@@ -150,7 +143,6 @@ public class ParsePushPlugin extends CordovaPlugin {
 
     @Override
     public void onDestroy() {
-    	/////gECB = null;
     	gWebView = null;
     	gForeground = false;
 

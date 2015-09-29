@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<plugin xmlns="http://www.phonegap.com/ns/plugins/1.0" id="com.phonegap.parsepushplugin" version="0.6.2">
+<plugin xmlns="http://www.phonegap.com/ns/plugins/1.0" id="com.phonegap.parsepushplugin" version="0.6.3">
     <name>ParsePushPlugin</name>
     <description>Phonegap plugin for Parse.com push notification</description>
 
@@ -8,7 +8,6 @@
         <clobbers target="ParsePushPlugin" />
     </js-module>
 
-    <!-- android -->
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="ParsePushPlugin">
@@ -51,7 +50,6 @@
         <source-file src="src/android/ParsePushPluginReceiver.java" target-dir="src/com/phonegap/parsepushplugin" />      
      </platform>
 
-    <!-- ios -->
     <platform name="ios">
         <config-file target="config.xml" parent="/*">
             <feature name="ParsePushPlugin">
