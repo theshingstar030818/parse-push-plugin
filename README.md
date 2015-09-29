@@ -225,6 +225,7 @@ further compilation errors that has to do with the new cordova libs setting your
 to be 22 or higher. Look at file `platforms/android/project.properties` and make sure that is
 consistent with your `config.xml`
 
+
 Compatibility
 -------------
 Phonegap/Cordova > 3.0.0
