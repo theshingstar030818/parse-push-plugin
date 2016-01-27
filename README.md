@@ -7,20 +7,24 @@ Phonegap 3.x plugin for Parse.com push service.
 makes it fairly useless for PN in Phonegap/Cordova. This plugin bridges the gap by leveraging native Parse.com SDKs
 to register/receive PNs and allow a few essential methods to be accessible from Javascript.
 
+* Phonegap/Cordova > 3.0.0. 
+* Android Parse SDK v1.10.1 with or without GCM. 
+* iOS Parse SDK v1.11.0
+
 How Is This Fork Different?
 --------------------------
 
 **API**
 
-This plugin exposes the following native Android API push services to JS:
+This plugin can handle cold start. It uses the following JS API to give access to native services:
 
 * **getInstallationId**( successCB, errorCB )
 * **getSubscriptions**( successCB, errorCB )
 * **subscribe**( channel, successCB, errorCB )
 * **unsubscribe**( channel, successCB, errorCB )
 
-ParsePushPlugin extends Parse.Events, and makes these notification events available:
-`openPN, receivePN, receivePN:customEvt`. To handle notification events in JS, you can do this:
+ParsePushPlugin makes these notification events available: `openPN, receivePN, receivePN:customEvt`. 
+To handle notification events in JS, do this:
 
 ```javascript
 ParsePushPlugin.on('receivePN', function(pn){
@@ -42,22 +46,38 @@ ParsePushPlugin.on('openPN', function(pn){
 
 **Multiple notifications**
 
-Prevent flooding the notification tray by retaining only the last PN with the same `title` field.
-For messages without the `title` field, the application name is used. A count of unopened PNs is
-also shown.
+Android: to prevent flooding the notification tray, this plugin retains only the last PN with the same `title` field.
+For messages without the `title` field, the application name is used. A count of unopened PNs is shown.
+
+iOS: iOS handles the notification tray.
+
 
 **Foreground vs. Background**
 
-Only add an entry to the notification tray if the application is not running in foreground.
+Android: Only add an entry to the notification tray if the application is not running in foreground.
 The actual PN payload is always forwarded to your javascript when it is received.
+
+iOS: Forward the PN payload to javascript in foreground mode. When app inactive or in background, iOS
+holds PNs in the tray. Only when the user opens these PNs would we have access and forward them to javascript.
+
 
 **Navigate to a specific view when user opens a notification**
 
 Simply add a `urlHash` field in your PN payload that contains either a url hash, i.e. #myhash,
-or a url parameter string, i.e. ?param1=a&param2=b. If `urlHash` starts with "#" or "?",
-this plugin will pass it along as an extra in the android intent to launch your MainActivity.
+or a url parameter string, i.e. ?param1=a&param2=b. If your app is already running, you can always
+handle page transition via javascript.
 
-For the cold start case, simply do this in your `MainActivity.onCreate()`:
+```javascript
+ParsePushPlugin.on('openPN', function(pn){
+	if(pn.urlHash){
+		window.location.hash = hash;
+	}
+});
+```
+
+Android: If `urlHash` starts with "#" or "?", this plugin will pass it along as an extra in the 
+android intent to launch your MainActivity. For the cold start case, you can change your initial url
+in  `MainActivity.onCreate()`:
 
 ```java
 @Override
@@ -72,26 +92,7 @@ public void onCreate(Bundle savedInstanceState)
 }
 ```
 
-If your app is already running (in the background, for example), and you want the PN open
-action to trigger navigation to a different page/view within your app, just set a handler
-for the `openPN` event, like so:
-
-```javascript
-ParsePushPlugin.on('openPN', function(pn){
-	if(pn.urlHash){
-		window.location.hash = hash;
-	}
-});
-```
-
-**Platforms**
-
-Phonegap/Cordova > 3.0.0
-
-Android Parse SDK v1.10.1. This means GCM support. No more background process `PushService` tapping
-device battery to duplicate what GCM already provides.
-
-iOS Parse SDK v1.11.0
+iOS: ... haven't tried yet but probably should be handled in `AppDelegate.didReceiveRemoteNotification`
 
 
 Installation
@@ -173,8 +174,7 @@ connection that will handle PNs without GCM. Follow these steps for `ParseBroadc
 There is a tutorial [here](https://github.com/ParsePlatform/PushTutorial/tree/master/iOS) that you may find useful. All the steps
 prior to adding code to your iOS application are applicable.
 
-2. Now let's add some code to initialize Parse.com and configure push.
-Open `platforms/ios/ProjectName/Classes/AppDelegate.m` and add the `Parse/Parse.h` header as well as code to the following function. Cordova should have defined the function
+2. To initialize Parse.com and configure push, open `platforms/ios/ProjectName/Classes/AppDelegate.m` and add the `Parse/Parse.h` header as well as code to the following function. Cordova should have defined the function
 for you already so search for it first.
 
 ```objective-c
@@ -187,7 +187,7 @@ for you already so search for it first.
 	//
     
     //
-    // Setup ParsePush
+    // Initialize Parse
     [Parse setApplicationId:@"YOUR_PARSE_APPID" clientKey:@"YOUR_PARSE_CLIENT_KEY"];
     
     //
@@ -206,15 +206,13 @@ for you already so search for it first.
 
 Usage
 -----
-**Registering device**
 
-Calls to register the device with Parse is done in java in the android MainApplication code.
-It has to be this way because notifications can arrive and need to be handled when the webview 
-and this javascript plugin are not yet loaded. See [Android Setup](#android-setup).
+When your app starts, ParsePushPlugin automatically obtains and stores necessary device tokens to your native `ParseInstallation`. 
+This plugin also registers a javascript callback that will be triggered when a push notification is received or opened on the native side.
+This setup enables the following simple API and event handling.
 
 **API**
 
-You can do any of the following
 
 ```javascript
 ParsePushPlugin.getInstallationId(function(id) {
@@ -269,9 +267,13 @@ payload will still be delivered to your `receivePN` and `receivePN:customEvt` ha
 
 
 **Troubleshooting**
-Starting with the Parse Android SDK v1.10.1 update, your app may crash at start and the log says
+Android: Starting with the Parse Android SDK v1.10.1 update, your app may crash at start and the log says
 something about a missing method in OkHttpClient. Just update the cordova libs of your project
 via `cordova platform update android`. If your previous cordova libs are old, you may run into
 further compilation errors that has to do with the new cordova libs setting your android target
 to be 22 or higher. Look at file `platforms/android/project.properties` and make sure that is
 consistent with your `config.xml`
+
+iOS: This plugin takes advantage of the `cordova.exec` bridge. If calls to `cordova.exec` only gets triggered
+after pressing your device's Home button, try inspecting your Content-Security-Policy. Your `frame-src` must allow
+`gap:` because the cordova bridge on iOS works via Iframe.
