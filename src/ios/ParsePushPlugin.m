@@ -1,19 +1,26 @@
-#import "CDVParsePlugin.h"
+#import "ParsePushPlugin.h"
 #import <Cordova/CDV.h>
+//#import <objc/message.h>
+
 #import <Parse/Parse.h>
-#import <objc/runtime.h>
-#import <objc/message.h>
 
-@implementation CDVParsePlugin
+@implementation ParsePushPlugin
 
-- (void)initialize: (CDVInvokedUrlCommand*)command
+@synthesize callbackId;
+
+- (void)pluginInitialize {}
+
+- (void)registerCallback: (CDVInvokedUrlCommand*)command
 {
-    CDVPluginResult* pluginResult = nil;
-    NSString *appId = [command.arguments objectAtIndex:0];
-    NSString *clientKey = [command.arguments objectAtIndex:1];
-    [Parse setApplicationId:appId clientKey:clientKey];
-    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    //
+    // Save callbackId to trigger later when PN arrives
+    //
+    //
+    self.callbackId = command.callbackId;
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    
+    [pluginResult setKeepCallbackAsBool:YES];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
 }
 
 - (void)getInstallationId:(CDVInvokedUrlCommand*) command
@@ -84,54 +91,25 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
-@end
-
-@implementation AppDelegate (CDVParsePlugin)
-
-void MethodSwizzle(Class c, SEL originalSelector) {
-    NSString *selectorString = NSStringFromSelector(originalSelector);
-    SEL newSelector = NSSelectorFromString([@"swizzled_" stringByAppendingString:selectorString]);
-    SEL noopSelector = NSSelectorFromString([@"noop_" stringByAppendingString:selectorString]);
-    Method originalMethod, newMethod, noop;
-    originalMethod = class_getInstanceMethod(c, originalSelector);
-    newMethod = class_getInstanceMethod(c, newSelector);
-    noop = class_getInstanceMethod(c, noopSelector);
-    if (class_addMethod(c, originalSelector, method_getImplementation(newMethod), method_getTypeEncoding(newMethod))) {
-        class_replaceMethod(c, newSelector, method_getImplementation(originalMethod) ?: method_getImplementation(noop), method_getTypeEncoding(originalMethod));
-    } else {
-        method_exchangeImplementations(originalMethod, newMethod);
-    }
+- (void)jsCallback: (NSDictionary*)pnPayload withAction: (NSString*)pnAction
+{
+    //
+    // Trigger javascript callback because a PN has been received or opened
+    //
+    //
+    NSArray* callbackArgs = [NSArray arrayWithObjects:pnPayload, pnAction, nil];
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsMultipart:callbackArgs];
+    
+    [pluginResult setKeepCallbackAsBool:YES];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
 }
 
-+ (void)load
++ (void)saveDeviceTokenToInstallation: (NSData*)deviceToken
 {
-    MethodSwizzle([self class], @selector(application:didRegisterForRemoteNotificationsWithDeviceToken:));
-    MethodSwizzle([self class], @selector(application:didReceiveRemoteNotification:));
-}
-
-- (void)noop_application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)newDeviceToken
-{
-}
-
-- (void)swizzled_application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)newDeviceToken
-{
-    // Call existing method
-    [self swizzled_application:application didRegisterForRemoteNotificationsWithDeviceToken:newDeviceToken];
-    // Store the deviceToken in the current installation and save it to Parse.
     PFInstallation *currentInstallation = [PFInstallation currentInstallation];
-    [currentInstallation setDeviceTokenFromData:newDeviceToken];
+    [currentInstallation setDeviceTokenFromData:deviceToken];
     [currentInstallation saveInBackground];
 }
 
-- (void)noop_application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
-{
-}
-
-- (void)swizzled_application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
-{
-    // Call existing method
-    [self swizzled_application:application didReceiveRemoteNotification:userInfo];
-    [PFPush handlePush:userInfo];
-}
-
 @end
+

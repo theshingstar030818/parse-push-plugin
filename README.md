@@ -86,14 +86,18 @@ ParsePushPlugin.on('openPN', function(pn){
 
 **Platforms**
 
-For Android, Parse SDK v1.10.1 is used. This means GCM support. No more background process `PushService` tapping
+Phonegap/Cordova > 3.0.0
+
+Android Parse SDK v1.10.1. This means GCM support. No more background process `PushService` tapping
 device battery to duplicate what GCM already provides.
 
-_I've only worked on the Android support for this fork. The iOS side is not yet up to date._
+iOS Parse SDK v1.11.0
 
 
 Installation
 ------------
+
+For both Android and iOS, run
 
 ```
 cordova plugin add https://github.com/taivo/parse-push-plugin
@@ -162,6 +166,42 @@ connection that will handle PNs without GCM. Follow these steps for `ParseBroadc
     ```xml
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     ```
+
+####iOS Setup:
+
+1. Create your SSL push certificates with Apple and configure them in your Parse.com app. 
+There is a tutorial [here](https://github.com/ParsePlatform/PushTutorial/tree/master/iOS) that you may find useful. All the steps
+prior to adding code to your iOS application are applicable.
+
+2. Now let's add some code to initialize Parse.com and configure push.
+Open `platforms/ios/ProjectName/Classes/AppDelegate.m` and add the `Parse/Parse.h` header as well as code to the following function. Cordova should have defined the function
+for you already so search for it first.
+
+```objective-c
+#import <Parse/Parse.h>
+
+- (BOOL)application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions
+{
+	//
+	// Stuff already defined by Cordova
+	//
+    
+    //
+    // Setup ParsePush
+    [Parse setApplicationId:@"YOUR_PARSE_APPID" clientKey:@"YOUR_PARSE_CLIENT_KEY"];
+    
+    //
+    // Basic notification config, left as cut-and-paste instead of part of plugin code for easy customization
+    UIUserNotificationType userNotificationTypes = (UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound);
+    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:userNotificationTypes categories:nil];
+    [application registerUserNotificationSettings:settings];
+    [application registerForRemoteNotifications];
+
+    return YES;
+}
+```
+
+
 
 
 Usage
@@ -235,8 +275,3 @@ via `cordova platform update android`. If your previous cordova libs are old, yo
 further compilation errors that has to do with the new cordova libs setting your android target
 to be 22 or higher. Look at file `platforms/android/project.properties` and make sure that is
 consistent with your `config.xml`
-
-
-Compatibility
--------------
-Phonegap/Cordova > 3.0.0

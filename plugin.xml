@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<plugin xmlns="http://www.phonegap.com/ns/plugins/1.0" id="com.phonegap.parsepushplugin" version="0.6.3">
+<plugin xmlns="http://www.apache.org/cordova/ns/plugins/1.0" id="com.phonegap.parsepushplugin" version="0.8.0">
     <name>ParsePushPlugin</name>
     <description>Phonegap plugin for Parse.com push notification</description>
-
+	<keywords>cordova,phonegap,parse.com,parse push, push notification</keywords>
+	
     <js-module src="www/parse-push-plugin.js" name="ParsePushPlugin">
         <clobbers target="ParsePushPlugin" />
     </js-module>
@@ -53,13 +54,16 @@
     <platform name="ios">
         <config-file target="config.xml" parent="/*">
             <feature name="ParsePushPlugin">
-                <param name="ios-package" value="CDVParsePlugin" />
+                <param name="ios-package" value="ParsePushPlugin" />
+                <param name="onload" value="true" />
             </feature>
         </config-file>
-        <header-file src="src/ios/CDVParsePlugin.h" />
-        <source-file src="src/ios/CDVParsePlugin.m" />
+        <header-file src="src/ios/ParsePushPlugin.h" />
+        <source-file src="src/ios/ParsePushPlugin.m" />
+        
+        <header-file src="src/ios/AppDelegate+parsepush.h" />
+        <source-file src="src/ios/AppDelegate+parsepush.m" />
 
-        <!--<framework src="AssetsLibrary.framework" />-->
         <framework src="AudioToolbox.framework" />
         <framework src="CFNetwork.framework" />
         <framework src="CoreGraphics.framework" />
