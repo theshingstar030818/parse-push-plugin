@@ -58,8 +58,9 @@ void MethodSwizzle(Class c, SEL originalSelector) {
     
     //
     // format the pn payload to be just 1 level deep
-    NSMutableDictionary* pnPayload = [NSMutableDictionary dictionaryWithDictionary:userInfo[@"aps"]];
-    pnPayload[@"parsePushId"] = userInfo[@"parsePushId"];
+    NSMutableDictionary* pnPayload = [NSMutableDictionary dictionaryWithDictionary:userInfo];
+    [pnPayload addEntriesFromDictionary:userInfo[@"aps"]];
+    [pnPayload removeObjectForKey:@"aps"];
     
     
     //
