@@ -91,12 +91,20 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
-- (void)jsCallback: (NSDictionary*)pnPayload withAction: (NSString*)pnAction
+- (void)jsCallback: (NSDictionary*)userInfo withAction: (NSString*)pnAction
 {
     //
     // Trigger javascript callback because a PN has been received or opened
     //
     //
+    
+    //
+    // format the pn payload to be just 1 level deep and consistent with other platform versions of this plugin
+    NSMutableDictionary* pnPayload = [NSMutableDictionary dictionaryWithDictionary:userInfo];
+    [pnPayload addEntriesFromDictionary:userInfo[@"aps"]];
+    [pnPayload removeObjectForKey:@"aps"];
+    
+    
     NSArray* callbackArgs = [NSArray arrayWithObjects:pnPayload, pnAction, nil];
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsMultipart:callbackArgs];
     

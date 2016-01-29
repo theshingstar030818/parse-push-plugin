@@ -19,7 +19,7 @@
 //
 // methods internal to plugin
 - (void)pluginInitialize;
-- (void)jsCallback: (NSDictionary*)pnPayload withAction: (NSString*)pnAction;
+- (void)jsCallback: (NSDictionary*)userInfo withAction: (NSString*)pnAction;
 + (void)saveDeviceTokenToInstallation: (NSData*)deviceToken;
 @end
 

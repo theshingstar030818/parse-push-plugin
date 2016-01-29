@@ -1,6 +1,7 @@
 #import "AppDelegate+parsepush.h"
 #import "ParsePushPlugin.h"
 
+#import <Parse/Parse.h>
 #import <objc/runtime.h>
 
 @implementation AppDelegate(parsepush)
@@ -21,6 +22,7 @@ void MethodSwizzle(Class c, SEL originalSelector) {
 
 + (void)load
 {
+    MethodSwizzle([self class], @selector(init));
     MethodSwizzle([self class], @selector(application:didRegisterForRemoteNotificationsWithDeviceToken:));
     MethodSwizzle([self class], @selector(application:didReceiveRemoteNotification:));
 }
@@ -35,6 +37,29 @@ void MethodSwizzle(Class c, SEL originalSelector) {
 - (id)getParsePluginInstance
 {
     return [self.viewController getCommandInstance:@"ParsePushPlugin"];
+}
+
+- (id)swizzled_init
+{
+    //
+    // setup observer to handle notification on cold-start
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(coldStartNotification:)
+                                                 name:@"UIApplicationDidFinishLaunchingNotification" object:nil];
+    return [self swizzled_init];
+}
+
+
+- (void)coldStartNotification:(NSNotification *)notification
+{
+    //
+    // handle the notification on cold start
+    //
+    if(notification.userInfo){
+        ParsePushPlugin* pluginInstance = [self getParsePluginInstance];
+        [pluginInstance jsCallback:notification.userInfo withAction:@"OPEN"];
+    } else{
+        NSLog(@"notification has no userInfo");
+    }
 }
 
 - (void)swizzled_application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)newDeviceToken
@@ -57,18 +82,11 @@ void MethodSwizzle(Class c, SEL originalSelector) {
     
     
     //
-    // format the pn payload to be just 1 level deep
-    NSMutableDictionary* pnPayload = [NSMutableDictionary dictionaryWithDictionary:userInfo];
-    [pnPayload addEntriesFromDictionary:userInfo[@"aps"]];
-    [pnPayload removeObjectForKey:@"aps"];
-    
-    
-    //
     // PN can either be opened by user or received directly by app:
     // PN can only be received directly by app when app is running in foreground, UIApplicationStateActive.
     // PN that arrived when app is not running or in background (UIApplicationStateInactive or UIApplicationStateBackground)
     //    must be opened by user to reach this part of the code
     ParsePushPlugin* pluginInstance = [self getParsePluginInstance];
-    [pluginInstance jsCallback:pnPayload withAction:(application.applicationState == UIApplicationStateActive) ? @"RECEIVE" : @"OPEN"];
+    [pluginInstance jsCallback:userInfo withAction:(application.applicationState == UIApplicationStateActive) ? @"RECEIVE" : @"OPEN"];
 }
 @end
