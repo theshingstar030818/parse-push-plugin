@@ -8,7 +8,11 @@
 
 @synthesize callbackId;
 
-- (void)pluginInitialize {}
+
+- (void)pluginInitialize {
+    //store userInfo dictionaries if js callback is not yet registered.
+    self.pnQueue = [NSMutableArray new];
+}
 
 - (void)registerCallback: (CDVInvokedUrlCommand*)command
 {
@@ -21,6 +25,10 @@
     
     [pluginResult setKeepCallbackAsBool:YES];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
+    
+    if(self.pnQueue && self.pnQueue.count){
+        [self flushPushNotificationQueue];
+    }
 }
 
 - (void)getInstallationId:(CDVInvokedUrlCommand*) command
@@ -98,18 +106,38 @@
     //
     //
     
-    //
-    // format the pn payload to be just 1 level deep and consistent with other platform versions of this plugin
-    NSMutableDictionary* pnPayload = [NSMutableDictionary dictionaryWithDictionary:userInfo];
-    [pnPayload addEntriesFromDictionary:userInfo[@"aps"]];
-    [pnPayload removeObjectForKey:@"aps"];
-    
-    
-    NSArray* callbackArgs = [NSArray arrayWithObjects:pnPayload, pnAction, nil];
-    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsMultipart:callbackArgs];
-    
-    [pluginResult setKeepCallbackAsBool:YES];
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
+    if(self.callbackId){
+        //
+        // format the pn payload to be just 1 level deep and consistent with other platform versions of this plugin
+        NSMutableDictionary* pnPayload = [NSMutableDictionary dictionaryWithDictionary:userInfo];
+        [pnPayload addEntriesFromDictionary:pnPayload[@"aps"]];
+        [pnPayload removeObjectForKey:@"aps"];
+        
+        NSArray* callbackArgs = [NSArray arrayWithObjects:pnPayload, pnAction, nil];
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsMultipart:callbackArgs];
+        
+        [pluginResult setKeepCallbackAsBool:YES];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
+    } else{
+        //callback has not been registered by the js side,
+        //put userInfo into queue. Will be flushed when callback is registered
+        if(self.pnQueue.count <= 10){
+            NSMutableDictionary* userInfoWithPnAction = [NSMutableDictionary dictionaryWithDictionary:userInfo];
+            userInfoWithPnAction[@"pnAction"] = pnAction;
+            [self.pnQueue addObject:userInfoWithPnAction];
+        } //if more than 10 items, stop queuing
+    }
+}
+
+- (void)flushPushNotificationQueue{
+    while(self.pnQueue && self.pnQueue.count){
+        //
+        // de-queue the oldest pn and trigger callback
+        NSDictionary* userInfo = self.pnQueue[0];
+        [self.pnQueue removeObjectAtIndex:0];
+        
+        [self jsCallback:userInfo withAction:userInfo[@"pnAction"]];
+    }
 }
 
 + (void)saveDeviceTokenToInstallation: (NSData*)deviceToken

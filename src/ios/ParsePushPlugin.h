@@ -4,6 +4,7 @@
 @interface ParsePushPlugin: CDVPlugin
 
 @property (nonatomic, copy) NSString* callbackId;
+@property (nonatomic, copy) NSMutableArray* pnQueue;
 
 //
 // methods exposed to JS
