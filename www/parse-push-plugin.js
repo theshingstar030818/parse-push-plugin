@@ -33,7 +33,7 @@ require('cordova/channel').onCordovaReady.subscribe(function() {
 		}
    };
    
-   require('cordova/exec')(jsCallback, null, serviceName, 'registerCallback');
+   require('cordova/exec')(jsCallback, null, serviceName, 'registerCallback', []);
 });
 
 var ParsePushPlugin = {
@@ -42,15 +42,15 @@ var ParsePushPlugin = {
 	 _customEventKey: 'event', //default key for custom events associated with each PN, set this to anything you see fit
 	 
     getInstallationId: function(successCb, errorCb) {
-       cordova.exec(successCb, errorCb, serviceName, 'getInstallationId');
+       cordova.exec(successCb, errorCb, serviceName, 'getInstallationId', []);
     },
 
     getInstallationObjectId: function(successCb, errorCb) {
-       cordova.exec(successCb, errorCb, serviceName, 'getInstallationObjectId');
+       cordova.exec(successCb, errorCb, serviceName, 'getInstallationObjectId', []);
     },
 
     getSubscriptions: function(successCb, errorCb) {
-       cordova.exec(successCb, errorCb, serviceName, 'getSubscriptions');
+       cordova.exec(successCb, errorCb, serviceName, 'getSubscriptions', []);
     },
 
     subscribe: function(channel, successCb, errorCb) {
