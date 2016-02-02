@@ -80,7 +80,11 @@ void MethodSwizzle(Class c, SEL originalSelector) {
     // Call existing method in case it's already defined in main project's AppDelegate
     [self swizzled_application:application didReceiveRemoteNotification:userInfo];
     
-    
+    if (application.applicationState != UIApplicationStateActive) {
+        // The application was just brought from the background to the foreground,
+        // so we consider the app as having been "opened by a push notification."
+        [PFAnalytics trackAppOpenedWithRemoteNotificationPayload:userInfo];
+    }
     //
     // PN can either be opened by user or received directly by app:
     // PN can only be received directly by app when app is running in foreground, UIApplicationStateActive.
