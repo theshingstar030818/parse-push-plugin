@@ -1,6 +1,7 @@
 package com.phonegap.parsepushplugin;
 
 import com.parse.ParsePushBroadcastReceiver;
+import com.parse.ParseAnalytics;
 
 import android.app.Activity;
 import android.content.Context;
@@ -61,7 +62,8 @@ public class ParsePushPluginReceiver extends ParsePushBroadcastReceiver
         activityIntent.putExtras(intent)
                       .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
         
-        //
+        ParseAnalytics.trackAppOpened(intent);
+
         // allow a urlHash parameter for hash as well as query params.
         // This lets the app know what to do at coldstart by opening a PN.
         // For example: navigate to a specific page of the app
