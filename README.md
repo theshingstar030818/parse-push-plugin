@@ -152,29 +152,6 @@ content in it and replace the hex color value of the form `#AARRGGBB` to your li
     </resources>
     ```
 
-
-####Android Without GCM support:
-If you only care about GCM devices, you're good to go. Move on to the [Usage](#usage) section.
-
-The setup above is not enough for non-GCM devices. To support them, `ParseBroadcastReceiver`
-must be setup to work properly. This receiver takes care of establishing a persistent
-connection that will handle PNs without GCM. Follow these steps for `ParseBroadcastReceiver` setup:
-
-1. Add the following to your AndroidManifest.xml, inside the `<application>` tag
-    ```xml
-    <receiver android:name="com.parse.ParseBroadcastReceiver">
-       <intent-filter>
-          <action android:name="android.intent.action.BOOT_COMPLETED" />
-          <action android:name="android.intent.action.USER_PRESENT" />
-       </intent-filter>
-    </receiver>
-    ```
-
-2. Add the following permission to AndroidManifest.xml, as a sibling of the `<application>` tag
-    ```xml
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    ```
-
 ####iOS Setup:
 
 1. Create your SSL push certificates with Apple and configure them in your Parse.com app.
