@@ -105,10 +105,48 @@ For both Android and iOS, run
 ```
 cordova plugin add https://github.com/taivo/parse-push-plugin --variable GCM_SENDER_ID=1234256789
 ```
+
 To get your GCM sender ID, enable GCM for your Android project in the Google Developer Console. Take note of your
 project number. It should be a large integer like 123427208255. This project number is your GCM sender ID.
 
-####Android Setup:
+####Install Push Certificates on Server:
+
+- Hosted Parse.com
+   - iOS
+      1. Create SSL push certificate with Apple. You may find  [this tutorial useful](https://github.com/ParsePlatform/PushTutorial/tree/master/iOS). All steps prior to adding code to your iOS application are applicable.
+      2. Use Parse Dashboard to upload the generated `p12` push certificate.
+   - Android - no need for certificate setup. Parse.com uses its own push credential.
+
+- Open Source parse-server
+   1. Setup parse-server
+
+      There are plenty of guides out there to help you get started on popular hosting services like Heroku and AWS. If you want to setup parse-server on your laptop [for local development, here's a quick-start guide](https://taivo.github.io/guides/parse-server-for-local-development).
+   2. After your `parse-server` is up and running, generate your push credentials:
+
+      - iOS
+         1. Create SSL push certificate with Apple. You may find  [this tutorial useful](https://github.com/ParsePlatform/PushTutorial/tree/master/iOS). All steps prior to adding code to your iOS application are applicable.
+         2. Place the `p12` certificate file from the previous step on your server.
+      - Android
+   3. Update your `parse-server` configuration to use the push credentials. Here is an example:
+   
+   ```json
+   {
+      "appId": "MY_APP_ID",
+      "masterKey": "SUPER_SECRET",
+      "cloud": "./myCloudDir/main.js",
+      "push": {
+         "ios":{
+            "pfx": "my-push-certificate.p12",
+            "bundleId": "com.company.myapp",
+            "production": false
+         }
+      }
+   }
+   ```
+   4. Restart your `parse-server` for the new settings to take effect.
+
+####Android Plugin Setup:
+
 Phonegap/Cordova doesn't define a custom `android.app.Application`, it only defines an android `Activity`. With an `Activity` alone,
 we should be able to receive PNs just fine while our app is running. However, if a PN arrives when the app is not running,
 the app will be automatically invoked, and this plugin's `ParsePushPluginReceiver` runs before the `Activity` class or any javascript code
@@ -154,63 +192,40 @@ content in it and replace the hex color value of the form `#AARRGGBB` to your li
     </resources>
     ```
 
-####iOS Setup:
+####iOS Plugin Setup:
 
-1. Create your SSL push certificates with Apple and configure them in your Parse.com app. [Here is a useful tutorial](https://github.com/ParsePlatform/PushTutorial/tree/master/iOS). All the steps prior to adding code to your iOS application are applicable.
+For Parse.Push to work, the native Parse platform needs to be initialized. Open `platforms/ios/ProjectName/Classes/AppDelegate.m` and add the `Parse/Parse.h` header as well as code to the following function. Cordova should have defined the function for you already so search for it first.
 
-2. If you are using the open source [parse-server](https://github.com/ParsePlatform/parse-server), place the `p12` file generated from step 1 on
-your server and point to it in your server configuration. For example
+```objective-c
+#import <Parse/Parse.h>
 
-   ```json
-   {
-      "appId": "MY_APP_ID",
-      "masterKey": "SUPER_SECRET",
-      "cloud": "./myCloudDir/main.js",
-      "push": {
-         "ios":{
-            "pfx": "my-push-certificate.p12",
-            "bundleId": "com.company.myapp",
-            "production": false
-         }
-      }
-   }
-   ```
+- (BOOL)application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions
+{
+    //
+    // Stuff already defined by Cordova
+    //
 
-3. To initialize Parse.com and configure push, open `platforms/ios/ProjectName/Classes/AppDelegate.m` and add the `Parse/Parse.h` header as well as code to the following function. Cordova should have defined the function
-for you already so search for it first.
+    //
+    // Initialize app for soon-to-depart Parse.com hosted service
+    [Parse setApplicationId:@"YOUR_PARSE_APPID" clientKey:@"YOUR_PARSE_CLIENT_KEY"];
 
-   ```objective-c
-   #import <Parse/Parse.h>
+    //
+    // Initialize open source parse-server (which no longer uses clientKey)
+    [Parse initializeWithConfiguration:[ParseClientConfiguration configurationWithBlock:^(id<ParseMutableClientConfiguration> configuration) {
+        configuration.applicationId = @"YOUR_PARSE_APPID";
+        configuration.server = @"YOUR_PARSER_SERVER_URL";
+    }]];
 
-   - (BOOL)application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions
-   {
-       //
-       // Stuff already defined by Cordova
-       //
+    //
+    // Basic notification config, left as cut-and-paste instead of part of plugin code for easy customization
+    UIUserNotificationType userNotificationTypes = (UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound);
+    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:userNotificationTypes categories:nil];
+    [application registerUserNotificationSettings:settings];
+    [application registerForRemoteNotifications];
 
-       //
-       // Initialize app for soon-to-depart Parse.com hosted service
-       [Parse setApplicationId:@"YOUR_PARSE_APPID" clientKey:@"YOUR_PARSE_CLIENT_KEY"];
-
-       //
-       // Initialize open source parse-server (which no longer uses clientKey)
-       [Parse initializeWithConfiguration:[ParseClientConfiguration configurationWithBlock:^(id<ParseMutableClientConfiguration> configuration) {
-           configuration.applicationId = @"YOUR_PARSE_APPID";
-           configuration.server = @"YOUR_PARSER_SERVER_URL";
-       }]];
-
-       //
-       // Basic notification config, left as cut-and-paste instead of part of plugin code for easy customization
-       UIUserNotificationType userNotificationTypes = (UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound);
-       UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:userNotificationTypes categories:nil];
-       [application registerUserNotificationSettings:settings];
-       [application registerForRemoteNotifications];
-
-       return YES;
-   }
-   ```
-
-
+    return YES;
+}
+```
 
 
 Usage
