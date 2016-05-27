@@ -12,7 +12,7 @@ to register/receive PNs and expose a simple API to Javascript.
 How Is This Fork Different?
 --------------------------
 
-**Works with hosted Parse.com and open source Parse Sever**
+**Works with hosted Parse.com and open source parse-sever**
 
 **Can handle cold start**
 
@@ -115,20 +115,20 @@ project number. It should be a large integer like 123427208255. This project num
    - iOS
       1. Create SSL push certificate with Apple. You may find  [this tutorial useful](https://github.com/ParsePlatform/PushTutorial/tree/master/iOS). All steps prior to adding code to your iOS application are applicable.
       2. Use Parse Dashboard to upload the generated `p12` push certificate.
-   - Android - no need for certificate setup. Parse.com uses its own push credential.
+   - Android - no need for certificate setup. Parse.com uses its own push credentials.
 
 - Open Source parse-server
-   1. Setup parse-server
+   1. Setup `parse-server`
 
       There are plenty of guides out there to help you get started on popular hosting services like Heroku and AWS. If you want to setup parse-server on your laptop [for local development, here's a quick-start guide](https://taivo.github.io/guides/parse-server-for-local-development).
-   2. After your `parse-server` is up and running, generate your push credentials:
+   2. Once you have a working `parse-server`, generate your push credentials:
 
       - iOS
          1. Create SSL push certificate with Apple. You may find  [this tutorial useful](https://github.com/ParsePlatform/PushTutorial/tree/master/iOS). All steps prior to adding code to your iOS application are applicable.
          2. Place the `p12` certificate file from the previous step on your server.
       - Android
    3. Update your `parse-server` configuration to use the push credentials. Here is an example:
-   
+
    ```json
    {
       "appId": "MY_APP_ID",
@@ -194,7 +194,7 @@ content in it and replace the hex color value of the form `#AARRGGBB` to your li
 
 ####iOS Plugin Setup:
 
-For Parse.Push to work, the native Parse platform needs to be initialized. Open `platforms/ios/ProjectName/Classes/AppDelegate.m` and add the `Parse/Parse.h` header as well as code to the following function. Cordova should have defined the function for you already so search for it first.
+For `Parse.Push` to work, the native Parse platform needs to be initialized. Open `platforms/ios/ProjectName/Classes/AppDelegate.m` and add the `Parse/Parse.h` header as well as code to the following function. Cordova should have defined the function for you already so search for it first. Uncomment the appropriate code block to initialize either hosted Parse.com or open source parse-server.
 
 ```objective-c
 #import <Parse/Parse.h>
@@ -207,14 +207,18 @@ For Parse.Push to work, the native Parse platform needs to be initialized. Open 
 
     //
     // Initialize app for soon-to-depart Parse.com hosted service
-    [Parse setApplicationId:@"YOUR_PARSE_APPID" clientKey:@"YOUR_PARSE_CLIENT_KEY"];
+    //
+    //[Parse setApplicationId:@"YOUR_PARSE_APPID" clientKey:@"YOUR_PARSE_CLIENT_KEY"];
+    //
 
     //
     // Initialize open source parse-server (which no longer uses clientKey)
-    [Parse initializeWithConfiguration:[ParseClientConfiguration configurationWithBlock:^(id<ParseMutableClientConfiguration> configuration) {
-        configuration.applicationId = @"YOUR_PARSE_APPID";
-        configuration.server = @"YOUR_PARSER_SERVER_URL";
-    }]];
+    //
+    //[Parse initializeWithConfiguration:[ParseClientConfiguration configurationWithBlock:^(id<ParseMutableClientConfiguration> configuration) {
+    //     configuration.applicationId = @"YOUR_PARSE_APPID";
+    //     configuration.server = @"YOUR_PARSER_SERVER_URL";
+    //}]];
+    //
 
     //
     // Basic notification config, left as cut-and-paste instead of part of plugin code for easy customization
