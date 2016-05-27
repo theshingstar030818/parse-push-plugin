@@ -67,7 +67,7 @@ void MethodSwizzle(Class c, SEL originalSelector) {
     //
     // Call existing method in case it's already defined in main project's AppDelegate
     [self swizzled_application:application didRegisterForRemoteNotificationsWithDeviceToken:newDeviceToken];
-    
+
     //
     // Save device token
     [ParsePushPlugin saveDeviceTokenToInstallation:newDeviceToken];
@@ -76,10 +76,20 @@ void MethodSwizzle(Class c, SEL originalSelector) {
 
 - (void)swizzled_application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
 {
+    /*
+      Standard iOS fields: (alert, badge, sound, content-available, category) will automatically be moved (by Parse.Push or by Apple?)
+      into the "aps" field of the payload.
+
+      So if you pushed: {alert: "testing 1 2 3", customField: "custom content"},
+      the userInfo dictionary received here would be {aps: {alert: "testing 1 2 3"}, customField: "custom content"}
+
+      For more info, see https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/TheNotificationPayload.html
+    */
+
     //
     // Call existing method in case it's already defined in main project's AppDelegate
     [self swizzled_application:application didReceiveRemoteNotification:userInfo];
-    
+
     if (application.applicationState != UIApplicationStateActive) {
         // The application was just brought from the background to the foreground,
         // so we consider the app as having been "opened by a push notification."
