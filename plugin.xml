@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<plugin xmlns="http://www.apache.org/cordova/ns/plugins/1.0" id="com.phonegap.parsepushplugin" version="0.8.0">
+<plugin xmlns="http://www.apache.org/cordova/ns/plugins/1.0" id="com.phonegap.parsepushplugin" version="0.9.0">
     <name>ParsePushPlugin</name>
     <description>Phonegap plugin for Parse.com push notification</description>
 	<keywords>cordova,phonegap,parse.com,parse push, push notification</keywords>
-	
+
     <preference name="GCM_SENDER_ID" />
 
     <js-module src="www/parse-push-plugin.js" name="ParsePushPlugin">
@@ -51,7 +51,7 @@
         <source-file src="src/android/parse/bolts-tasks-1.4.0.jar" target-dir="libs" framework="true" />
         <source-file src="src/android/parse/android-support-v4.jar" target-dir="libs" framework="true" />
         <source-file src="src/android/ParsePushPlugin.java" target-dir="src/com/phonegap/parsepushplugin" />
-        <source-file src="src/android/ParsePushPluginReceiver.java" target-dir="src/com/phonegap/parsepushplugin" />      
+        <source-file src="src/android/ParsePushPluginReceiver.java" target-dir="src/com/phonegap/parsepushplugin" />
      </platform>
 
     <platform name="ios">
@@ -63,7 +63,7 @@
         </config-file>
         <header-file src="src/ios/ParsePushPlugin.h" />
         <source-file src="src/ios/ParsePushPlugin.m" />
-        
+
         <header-file src="src/ios/AppDelegate+parsepush.h" />
         <source-file src="src/ios/AppDelegate+parsepush.m" />
 
