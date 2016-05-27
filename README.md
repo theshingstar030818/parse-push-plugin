@@ -243,7 +243,8 @@ if(window.ParsePushPlugin){
 
 	//
 	//you can also listen to your own custom subevents
-	//
+	// Note: to push custom subevent, include 'event' key in your push payload,
+   // e.g. {alert: "sup", event:'chat'}
 	ParsePushPlugin.on('receivePN:chat', chatEventHandler);
 	ParsePushPlugin.on('receivePN:serverMaintenance', serverMaintenanceHandler);
 }
