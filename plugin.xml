@@ -1,84 +1,85 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <plugin xmlns="http://www.apache.org/cordova/ns/plugins/1.0" id="com.phonegap.parsepushplugin" version="0.9.0">
-    <name>ParsePushPlugin</name>
-    <description>Phonegap plugin for Parse.com push notification</description>
-	<keywords>cordova,phonegap,parse.com,parse push, push notification</keywords>
+   <name>ParsePushPlugin</name>
+   <description>Parse.Push plugin for phonegap/cordova/ionic framework</description>
+	<keywords>cordova,phonegap,ionic framework, parse.com,parse platform, parse push, push notification</keywords>
 
-    <preference name="GCM_SENDER_ID" />
+   <js-module src="www/parse-push-plugin.js" name="ParsePushPlugin">
+      <clobbers target="ParsePushPlugin" />
+   </js-module>
 
-    <js-module src="www/parse-push-plugin.js" name="ParsePushPlugin">
-        <clobbers target="ParsePushPlugin" />
-    </js-module>
-
-    <platform name="android">
-        <config-file target="res/xml/config.xml" parent="/*">
-            <feature name="ParsePushPlugin">
-                <param name="android-package" value="com.phonegap.parsepushplugin.ParsePushPlugin" />
-            </feature>
-        </config-file>
-        <config-file target="AndroidManifest.xml" parent="/manifest/application">
-          <service android:name="com.parse.PushService" />
-          <receiver android:exported="false" android:name="com.phonegap.parsepushplugin.ParsePushPluginReceiver" android:exported="false">
+   <platform name="android">
+      <preference name="GCM_SENDER_ID" />
+      <config-file target="res/xml/config.xml" parent="/*">
+         <feature name="ParsePushPlugin">
+            <param name="android-package" value="com.phonegap.parsepushplugin.ParsePushPlugin" />
+         </feature>
+      </config-file>
+      <config-file target="AndroidManifest.xml" parent="/manifest/application">
+         <service android:name="com.parse.PushService" />
+         <receiver android:exported="false" android:name="com.phonegap.parsepushplugin.ParsePushPluginReceiver" android:exported="false">
             <intent-filter>
-                <action android:name="com.parse.push.intent.RECEIVE" />
-                <action android:name="com.parse.push.intent.DELETE" />
-                <action android:name="com.parse.push.intent.OPEN" />
+               <action android:name="com.parse.push.intent.RECEIVE" />
+               <action android:name="com.parse.push.intent.DELETE" />
+               <action android:name="com.parse.push.intent.OPEN" />
             </intent-filter>
-          </receiver>
-          <receiver android:name="com.parse.GcmBroadcastReceiver"
-              android:permission="com.google.android.c2dm.permission.SEND">
+         </receiver>
+         <receiver android:name="com.parse.GcmBroadcastReceiver" android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
-              <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-              <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
-              <category android:name="$PACKAGE_NAME" />
+               <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+               <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+               <category android:name="$PACKAGE_NAME" />
             </intent-filter>
-          </receiver>
-          <meta-data android:name="com.parse.push.gcm_sender_id" android:value="id:$GCM_SENDER_ID" />
-        </config-file>
-        <config-file target="AndroidManifest.xml" parent="/manifest">
-          <uses-permission android:name="android.permission.INTERNET" />
-          <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-          <uses-permission android:name="android.permission.WAKE_LOCK" />
-          <uses-permission android:name="android.permission.VIBRATE" />
-          <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-          <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-          <permission android:protectionLevel="signature" android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" />
-          <uses-permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" />
-        </config-file>
+         </receiver>
+         <meta-data android:name="com.parse.push.gcm_sender_id" android:value="id:$GCM_SENDER_ID" />
+      </config-file>
+      <config-file target="AndroidManifest.xml" parent="/manifest">
+         <uses-permission android:name="android.permission.INTERNET" />
+         <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+         <uses-permission android:name="android.permission.WAKE_LOCK" />
+         <uses-permission android:name="android.permission.VIBRATE" />
+         <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
-        <source-file src="src/android/parse/parse-android-1.13.0.jar" target-dir="libs" framework="true" />
-        <source-file src="src/android/parse/bolts-tasks-1.4.0.jar" target-dir="libs" framework="true" />
-        <source-file src="src/android/parse/android-support-v4.jar" target-dir="libs" framework="true" />
-        <source-file src="src/android/ParsePushPlugin.java" target-dir="src/com/phonegap/parsepushplugin" />
-        <source-file src="src/android/ParsePushPluginReceiver.java" target-dir="src/com/phonegap/parsepushplugin" />
-     </platform>
+         <!-- no longer necessary for android > 4.0.4 -->
+         <!--uses-permission android:name="android.permission.GET_ACCOUNTS" /-->
 
-    <platform name="ios">
-        <config-file target="config.xml" parent="/*">
-            <feature name="ParsePushPlugin">
-                <param name="ios-package" value="ParsePushPlugin" />
-                <param name="onload" value="true" />
-            </feature>
-        </config-file>
-        <header-file src="src/ios/ParsePushPlugin.h" />
-        <source-file src="src/ios/ParsePushPlugin.m" />
+         <permission android:protectionLevel="signature" android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" />
+         <uses-permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" />
+      </config-file>
 
-        <header-file src="src/ios/AppDelegate+parsepush.h" />
-        <source-file src="src/ios/AppDelegate+parsepush.m" />
+      <source-file src="src/android/parse/parse-android-1.13.0.jar" target-dir="libs" framework="true" />
+      <source-file src="src/android/parse/bolts-tasks-1.4.0.jar" target-dir="libs" framework="true" />
+      <source-file src="src/android/parse/android-support-v4.jar" target-dir="libs" framework="true" />
+      <source-file src="src/android/ParsePushPlugin.java" target-dir="src/com/phonegap/parsepushplugin" />
+      <source-file src="src/android/ParsePushPluginReceiver.java" target-dir="src/com/phonegap/parsepushplugin" />
+   </platform>
 
-        <framework src="AudioToolbox.framework" />
-        <framework src="CFNetwork.framework" />
-        <framework src="CoreGraphics.framework" />
-        <framework src="CoreLocation.framework" />
-        <framework src="MobileCoreServices.framework" />
-        <framework src="QuartzCore.framework" />
-        <framework src="Security.framework" />
-        <framework src="StoreKit.framework" />
-        <framework src="SystemConfiguration.framework" />
-        <framework src="libz.tbd" />
-        <framework src="libsqlite3.tbd" />
-        <framework src="src/ios/Frameworks/Parse.framework" custom="true" />
-        <framework src="src/ios/Frameworks/Bolts.framework" custom="true" />
-    </platform>
+   <platform name="ios">
+      <config-file target="config.xml" parent="/*">
+         <feature name="ParsePushPlugin">
+            <param name="ios-package" value="ParsePushPlugin" />
+            <param name="onload" value="true" />
+         </feature>
+      </config-file>
+      <header-file src="src/ios/ParsePushPlugin.h" />
+      <source-file src="src/ios/ParsePushPlugin.m" />
+
+      <header-file src="src/ios/AppDelegate+parsepush.h" />
+      <source-file src="src/ios/AppDelegate+parsepush.m" />
+
+      <framework src="AudioToolbox.framework" />
+      <framework src="CFNetwork.framework" />
+      <framework src="CoreGraphics.framework" />
+      <framework src="CoreLocation.framework" />
+      <framework src="MobileCoreServices.framework" />
+      <framework src="QuartzCore.framework" />
+      <framework src="Security.framework" />
+      <framework src="StoreKit.framework" />
+      <framework src="SystemConfiguration.framework" />
+      <framework src="libz.tbd" />
+      <framework src="libsqlite3.tbd" />
+      <framework src="src/ios/Frameworks/Parse.framework" custom="true" />
+      <framework src="src/ios/Frameworks/Bolts.framework" custom="true" />
+   </platform>
 </plugin>
