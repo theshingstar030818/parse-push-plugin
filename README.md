@@ -119,27 +119,27 @@ Read the [Parse server push guide](https://github.com/ParsePlatform/parse-server
          2. Place the `p12` certificate file from the previous step on your server.
       - Android
          1. Get the sender id (your project number) from your google developer console. It's a long integer.
-         2. Enable push notification for your project on google developer console and generate a server API key.
+         2. Enable GCM for your project on google developer console and generate a **server API key**.
    3. Update your `parse-server` configuration to use the push credentials. Here is an example:
 
-   ```json
-   {
-      "appId": "MY_APP_ID",
-      "masterKey": "SUPER_SECRET",
-      "cloud": "./myCloudDir/main.js",
-      "push": {
-         "android":{
-            "senderId": "SENDER_ID_AKA_PROJECT_NUMBER",
-            "apiKey": "SERVER_API_KEY_FROM_GOOGLE_DEVELOPER_CONSOLE"
-         },
-         "ios":{
-            "pfx": "my-push-certificate.p12",
-            "bundleId": "com.company.myapp",
-            "production": false
+      ```json
+      {
+         "appId": "MY_APP_ID",
+         "masterKey": "SUPER_SECRET",
+         "cloud": "./myCloudDir/main.js",
+         "push": {
+            "android":{
+               "senderId": "SENDER_ID_AKA_PROJECT_NUMBER",
+               "apiKey": "SERVER_API_KEY_FROM_GOOGLE_DEVELOPER_CONSOLE"
+            },
+            "ios":{
+               "pfx": "my-push-certificate.p12",
+               "bundleId": "com.company.myapp",
+               "production": false
+            }
          }
       }
-   }
-   ```
+      ```
    4. Restart your `parse-server` for the new settings to take effect.
 
 
@@ -161,8 +161,8 @@ same `senderId` used in your server config.
 
 Phonegap/Cordova doesn't define a custom `android.app.Application`, it only defines an android `Activity`. With an `Activity` alone,
 we should be able to receive PNs just fine while our app is running. However, if a PN arrives when the app is not running,
-the app will be automatically invoked, and this plugin's `ParsePushPluginReceiver` runs before the `Activity` class or any javascript code
-gets a chance to call `Parse.initialize()`. The result is a crash dialog. To fix this, do the following:
+Android will launch the app, and this plugin's `ParsePushPluginReceiver` runs before the `Activity` class or any javascript code
+gets a chance to call `Parse.initialize()`. The result is a crash. To fix this, do the following:
 
 1. Define a custom Application class that calls `Parse.initialize()` in its `onCreate` method. This way, the Parse
 subsystem gets initialized before the PN-handling code runs. Crash avoided. In your application's Java source path,
@@ -179,12 +179,24 @@ e.g., `platforms/android/src/com/example/app`, create a file named MainApplicati
 	    @Override
         public void onCreate() {
             super.onCreate();
+
+            //
+            // Initialize app for soon-to-depart Parse.com hosted service
+            //
+            //Parse.initialize(this, "YOUR_PARSE_APPID", "YOUR_PARSE_CLIENT_KEY");
+
+            //
+            // Initialize open source parse-server (which no longer uses clientKey)
+            //
             Parse.initialize(new Parse.Configuration.Builder(this)
                 .applicationId("PARSE_APP_ID")
                 .clientKey(null)
-                .server("PARSE_SERVER_URL") // The trailing slash is important.
+                .server("PARSE_SERVER_URL") // The trailing slash is important, e.g., https://mydomain.com:1337/parse/
                 .build()
             );
+
+            //
+            // save installation. Parse.Push will later use this to push to the correct device
             ParseInstallation.getCurrentInstallation().saveInBackground();
         }
     }
@@ -193,7 +205,7 @@ e.g., `platforms/android/src/com/example/app`, create a file named MainApplicati
 In the `<application>` tag, add the attribute `android:name="MainApplication"`. Obviously, you don't have
 to name your application class this way, but you have to use the same name in 1 and 2.
 
-3. Optional. To customize background color for the push notification icon in Android Lollipop, go to
+3. Optional: to customize background color for the push notification icon in Android Lollipop, go to
 your `platforms/android/res/values` folder and create a file named `colors.xml`. Paste the following
 content in it and replace the hex color value of the form `#AARRGGBB` to your liking.
 
@@ -215,6 +227,7 @@ For `Parse.Push` to work, the native Parse platform needs to be initialized. Ope
 {
     //
     // Stuff already defined by Cordova
+    // ...
     //
 
     //
@@ -226,14 +239,16 @@ For `Parse.Push` to work, the native Parse platform needs to be initialized. Ope
     //
     // Initialize open source parse-server (which no longer uses clientKey)
     //
-    //[Parse initializeWithConfiguration:[ParseClientConfiguration configurationWithBlock:^(id<ParseMutableClientConfiguration> configuration) {
-    //     configuration.applicationId = @"YOUR_PARSE_APPID";
-    //     configuration.server = @"YOUR_PARSER_SERVER_URL";
-    //}]];
-    //
+    [Parse initializeWithConfiguration:[ParseClientConfiguration configurationWithBlock:^(id<ParseMutableClientConfiguration> configuration) {
+         configuration.applicationId = @"YOUR_PARSE_APPID";
+         configuration.server = @"YOUR_PARSER_SERVER_URL";
+    }]];
+
 
     //
-    // Basic notification config, left as cut-and-paste instead of part of plugin code for easy customization
+    // Basic notification config, left as cut-and-paste instead of part of plugin
+    // so you can customize your own notif settings
+    //
     UIUserNotificationType userNotificationTypes = (UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound);
     UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:userNotificationTypes categories:nil];
     [application registerUserNotificationSettings:settings];
