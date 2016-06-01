@@ -127,7 +127,7 @@ project number. It should be a large integer like 123427208255. This project num
          1. Create SSL push certificate with Apple. You may find  [this tutorial useful](https://github.com/ParsePlatform/PushTutorial/tree/master/iOS). All steps prior to adding code to your iOS application are applicable.
          2. Place the `p12` certificate file from the previous step on your server.
       - Android
-         1. Get the sender id (your project id) from your google developer console. It's a long integer.
+         1. Get the sender id (your project number) from your google developer console. It's a long integer.
          2. Enable push notification for your project on google developer console and generate a server API key.
    3. Update your `parse-server` configuration to use the push credentials. Here is an example:
 
@@ -138,7 +138,7 @@ project number. It should be a large integer like 123427208255. This project num
       "cloud": "./myCloudDir/main.js",
       "push": {
          "android":{
-            "senderId": "PROJECT_ID_FROM_GOOGLE_DEVELOPER_CONSOLE",
+            "senderId": "SENDER_ID_AKA_PROJECT_NUMBER",
             "apiKey": "SERVER_API_KEY_FROM_GOOGLE_DEVELOPER_CONSOLE"
          },
          "ios":{
