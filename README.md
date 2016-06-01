@@ -100,15 +100,6 @@ Installation
 
 Read the [Parse server push guide](https://github.com/ParsePlatform/parse-server/wiki/Push) for an overview of the Push configuration.
 
-For both Android and iOS, run
-
-```
-cordova plugin add https://github.com/taivo/parse-push-plugin --variable GCM_SENDER_ID=1234256789
-```
-
-To get your GCM sender ID, enable GCM for your Android project in the Google Developer Console. Take note of your
-project number. It should be a large integer like 123427208255. This project number is your GCM sender ID.
-
 ####Install Push Certificates on Server:
 
 - Hosted Parse.com
@@ -150,6 +141,21 @@ project number. It should be a large integer like 123427208255. This project num
    }
    ```
    4. Restart your `parse-server` for the new settings to take effect.
+
+
+####Add Plugin
+
+For both Android and iOS, run
+
+```
+cordova plugin add https://github.com/taivo/parse-push-plugin --variable GCM_SENDER_ID=1234256789
+
+```
+
+To get your GCM sender ID, enable GCM for your Android project in the Google Developer Console. Take note of your
+project number. It should be a large integer like 123427208255. This project number is your GCM sender ID. It's the
+same `senderId` used in your server config.
+
 
 ####Android Plugin Setup:
 
