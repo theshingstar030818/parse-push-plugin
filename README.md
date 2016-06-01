@@ -32,6 +32,10 @@ ParsePushPlugin.on('receivePN', function(pn){
 });
 
 //customEvt can be any string of your choosing, i.e., chat, system, upvote, etc.
+//Be sure to specify that string via the 'event' key in your JSON payload, e.g., to
+//specify a customEvt called 'chat', your JSON payload must have {event: 'chat'} as
+//part of it.
+//
 ParsePushPlugin.on('receivePN:chat', function(pn){
 	console.log('yo i can also use custom event to keep things like chat modularized');
 });
@@ -92,7 +96,7 @@ public void onCreate(Bundle savedInstanceState)
 }
 ```
 
-iOS: ... haven't tried yet but probably should be handled in `AppDelegate.didReceiveRemoteNotification`
+iOS: You can process your notification payload in `AppDelegate.didReceiveRemoteNotification` and launch the specified URL from there.
 
 
 Installation
@@ -306,8 +310,8 @@ if(window.ParsePushPlugin){
 	});
 
 	//
-	//you can also listen to your own custom subevents
-	// Note: to push custom subevent, include 'event' key in your push payload,
+	//you can also listen to your own custom events
+	// Note: to push custom event, include 'event' key in your push payload,
    // e.g. {alert: "sup", event:'chat'}
 	ParsePushPlugin.on('receivePN:chat', chatEventHandler);
 	ParsePushPlugin.on('receivePN:serverMaintenance', serverMaintenanceHandler);
