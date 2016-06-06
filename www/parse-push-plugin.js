@@ -24,7 +24,7 @@ require('cordova/channel').onCordovaReady.subscribe(function() {
 				 //
 				 var base = ParsePushPlugin._receiveEvent;
 				 var customEventKey = ParsePushPlugin._customEventKey;
-				 
+
 				 ParsePushPlugin.trigger(base, pn);
 				 if(customEventKey && pn[customEventKey]){
 					 ParsePushPlugin.trigger(base + ':' + pn[customEventKey], pn);
@@ -32,7 +32,7 @@ require('cordova/channel').onCordovaReady.subscribe(function() {
 			 }
 		}
    };
-   
+
    require('cordova/exec')(jsCallback, null, serviceName, 'registerCallback', []);
 });
 
@@ -40,7 +40,7 @@ var ParsePushPlugin = {
 	 _openEvent: 'openPN',
 	 _receiveEvent: 'receivePN',
 	 _customEventKey: 'event', //default key for custom events associated with each PN, set this to anything you see fit
-	 
+
     getInstallationId: function(successCb, errorCb) {
        cordova.exec(successCb, errorCb, serviceName, 'getInstallationId', []);
     },
@@ -67,7 +67,7 @@ var ParsePushPlugin = {
 // push notification onReceive events
 function poorManExtend(object, source){
 	object || (object = {});
-	
+
 	for (var prop in source) {
 	    if(source.hasOwnProperty(prop)) {
 	       object[prop] = source[prop];
