@@ -25,11 +25,13 @@ public class ParsePushPlugin extends CordovaPlugin {
     public static final String ACTION_SUBSCRIBE = "subscribe";
     public static final String ACTION_UNSUBSCRIBE = "unsubscribe";
     public static final String ACTION_REGISTER_CALLBACK = "registerCallback";
+    public static final String ACTION_HANDLE_COLD_START = "handleColdStart";
 
     private static CallbackContext gEventCallback = null;
 
     private static CordovaWebView gWebView;
     private static boolean gForeground = false;
+    private static JSONObject gLaunchNotification = null;
 
     public static final String LOGTAG = "ParsePushPlugin";
 
@@ -59,6 +61,10 @@ public class ParsePushPlugin extends CordovaPlugin {
         }
         if (action.equals(ACTION_UNSUBSCRIBE)) {
             this.unsubscribe(args.getString(0), callbackContext);
+            return true;
+        }
+        if (action.equals(ACTION_HANDLE_COLD_START)) {
+            this.handleColdStart(callbackContext);
             return true;
         }
         return false;
@@ -103,6 +109,14 @@ public class ParsePushPlugin extends CordovaPlugin {
 
     private void unsubscribe(final String channel, final CallbackContext callbackContext) {
     	ParsePush.unsubscribeInBackground(channel);
+        callbackContext.success();
+    }
+
+    private void handleColdStart(final CallbackContext callbackContext) {
+        if (isInForeground() && gLaunchNotification != null) {
+            jsCallback(gLaunchNotification, "OPEN");
+            gLaunchNotification = null;
+        }
         callbackContext.success();
     }
 
@@ -155,5 +169,9 @@ public class ParsePushPlugin extends CordovaPlugin {
 
     public static boolean isInForeground(){
       return gForeground;
+    }
+
+    public static void setLaunchNotification(JSONObject _json) {
+        gLaunchNotification = _json;
     }
 }

@@ -77,7 +77,10 @@ public class ParsePushPluginReceiver extends ParsePushBroadcastReceiver
 		//
 		// relay the push notification data to the javascript in case the
 		// app is already running when this push is open.
-		ParsePushPlugin.jsCallback(getPushData(intent), "OPEN");
+		if (!ParsePushPlugin.isInForeground()) {
+			ParsePushPlugin.setLaunchNotification(pnData);
+		}
+		ParsePushPlugin.jsCallback(pnData, "OPEN");
 	}
 
 	@Override
