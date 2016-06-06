@@ -18,6 +18,7 @@
 - (void)subscribe: (CDVInvokedUrlCommand *)command;
 - (void)unsubscribe: (CDVInvokedUrlCommand *)command;
 - (void)handleColdStart: (CDVInvokedUrlCommand *)command;
+- (void)resetBadge: (CDVInvokedUrlCommand *)command;
 
 //
 // methods internal to plugin

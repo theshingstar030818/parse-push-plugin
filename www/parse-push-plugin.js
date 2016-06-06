@@ -63,6 +63,10 @@ var ParsePushPlugin = {
 
     handleColdStart: function(successCb, errorCb) {
        cordova.exec(successCb, errorCb, serviceName, 'handleColdStart', []);
+    },
+
+    resetBadge: function(successCb, errorCb) {
+       cordova.exec(successCb, errorCb, serviceName, 'resetBadge', []);
     }
 };
 
