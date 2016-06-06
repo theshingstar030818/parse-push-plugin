@@ -74,12 +74,14 @@ public class ParsePushPluginReceiver extends ParsePushBroadcastReceiver
 
     context.startActivity(activityIntent);
 
+		if (!ParsePushPlugin.isInForeground()) {
+			// store the notification until the plugin is ready in case of a cold start
+			ParsePushPlugin.setLaunchNotification(pnData);
+		}
+
 		//
 		// relay the push notification data to the javascript in case the
 		// app is already running when this push is open.
-		if (!ParsePushPlugin.isInForeground()) {
-			ParsePushPlugin.setLaunchNotification(pnData);
-		}
 		ParsePushPlugin.jsCallback(pnData, "OPEN");
 	}
 
