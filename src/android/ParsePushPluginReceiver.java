@@ -52,27 +52,27 @@ public class ParsePushPluginReceiver extends ParsePushBroadcastReceiver
     protected void onPushOpen(Context context, Intent intent) {
 		Log.d(LOGTAG, "onPushOpen - context: " + context);
 
-      JSONObject pnData = getPushData(intent);
-      resetCount(getNotificationTag(context, pnData));
+    JSONObject pnData = getPushData(intent);
+    resetCount(getNotificationTag(context, pnData));
 
-      String uriString = pnData.optString("uri");
-      Intent activityIntent = uriString.isEmpty() ? new Intent(context, getActivity(context, intent))
-                                                  : new Intent(Intent.ACTION_VIEW, Uri.parse(uriString));
+    String uriString = pnData.optString("uri");
+    Intent activityIntent = uriString.isEmpty() ? new Intent(context, getActivity(context, intent))
+                                                : new Intent(Intent.ACTION_VIEW, Uri.parse(uriString));
 
-      activityIntent.putExtras(intent)
-                    .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
+    activityIntent.putExtras(intent)
+                  .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
 
-      ParseAnalytics.trackAppOpened(intent);
+    ParseAnalytics.trackAppOpened(intent);
 
-      // allow a urlHash parameter for hash as well as query params.
-      // This lets the app know what to do at coldstart by opening a PN.
-      // For example: navigate to a specific page of the app
-      String urlHash = pnData.optString("urlHash");
-      if(urlHash.startsWith("#") || urlHash.startsWith("?")){
-      	activityIntent.putExtra("urlHash", urlHash);
-      }
+    // allow a urlHash parameter for hash as well as query params.
+    // This lets the app know what to do at coldstart by opening a PN.
+    // For example: navigate to a specific page of the app
+    String urlHash = pnData.optString("urlHash");
+    if(urlHash.startsWith("#") || urlHash.startsWith("?")){
+    	activityIntent.putExtra("urlHash", urlHash);
+    }
 
-      context.startActivity(activityIntent);
+    context.startActivity(activityIntent);
 
 		//
 		// relay the push notification data to the javascript in case the
