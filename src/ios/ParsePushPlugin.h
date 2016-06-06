@@ -5,6 +5,7 @@
 
 @property (nonatomic, copy) NSString* callbackId;
 @property (nonatomic, retain) NSMutableArray* pnQueue;
+@property (nonatomic, retain) NSDictionary* gLaunchNotification;
 
 //
 // methods exposed to JS
@@ -16,6 +17,7 @@
 - (void)getSubscriptions: (CDVInvokedUrlCommand *)command;
 - (void)subscribe: (CDVInvokedUrlCommand *)command;
 - (void)unsubscribe: (CDVInvokedUrlCommand *)command;
+- (void)handleColdStart: (CDVInvokedUrlCommand *)command;
 
 //
 // methods internal to plugin
@@ -23,4 +25,3 @@
 - (void)jsCallback: (NSDictionary*)userInfo withAction: (NSString*)pnAction;
 + (void)saveDeviceTokenToInstallation: (NSData*)deviceToken;
 @end
-

@@ -25,6 +25,7 @@ void MethodSwizzle(Class c, SEL originalSelector) {
     MethodSwizzle([self class], @selector(init));
     MethodSwizzle([self class], @selector(application:didRegisterForRemoteNotificationsWithDeviceToken:));
     MethodSwizzle([self class], @selector(application:didReceiveRemoteNotification:));
+    MethodSwizzle([self class], @selector(application:didFinishLaunchingWithOptions:));
 }
 
 //
@@ -32,7 +33,7 @@ void MethodSwizzle(Class c, SEL originalSelector) {
 //
 - (void)noop_application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)newDeviceToken {}
 - (void)noop_application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {}
-
+- (BOOL)noop_application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions { return YES; }
 
 - (id)getParsePluginInstance
 {
@@ -67,7 +68,7 @@ void MethodSwizzle(Class c, SEL originalSelector) {
     //
     // Call existing method in case it's already defined in main project's AppDelegate
     [self swizzled_application:application didRegisterForRemoteNotificationsWithDeviceToken:newDeviceToken];
-    
+
     //
     // Save device token
     [ParsePushPlugin saveDeviceTokenToInstallation:newDeviceToken];
@@ -79,7 +80,7 @@ void MethodSwizzle(Class c, SEL originalSelector) {
     //
     // Call existing method in case it's already defined in main project's AppDelegate
     [self swizzled_application:application didReceiveRemoteNotification:userInfo];
-    
+
     if (application.applicationState != UIApplicationStateActive) {
         // The application was just brought from the background to the foreground,
         // so we consider the app as having been "opened by a push notification."
@@ -92,5 +93,27 @@ void MethodSwizzle(Class c, SEL originalSelector) {
     //    must be opened by user to reach this part of the code
     ParsePushPlugin* pluginInstance = [self getParsePluginInstance];
     [pluginInstance jsCallback:userInfo withAction:(application.applicationState == UIApplicationStateActive) ? @"RECEIVE" : @"OPEN"];
+}
+
+
+- (BOOL)swizzled_application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
+    //
+    // Call existing method in case it's already defined in main project's AppDelegate
+    [self swizzled_application:application didFinishLaunchingWithOptions:launchOptions];
+
+    NSDictionary *launchPayload = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
+
+    if (launchPayload) {
+        NSMutableDictionary *notification = [NSMutableDictionary dictionaryWithDictionary:launchPayload];
+
+        // If the app is inactive, store the notification so that we can invoke the web app when it's ready
+        if (application.applicationState == UIApplicationStateInactive) {
+            ParsePushPlugin* pluginInstance = [self getParsePluginInstance];
+            pluginInstance.gLaunchNotification = notification;
+        }
+    }
+
+    return YES;
 }
 @end
