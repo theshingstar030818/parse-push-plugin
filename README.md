@@ -149,16 +149,24 @@ Read the [Parse server push guide](https://github.com/ParsePlatform/parse-server
 
 ####Add Plugin
 
-For both Android and iOS, run
+- Hosted Parse.com
 
-```
-cordova plugin add https://github.com/taivo/parse-push-plugin --variable GCM_SENDER_ID=1234256789
+   ```
+   cordova plugin add https://github.com/taivo/parse-push-plugin.git#parse-com
+   
+   ```
 
-```
+- Open Source parse-server
+   For both Android and iOS, run
 
-To get your GCM sender ID, enable GCM for your Android project in the Google Developer Console. Take note of your
-project number. It should be a large integer like 123427208255. This project number is your GCM sender ID. It's the
-same `senderId` used in your server config.
+   ```
+   cordova plugin add https://github.com/taivo/parse-push-plugin --variable GCM_SENDER_ID=1234256789
+
+   ```
+
+   To get your GCM sender ID, enable GCM for your Android project in the Google Developer Console. Take note of your
+   project number. It should be a large integer like 123427208255. This project number is your GCM sender ID. It's the
+   same `senderId` used in your server config.
 
 
 ####Android Plugin Setup:
