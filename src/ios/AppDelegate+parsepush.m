@@ -23,6 +23,7 @@ void MethodSwizzle(Class c, SEL originalSelector) {
 + (void)load
 {
     MethodSwizzle([self class], @selector(init));
+    MethodSwizzle([self class], @selector(application:didFinishLaunchingWithOptions:));
     MethodSwizzle([self class], @selector(application:didRegisterForRemoteNotificationsWithDeviceToken:));
     MethodSwizzle([self class], @selector(application:didReceiveRemoteNotification:));
 }
@@ -60,6 +61,54 @@ void MethodSwizzle(Class c, SEL originalSelector) {
     } else{
         NSLog(@"notification has no userInfo");
     }
+}
+
+- (BOOL)swizzled_application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions
+{
+   BOOL isOk = [self swizzled_application:application didFinishLaunchingWithOptions:launchOptions];
+
+   @try {
+      // test if Parse client has been initialized in the main AppDelegate.m
+      NSLog(@"Custom Parse.Push init already took place. appId: %@", [Parse getApplicationId]);
+   } @catch (NSException *exception) {
+      //
+      // default Parse Push setup. For custom setup, initialize the Parse client and
+      // notification settings yourself in your main AppDelegate.m 's didFinishLaunchingWithOptions
+      //
+      ParsePushPlugin* pluginInstance = [self getParsePluginInstance];
+
+      NSString *appId     = [pluginInstance getSettingForKey:@"ParseAppId"];
+      NSString *serverUrl = [pluginInstance getSettingForKey:@"ParseServerUrl"];
+
+      if(!serverUrl.length){
+         NSException* invalidSettingException = [NSException
+           exceptionWithName:@"invalidSettingException"
+           reason:@"Please set \"serverUrl\" with a preference tag in config.xml"
+           userInfo:nil];
+         @throw invalidSettingException;
+      }
+
+      if(!serverUrl.length){
+         NSException* invalidSettingException = [NSException
+           exceptionWithName:@"invalidSettingException"
+           reason:@"Please set \"ParseServerUrl\" with a preference tag in config.xml"
+           userInfo:nil];
+         @throw invalidSettingException;
+      }
+
+      [Parse initializeWithConfiguration:[ParseClientConfiguration configurationWithBlock:^(id<ParseMutableClientConfiguration> configuration) {
+         configuration.applicationId = appId;
+         configuration.server = serverUrl;
+      }]];
+
+      UIUserNotificationType userNotificationTypes = (UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound);
+      UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:userNotificationTypes categories:nil];
+      [application registerUserNotificationSettings:settings];
+      [application registerForRemoteNotifications];
+   }
+
+   NSLog(@"SWIZZLED id: [%@]", [Parse getApplicationId]);
+   return isOk;
 }
 
 - (void)swizzled_application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)newDeviceToken

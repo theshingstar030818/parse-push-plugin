@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<plugin xmlns="http://www.apache.org/cordova/ns/plugins/1.0" id="com.phonegap.parsepushplugin" version="0.9.0">
+<plugin xmlns="http://www.apache.org/cordova/ns/plugins/1.0" id="com.phonegap.parsepushplugin" version="0.9.1">
    <name>ParsePushPlugin</name>
    <description>Parse.Push plugin for phonegap/cordova/ionic framework</description>
 	<keywords>cordova,phonegap,ionic framework, parse.com,parse platform, parse push, push notification</keywords>

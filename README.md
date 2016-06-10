@@ -153,8 +153,12 @@ Read the [Parse server push guide](https://github.com/ParsePlatform/parse-server
 
    ```
    cordova plugin add https://github.com/taivo/parse-push-plugin.git#parse-com
-   
+
    ```
+
+   After this step, please use the `parse-com` branch's README to continue setting
+   up the plugin for use with hosted Parse.com.
+
 
 - Open Source parse-server
    For both Android and iOS, run
@@ -221,55 +225,24 @@ to name your application class this way, but you have to use the same name in 1 
 your `platforms/android/res/values` folder and create a file named `colors.xml`. Paste the following
 content in it and replace the hex color value of the form `#AARRGGBB` to your liking.
 
-    ```xml
+   ```xml
 	<?xml version="1.0" encoding="utf-8"?>
-    <resources>
-        <color name="parse_push_icon_color">#ff112233</color>
-    </resources>
-    ```
+   <resources>
+      <color name="parse_push_icon_color">#ff112233</color>
+   </resources>
+   ```
 
 ####iOS Plugin Setup:
+   Add the following tags to your `config.xml`
 
-For `Parse.Push` to work, the native Parse platform needs to be initialized. Open `platforms/ios/ProjectName/Classes/AppDelegate.m` and add the `Parse/Parse.h` header as well as code to the following function. Cordova should have defined the function for you already so search for it first. Uncomment the appropriate code block to initialize either hosted Parse.com or open source parse-server.
+   ```xml
+   <preference name="ParseAppId" value="PARSE_APPID" />
+   <preference name="ParseServerUrl" value="http://PARSE_SERVER:1337/parse/"/>
+   ```
 
-```objective-c
-#import <Parse/Parse.h>
-
-- (BOOL)application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions
-{
-    //
-    // Stuff already defined by Cordova
-    // ...
-    //
-
-    //
-    // Initialize app for soon-to-depart Parse.com hosted service
-    //
-    //[Parse setApplicationId:@"YOUR_PARSE_APPID" clientKey:@"YOUR_PARSE_CLIENT_KEY"];
-    //
-
-    //
-    // Initialize open source parse-server (which no longer uses clientKey)
-    //
-    [Parse initializeWithConfiguration:[ParseClientConfiguration configurationWithBlock:^(id<ParseMutableClientConfiguration> configuration) {
-         configuration.applicationId = @"YOUR_PARSE_APPID";
-         configuration.server = @"YOUR_PARSER_SERVER_URL";
-    }]];
-
-
-    //
-    // Basic notification config, left as cut-and-paste instead of part of plugin
-    // so you can customize your own notif settings
-    //
-    UIUserNotificationType userNotificationTypes = (UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound);
-    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:userNotificationTypes categories:nil];
-    [application registerUserNotificationSettings:settings];
-    [application registerForRemoteNotifications];
-
-    return YES;
-}
-```
-
+   If you want to customize your notification settings, use the method
+   `didFinishLaunchingWithOptions` in [AppDelegate+parsepush.m](ios/AppDelegate+parsepush.m)
+   as a guide to modify the same method in your `platforms/ios/ProjectName/Classes/AppDelegate.m`
 
 Usage
 -----

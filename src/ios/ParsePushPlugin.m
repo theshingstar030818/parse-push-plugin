@@ -22,10 +22,10 @@
     //
     self.callbackId = command.callbackId;
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-    
+
     [pluginResult setKeepCallbackAsBool:YES];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
-    
+
     if(self.pnQueue && self.pnQueue.count){
         [self flushPushNotificationQueue];
     }
@@ -105,17 +105,17 @@
     // Trigger javascript callback because a PN has been received or opened
     //
     //
-    
+
     if(self.callbackId){
         //
         // format the pn payload to be just 1 level deep and consistent with other platform versions of this plugin
         NSMutableDictionary* pnPayload = [NSMutableDictionary dictionaryWithDictionary:userInfo];
         [pnPayload addEntriesFromDictionary:pnPayload[@"aps"]];
         [pnPayload removeObjectForKey:@"aps"];
-        
+
         NSArray* callbackArgs = [NSArray arrayWithObjects:pnPayload, pnAction, nil];
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsMultipart:callbackArgs];
-        
+
         [pluginResult setKeepCallbackAsBool:YES];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
     } else{
@@ -135,9 +135,14 @@
         // de-queue the oldest pn and trigger callback
         NSDictionary* userInfo = self.pnQueue[0];
         [self.pnQueue removeObjectAtIndex:0];
-        
+
         [self jsCallback:userInfo withAction:userInfo[@"pnAction"]];
     }
+}
+
+- (NSString *)getSettingForKey:(NSString *)key
+{
+   return [self.commandDelegate.settings objectForKey:[key lowercaseString]];
 }
 
 + (void)saveDeviceTokenToInstallation: (NSData*)deviceToken
@@ -148,4 +153,3 @@
 }
 
 @end
-
