@@ -233,7 +233,7 @@ content in it and replace the hex color value of the form `#AARRGGBB` to your li
    ```
 
 ####iOS Plugin Setup:
-   Add the following tags to your `config.xml`
+   After adding the plugin to your project, create the following tags in `config.xml`
 
    ```xml
    <preference name="ParseAppId" value="PARSE_APPID" />
@@ -242,7 +242,10 @@ content in it and replace the hex color value of the form `#AARRGGBB` to your li
 
    If you want to customize your notification settings, use the method
    `didFinishLaunchingWithOptions` in [AppDelegate+parsepush.m](ios/AppDelegate+parsepush.m)
-   as a guide to modify the same method in your `platforms/ios/ProjectName/Classes/AppDelegate.m`
+   as a guide to modify the same method in your `platforms/ios/ProjectName/Classes/AppDelegate.m`.
+   When you initialize Parse from `platforms/ios/ProjectName/Classes/AppDelegate.m`, this plugin
+   will skip it's own version of Parse initialization and notification setup, that way it won't
+   override your customization.
 
 Usage
 -----
