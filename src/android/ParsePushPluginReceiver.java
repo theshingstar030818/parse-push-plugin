@@ -24,6 +24,7 @@ public class ParsePushPluginReceiver extends ParsePushBroadcastReceiver
 	public static final String LOGTAG = "ParsePushPluginReceiver";
 	public static final String PARSE_DATA_KEY = "com.parse.Data";
 	public static final String RESOURCE_PUSH_ICON_COLOR = "parse_push_icon_color";
+	public static final String PUSH_TAG_KEY = "push_tag";
 
 	private static JSONObject MSG_COUNTS = new JSONObject();
 
@@ -105,7 +106,7 @@ public class ParsePushPluginReceiver extends ParsePushBroadcastReceiver
 		if(pnData.has("title")){
 			builder.setTicker(pnData.optString("title")).setContentTitle(pnData.optString("title"));
 		} else if(pnData.has("alert")){
-			builder.setTicker(pnTag).setContentTitle(pnTag);
+			builder.setTicker(getAppName(context)).setContentTitle(getAppName(context));
 		}
 
 		if(pnData.has("alert")){
@@ -151,11 +152,13 @@ public class ParsePushPluginReceiver extends ParsePushBroadcastReceiver
 	}
 
 	private static String getNotificationTag(Context context, Intent intent){
-		return getPushData(intent).optString("title", getAppName(context));
+		JSONObject pnData = getPushData(intent);
+		return getNotificationTag(context, pnData);
 	}
 
 	private static String getNotificationTag(Context context, JSONObject pnData){
-		return pnData.optString("title", getAppName(context));
+		String title = pnData.optString("title", getAppName(context));
+		return pnData.optString(PUSH_TAG_KEY, title);
 	}
 
 	private static int nextCount(String pnTag){
