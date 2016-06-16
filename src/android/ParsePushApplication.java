@@ -13,8 +13,8 @@ import android.util.Log;
 
 /*
    Why is this Application subclass needed?
-      - Cordova does not define an Application class, only a Activity.
-      - The android init sequence seems to be MainApplication -> ... --> handle push --> ... -> launch Activity,
+      - Cordova does not define an Application class, only Activity.
+      - The android cold start sequence is: create Application -> ... --> handle push --> ... -> launch Activity,
       - Without configuring an Application class, the app would crash during push notification cold start because
          Parse.Push is not initialized before the "handle push" phase.
 
@@ -22,7 +22,7 @@ import android.util.Log;
       - In AndroidManifest.xml, the <application> class has an attribute "android:name" that points to your designated main application class.
       - This plugin automatically sets android:name during plugin installation IFF it doesn't exist.
       - If you write your own MainApplication class in your app package, be sure to manually set android:name="MainApplication"
-      - If your MainApplication resides in a package other than your main app package, the full path must be included,
+      - If your MainApplication resides in a package other than your main app package, the full path must be specified,
          i.e., android:name="com.custom.package.MainApplication"
 */
 public class ParsePushApplication extends Application {
@@ -43,7 +43,7 @@ public class ParsePushApplication extends Application {
          //
 
 
-         // Simple config reading: 1st null to detect R.xml.config, 2nd null indicates no custom config param
+         // Simple config reading: 1st null to detect R.xml.config resource id, 2nd null indicates no custom config param
          ParsePushConfigReader config = new ParsePushConfigReader(getApplicationContext(), null, null);
 
          Parse.initialize(new Parse.Configuration.Builder(this)
