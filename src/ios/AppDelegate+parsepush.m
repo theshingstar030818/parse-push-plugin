@@ -107,7 +107,6 @@ void MethodSwizzle(Class c, SEL originalSelector) {
       [application registerForRemoteNotifications];
    }
 
-   NSLog(@"SWIZZLED id: [%@]", [Parse getApplicationId]);
    return isOk;
 }
 
