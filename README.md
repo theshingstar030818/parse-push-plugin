@@ -16,13 +16,14 @@ How Is This Fork Different?
 
 **Can handle cold start**
 
-**API**
+**Simple API**
 
 * **getInstallationId**( successCB, errorCB )
 * **getSubscriptions**( successCB, errorCB )
 * **subscribe**( channel, successCB, errorCB )
 * **unsubscribe**( channel, successCB, errorCB )
 
+**Manage push notification via events anywhere in your code**
 ParsePushPlugin makes these notification events available: `openPN, receivePN, receivePN:customEvt`.
 To handle notification events in JS, do this:
 
@@ -31,18 +32,24 @@ ParsePushPlugin.on('receivePN', function(pn){
 	console.log('yo i got this push notification:' + JSON.stringify(pn));
 });
 
-//customEvt can be any string of your choosing, i.e., chat, system, upvote, etc.
-//Be sure to specify that string via the 'event' key in your JSON payload, e.g., to
-//specify a customEvt called 'chat', your JSON payload must have {event: 'chat'} as
-//part of it.
 //
+// Custom events: If your pn content contains an `event` key, e.g.,
+// `{alert: "sup", event:"chat", customKey1:"foo", customKey2:"bar", ...}`,
+// ParsePushPlugin triggers a custom event that you can handle separately from the main
+// receivePN stream. This helps modularizing different types of communications via push.
 ParsePushPlugin.on('receivePN:chat', function(pn){
 	console.log('yo i can also use custom event to keep things like chat modularized');
 });
+ParsePushPlugin.on('receivePN:system-maintenance', function(pn){
+	console.log('yo, here is a system maintenance payload');
+});
 
+//
+// When you open a notification from the system tray, `openPN` is also triggered.
+// You can use it to do things like navigating to a different page or refreshing data.
 ParsePushPlugin.on('openPN', function(pn){
 	//you can do things like navigating to a different view here
-	console.log('Yo, I get this when the user clicks open a notification from the tray');
+	console.log('Yo, I get this when the user taps open a notification from the tray');
 });
 ```
 
