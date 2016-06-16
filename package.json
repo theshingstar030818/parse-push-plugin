@@ -1,7 +1,7 @@
 {
   "name": "parse-push-plugin",
   "version": "0.9.2",
-  "description": "Parse.Push plugin for phonegap/cordova/ionic framework",
+  "description": "Parse.Push plugin for phonegap/cordova/ionic",
   "cordova": {
     "id": "parse-push-plugin",
     "platforms": [
