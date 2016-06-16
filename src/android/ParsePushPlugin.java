@@ -1,4 +1,4 @@
-package com.phonegap.parsepushplugin;
+package github.taivo.parsepushplugin;
 
 import java.util.List;
 import java.util.ArrayList;

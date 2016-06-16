@@ -1,4 +1,4 @@
-package com.phonegap.parsepushplugin;
+package github.taivo.parsepushplugin;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -12,7 +12,7 @@ import android.content.res.XmlResourceParser;
 import java.io.IOException;
 import org.xmlpull.v1.XmlPullParserException;
 
-import com.phonegap.parsepushplugin.ParsePushConfigException;
+import github.taivo.parsepushplugin.ParsePushConfigException;
 
 import android.util.Log;
 

@@ -1,4 +1,4 @@
-package com.phonegap.parsepushplugin;
+package github.taivo.parsepushplugin;
 
 import java.lang.RuntimeException;
 

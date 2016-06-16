@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<plugin xmlns="http://www.apache.org/cordova/ns/plugins/1.0" id="com.phonegap.parsepushplugin" version="0.9.2">
+<plugin xmlns="http://www.apache.org/cordova/ns/plugins/1.0" id="parse-push-plugin" version="0.9.2">
    <name>ParsePushPlugin</name>
    <description>Parse.Push plugin for phonegap/cordova/ionic framework</description>
-	<keywords>cordova,phonegap,ionic framework, parse.com,parse platform, parse push, push notification</keywords>
+	<keywords>cordova,phonegap,ionic framework, parse server, parse push, push notification</keywords>
 
    <js-module src="www/parse-push-plugin.js" name="ParsePushPlugin">
       <clobbers target="ParsePushPlugin" />
@@ -13,12 +13,12 @@
       <preference name="GCM_SENDER_ID" />
       <config-file target="res/xml/config.xml" parent="/*">
          <feature name="ParsePushPlugin">
-            <param name="android-package" value="com.phonegap.parsepushplugin.ParsePushPlugin" />
+            <param name="android-package" value="github.taivo.parsepushplugin.ParsePushPlugin" />
          </feature>
       </config-file>
       <config-file target="AndroidManifest.xml" parent="/manifest/application">
          <service android:name="com.parse.PushService" />
-         <receiver android:exported="false" android:name="com.phonegap.parsepushplugin.ParsePushPluginReceiver" android:exported="false">
+         <receiver android:exported="false" android:name="github.taivo.parsepushplugin.ParsePushPluginReceiver" android:exported="false">
             <intent-filter>
                <action android:name="com.parse.push.intent.RECEIVE" />
                <action android:name="com.parse.push.intent.DELETE" />
@@ -51,11 +51,11 @@
       <source-file src="src/android/parse/parse-android-1.13.0.jar" target-dir="libs" framework="true" />
       <source-file src="src/android/parse/bolts-tasks-1.4.0.jar" target-dir="libs" framework="true" />
       <source-file src="src/android/parse/android-support-v4.jar" target-dir="libs" framework="true" />
-      <source-file src="src/android/ParsePushPlugin.java" target-dir="src/com/phonegap/parsepushplugin" />
-      <source-file src="src/android/ParsePushPluginReceiver.java" target-dir="src/com/phonegap/parsepushplugin" />
-      <source-file src="src/android/ParsePushConfigReader.java" target-dir="src/com/phonegap/parsepushplugin" />
-      <source-file src="src/android/ParsePushConfigException.java" target-dir="src/com/phonegap/parsepushplugin" />
-      <source-file src="src/android/ParsePushApplication.java" target-dir="src/com/phonegap/parsepushplugin" />
+      <source-file src="src/android/ParsePushPlugin.java" target-dir="src/github/taivo/parsepushplugin" />
+      <source-file src="src/android/ParsePushPluginReceiver.java" target-dir="src/github/taivo/parsepushplugin" />
+      <source-file src="src/android/ParsePushConfigReader.java" target-dir="src/github/taivo/parsepushplugin" />
+      <source-file src="src/android/ParsePushConfigException.java" target-dir="src/github/taivo/parsepushplugin" />
+      <source-file src="src/android/ParsePushApplication.java" target-dir="src/github/taivo/parsepushplugin" />
 
       <!-- hook to simplify default installation -->
       <hook type="before_plugin_install" src="scripts/beforeAndroidInstall.js" />

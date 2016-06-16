@@ -1,6 +1,5 @@
 #import "ParsePushPlugin.h"
 #import <Cordova/CDV.h>
-//#import <objc/message.h>
 
 #import <Parse/Parse.h>
 

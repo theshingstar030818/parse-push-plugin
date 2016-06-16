@@ -3,7 +3,7 @@
 // Cordova generates its own version of AndroidManifest and saves it after the after_plugin_install hook
 // so our updates would be overwritten. This is true for Cordova 5.4.1.
 //
-var DefaultApplicationClassName = ["com.phonegap.parsepushplugin", "ParsePushApplication"].join('.');
+var DefaultApplicationName = ["github.taivo.parsepushplugin", "ParsePushApplication"].join('.');
 
 module.exports = function(context) {
    var path = context.requireCordovaModule('path');
@@ -18,7 +18,7 @@ module.exports = function(context) {
    //
    var applicationNode = androidManifest.data.find('application');
    if(applicationNode.get('android:name') === undefined){
-      applicationNode.set('android:name', DefaultApplicationClassName);
+      applicationNode.set('android:name', DefaultApplicationName);
       androidManifest.save();
    }
 

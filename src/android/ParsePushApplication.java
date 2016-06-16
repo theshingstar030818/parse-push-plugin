@@ -1,4 +1,4 @@
-package com.phonegap.parsepushplugin;
+package github.taivo.parsepushplugin;
 
 import android.app.Application;
 
@@ -6,8 +6,8 @@ import com.parse.Parse;
 import com.parse.Parse.Configuration.Builder;
 import com.parse.ParseInstallation;
 
-import com.phonegap.parsepushplugin.ParsePushConfigReader;
-import com.phonegap.parsepushplugin.ParsePushConfigException;
+import github.taivo.parsepushplugin.ParsePushConfigReader;
+import github.taivo.parsepushplugin.ParsePushConfigException;
 
 import android.util.Log;
 
