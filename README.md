@@ -179,38 +179,9 @@ Read the [Parse server push guide](https://github.com/ParsePlatform/parse-server
    <preference name="ParseServerUrl" value="http://PARSE_SERVER:1337/parse/" />
    ```
 
-####Android Plugin Setup:
-
-This plugin automatically initializes the android Parse platform for you using the `config.xml` preferences
-mentioned above. This is done in [ParsePushApplication.java](src/android/ParsePushApplication.java).
-
-In the `<application>` tag of your `platforms/android/AndroidManifest.xml`, this plugin adds the attribute
-`android:name="com.phonegap.parsepushplugin.ParsePushApplication"` if `android:name` isn't already defined.
-This is done during plugin installation. Similarly, on plugin uninstallation, `android:name` will be removed
-if its content is exactly `com.phonegap.parsepushplugin.ParsePushApplication`. If you use your own
-MainApplication class, change the value of `android:name` to point to it.
-
-*Optional: Write your own MainApplication and/or initialize Parse yourself:* Look at [ParsePushApplication.java](src/android/ParsePushApplication.java).
-The comments contain all the explanations and hints you will need. Mimic the code to write your own customized implementation.
-
-*Optional: Customize background color for the push notification icon in Android Lollipop:* Go to your `platforms/android/res/values` folder and create a file named `colors.xml`. Paste the following content in it and replace the hex color value of the form `#AARRGGBB` to your liking.
-
-   ```xml
-	   <?xml version="1.0" encoding="utf-8"?>
-      <resources>
-         <color name="parse_push_icon_color">#ff112233</color>
-      </resources>
-   ```
-
-####iOS Plugin Setup:
-
-If you want to customize your notification settings, use the method `didFinishLaunchingWithOptions`
-in [AppDelegate+parsepush.m](src/ios/AppDelegate+parsepush.m) as a guide to modify the same method in
-your `platforms/ios/ProjectName/Classes/AppDelegate.m`.
-
-When you initialize Parse from `platforms/ios/ProjectName/Classes/AppDelegate.m`, this plugin will
-skip it's own version of Parse initialization and notification setup, that way it won't override
-your customization.
+   You're all set. The plugin will take care of initializing Parse platform. To customize push notifications, initialize
+   Parse platform yourself, or use your own `MainApplication.java` in Android, see the
+   [Advanced Configuration](#advanced-configuration) section.
 
 Usage
 -----
@@ -275,7 +246,45 @@ JSON payload. This means the push notification will not be shown in the system t
 payload will still be delivered to your `receivePN` and `receivePN:customEvt` handlers.
 
 
-**Troubleshooting**
+Advanced Configuration
+----------------------
+####Android Advanced Configuration:
+
+This plugin automatically initializes the android Parse platform for you using the `config.xml` preferences
+mentioned above. The initialization is done in [ParsePushApplication.java](src/android/ParsePushApplication.java).
+
+In the `<application>` tag of your `platforms/android/AndroidManifest.xml`, this plugin adds the attribute
+`android:name="com.phonegap.parsepushplugin.ParsePushApplication"` if `android:name` isn't already defined.
+It does this during plugin installation. Similarly, on plugin uninstallation, `android:name` will be removed
+if its content is exactly `com.phonegap.parsepushplugin.ParsePushApplication`. If you use your own
+MainApplication class, change the value of `android:name` to point to it.
+
+*Optional: Write your own MainApplication and/or initialize Parse yourself:* Look at [ParsePushApplication.java](src/android/ParsePushApplication.java).
+The comments contain all the explanations and hints you will need. Mimic the code to write your own customized implementation.
+
+*Optional: Customize background color for the push notification icon in Android Lollipop:* Go to your `platforms/android/res/values` folder and create a file named `colors.xml`. Paste the following content in it and replace the hex color value of the form `#AARRGGBB` to your liking.
+
+   ```xml
+	   <?xml version="1.0" encoding="utf-8"?>
+      <resources>
+         <color name="parse_push_icon_color">#ff112233</color>
+      </resources>
+   ```
+
+
+####iOS Advanced Configuration:
+
+If you want to customize your notification settings, use the method `didFinishLaunchingWithOptions`
+in [AppDelegate+parsepush.m](src/ios/AppDelegate+parsepush.m) as a guide to modify the same method in
+your `platforms/ios/ProjectName/Classes/AppDelegate.m`.
+
+When you initialize Parse from `platforms/ios/ProjectName/Classes/AppDelegate.m`, this plugin will
+skip it's own version of Parse initialization and notification setup, that way it won't override
+your customization.
+
+
+Troubleshooting
+---------------
 Android: Starting with the Parse Android SDK v1.10.1 update, your app may crash at start and the log says
 something about a missing method in OkHttpClient. Just update the cordova libs of your project
 via `cordova platform update android`. If your previous cordova libs are old, you may run into
