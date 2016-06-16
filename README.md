@@ -24,6 +24,7 @@ How Is This Fork Different?
 * **unsubscribe**( channel, successCB, errorCB )
 
 **Manage push notification via events anywhere in your code**
+
 ParsePushPlugin makes these notification events available: `openPN, receivePN, receivePN:customEvt`.
 To handle notification events in JS, do this:
 
