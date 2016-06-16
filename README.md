@@ -179,9 +179,9 @@ Read the [Parse server push guide](https://github.com/ParsePlatform/parse-server
    <preference name="ParseServerUrl" value="http://PARSE_SERVER:1337/parse/" />
    ```
 
-   You're all set. The plugin will take care of initializing Parse platform. To customize push notifications, initialize
-   Parse platform yourself, or use your own `MainApplication.java` in Android, see the
-   [Advanced Configuration](#advanced-configuration) section.
+   You're all set. The plugin takes care of initializing Parse platform using the `config.xml` preferences mentioned above.
+   To customize push notifications, initialize Parse platform yourself, or use your own `MainApplication.java` in Android,
+   see the [Advanced Configuration](#advanced-configuration) section.
 
 Usage
 -----
@@ -248,16 +248,16 @@ payload will still be delivered to your `receivePN` and `receivePN:customEvt` ha
 
 Advanced Configuration
 ----------------------
-####Android Advanced Configuration:
+####Android:
 
-This plugin automatically initializes the android Parse platform for you using the `config.xml` preferences
-mentioned above. The initialization is done in [ParsePushApplication.java](src/android/ParsePushApplication.java).
+The actual code that handles Parse platform initialization is in [ParsePushApplication.java](src/android/ParsePushApplication.java).
 
-In the `<application>` tag of your `platforms/android/AndroidManifest.xml`, this plugin adds the attribute
-`android:name="com.phonegap.parsepushplugin.ParsePushApplication"` if `android:name` isn't already defined.
-It does this during plugin installation. Similarly, on plugin uninstallation, `android:name` will be removed
-if its content is exactly `com.phonegap.parsepushplugin.ParsePushApplication`. If you use your own
-MainApplication class, change the value of `android:name` to point to it.
+Android knows to use this class due to the attribute `android:name` in `<application>` in 'platforms/android/AndroidManifest.xml'.
+To preserve your customizations, this plugin sets `android:name="com.phonegap.parsepushplugin.ParsePushApplication"`  
+if and only if `android:name` is not already defined. It does this during plugin installation. Similarly, when the plugin is
+uninstalled, `android:name` will be removed only if its content matches `com.phonegap.parsepushplugin.ParsePushApplication` exactly.
+
+If you use your own Application class, don't forget to update `android:name` to point to it.
 
 *Optional: Write your own MainApplication and/or initialize Parse yourself:* Look at [ParsePushApplication.java](src/android/ParsePushApplication.java).
 The comments contain all the explanations and hints you will need. Mimic the code to write your own customized implementation.
@@ -272,7 +272,7 @@ The comments contain all the explanations and hints you will need. Mimic the cod
    ```
 
 
-####iOS Advanced Configuration:
+####iOS:
 
 If you want to customize your notification settings, use the method `didFinishLaunchingWithOptions`
 in [AppDelegate+parsepush.m](src/ios/AppDelegate+parsepush.m) as a guide to modify the same method in
