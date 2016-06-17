@@ -14,7 +14,7 @@ ionic state restore
 # restore bower dependencies
 bower update
 
-# install the plugin with your sender id
+# install the parse-push-plugin with your sender id
 ionic plugin add ../../ --variable GCM_SENDER_ID=1234567
 
 ```
