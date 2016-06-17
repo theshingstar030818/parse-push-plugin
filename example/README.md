@@ -43,12 +43,11 @@ This will start a server whose cloud code is in the testpn-cloudcode directory.
 2 and 2 together
 ----------------
 
-With a parse-server running for the `TESTPN` app, you can use `ionic serve` on the
-ionic-testpn app to see if it is working. You can then install that app to your test
+With a parse-server running for the `TESTPN` app, you can use `ionic serve` on
+ionic-testpn to see if it is working. You can then install to your test
 devices via USB.
 
-Don't forget to update ParseServerUrl in both config.xml and app.js
-(1 for device, the other for javascript).
-
-Finally, if you are using this local parse-server setup, make sure your test device
-can reach your server IP, i.e., they are on the same local network.
+Don't forget to update `ParseServerUrl` in both config.xml and app.js
+(1 for device, the other for javascript). Use the actual IP, not `localhost` because
+your test device needs to reach your server. Also, make sure both your device and
+computer are on the same network, i.e., device not on LTE and server on wifi.
