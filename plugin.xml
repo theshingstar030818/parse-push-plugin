@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<plugin xmlns="http://www.apache.org/cordova/ns/plugins/1.0" id="parse-push-plugin" version="0.9.6">
+<plugin xmlns="http://www.apache.org/cordova/ns/plugins/1.0" id="parse-push-plugin" version="0.9.7">
    <name>ParsePushPlugin</name>
    <description>Parse.Push plugin for phonegap/cordova/ionic framework</description>
 	<keywords>cordova,phonegap,ionic framework, parse server, parse push, push notification</keywords>
@@ -10,7 +10,6 @@
    </js-module>
 
    <platform name="android">
-      <preference name="GCM_SENDER_ID" />
       <config-file target="res/xml/config.xml" parent="/*">
          <feature name="ParsePushPlugin">
             <param name="android-package" value="github.taivo.parsepushplugin.ParsePushPlugin" />
@@ -32,7 +31,7 @@
                <category android:name="$PACKAGE_NAME" />
             </intent-filter>
          </receiver>
-         <meta-data android:name="com.parse.push.gcm_sender_id" android:value="id:$GCM_SENDER_ID" />
+         <meta-data android:name="com.parse.push.gcm_sender_id" android:value="id:CONFIG_XML_ParseGcmSenderId" />
       </config-file>
       <config-file target="AndroidManifest.xml" parent="/manifest">
          <uses-permission android:name="android.permission.INTERNET" />
@@ -60,6 +59,7 @@
       <!-- hook to simplify default installation -->
       <hook type="before_plugin_install" src="scripts/beforeAndroidInstall.js" />
       <hook type="before_plugin_uninstall" src="scripts/beforeAndroidUninstall.js" />
+      <hook type="after_prepare" src="scripts/afterAndroidPrepare.js" />
    </platform>
 
    <platform name="ios">

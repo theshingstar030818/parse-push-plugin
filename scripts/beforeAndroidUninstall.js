@@ -14,11 +14,25 @@ module.exports = function(context) {
 
 
    //
-   // because the user may have customized android:name, remove it IFF it is the default name
+   // because the user may have customized <application> android:name, remove it IFF it is the default name
    //
    var applicationNode = androidManifest.data.find('application');
    if(applicationNode.get('android:name') === DefaultApplicationName){
       delete applicationNode.attrib['android:name'];
+      androidManifest.is_changed = true;
+   }
+
+   //
+   // Remove the <meta-data android:name="com.parse.push.gcm_sender_id" />
+   // We changed it via after_prepare hook so cordova doesn't know to remove it automatically
+   //
+   var manifestGcmIdNode = androidManifest.data.find('application/meta-data[@android:name="com.parse.push.gcm_sender_id"]');
+   if(manifestGcmIdNode){
+      applicationNode.remove(manifestGcmIdNode);
+      androidManifest.is_changed = true;
+   }
+
+   if(androidManifest.is_changed){
       androidManifest.save();
    }
 

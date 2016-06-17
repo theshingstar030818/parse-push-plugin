@@ -172,20 +172,24 @@ Read the [Parse server push guide](https://github.com/ParsePlatform/parse-server
    For both Android and iOS, run
 
    ```
-   cordova plugin add https://github.com/taivo/parse-push-plugin --variable GCM_SENDER_ID=1234256789
+   cordova plugin add https://github.com/taivo/parse-push-plugin
 
    ```
-
-   To get your GCM sender ID, enable GCM for your Android project in the Google Developer Console. Take note of your
-   project number. It should be a large integer like 123427208255. This project number is your GCM sender ID. It's the
-   same `senderId` used in your server config.
 
    After adding the plugin to your project, create the following tags in `config.xml`:
 
    ```xml
+   <!-- required -->
    <preference name="ParseAppId" value="PARSE_APPID" />
    <preference name="ParseServerUrl" value="http://PARSE_SERVER:1337/parse/" />
+
+   <!-- required for Android -->
+   <preference name="ParseGcmSenderId" value="GCM_SENDER_ID" />
    ```
+
+   To get your GCM sender ID, enable GCM for your Android project in the Google Developer Console. Take note of your
+   project number. It should be a large integer like 123427208255. This project number is your GCM sender ID. It's the
+   same `senderId` used in parse-server push config.
 
    You're all set. The plugin takes care of initializing Parse platform using the `config.xml` preferences mentioned above.
    To customize push notifications, initialize Parse platform yourself, or use your own `MainApplication.java` in Android,

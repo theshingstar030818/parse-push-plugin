@@ -14,12 +14,13 @@ ionic state restore
 # restore bower dependencies
 bower update
 
-# install the parse-push-plugin with your sender id
-ionic plugin add ../../ --variable GCM_SENDER_ID=1234567
+# install the local copy of parse-push-plugin you already have
+ionic plugin add ../../
 
 ```
 
-Now go to config.xml and `www/js/app.js` change your `ParseServerUrl` preference.
+Now go to config.xml to set `ParseServerUrl` and `ParseGcmSenderId`. After that,
+open `www/js/app.js` and update the `serverURL` as well.
 
 
 Set up local parse-server.
