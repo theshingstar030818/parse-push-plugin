@@ -43,7 +43,7 @@ This will start a server whose cloud code is in the testpn-cloudcode directory.
 2 and 2 together
 ----------------
 
-With a parse-server running for the `TESTPN` app, you can use `ionic serve` on
+With a parse-server running for `TESTPN` app, you can use `ionic serve` on
 ionic-testpn to see if it is working. You can then install to your test
 devices via USB.
 
