@@ -30,10 +30,12 @@ public class ParsePushPluginReceiver extends ParsePushBroadcastReceiver
 
 	@Override
 	protected void onPushReceive(Context context, Intent intent) {
-		Log.d(LOGTAG, "onPushReceive - context: " + context);
-
-		if(!ParsePushPlugin.isInForeground()){
-			//
+      if(ParsePushPlugin.isInForeground()){
+         //
+ 	      // relay the push notification data to the javascript
+ 		   ParsePushPlugin.jsCallback( getPushData(intent) );
+      } else {
+		   //
 			// only create entry for notification tray if plugin/application is
 			// not running in foreground.
 			//
@@ -42,46 +44,43 @@ public class ParsePushPluginReceiver extends ParsePushBroadcastReceiver
 			NotificationManager notifManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 			notifManager.notify(getNotificationTag(context, intent), 0, getNotification(context, intent));
 		}
-
-	    //
-	    // relay the push notification data to the javascript
-		ParsePushPlugin.jsCallback( getPushData(intent) );
 	}
 
 	@Override
-    protected void onPushOpen(Context context, Intent intent) {
-		Log.d(LOGTAG, "onPushOpen - context: " + context);
+   protected void onPushOpen(Context context, Intent intent) {
+      JSONObject pnData = getPushData(intent);
+      resetCount(getNotificationTag(context, pnData));
 
-        JSONObject pnData = getPushData(intent);
-        resetCount(getNotificationTag(context, pnData));
+      String uriString = pnData.optString("uri");
+      Intent activityIntent = uriString.isEmpty() ? new Intent(context, getActivity(context, intent))
+                                                  : new Intent(Intent.ACTION_VIEW, Uri.parse(uriString));
 
-        String uriString = pnData.optString("uri");
-        Intent activityIntent = uriString.isEmpty() ? new Intent(context, getActivity(context, intent))
-                                                    : new Intent(Intent.ACTION_VIEW, Uri.parse(uriString));
+      activityIntent.putExtras(intent)
+                    .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        activityIntent.putExtras(intent)
-                      .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
+      ParseAnalytics.trackAppOpened(intent);
 
-        ParseAnalytics.trackAppOpened(intent);
+      // allow a urlHash parameter for hash as well as query params.
+      // This lets the app know what to do at coldstart by opening a PN.
+      // For example: navigate to a specific page of the app
+      String urlHash = pnData.optString("urlHash");
+      if(urlHash.startsWith("#") || urlHash.startsWith("?")){
+         activityIntent.putExtra("urlHash", urlHash);
+      }
 
-        // allow a urlHash parameter for hash as well as query params.
-        // This lets the app know what to do at coldstart by opening a PN.
-        // For example: navigate to a specific page of the app
-        String urlHash = pnData.optString("urlHash");
-        if(urlHash.startsWith("#") || urlHash.startsWith("?")){
-        	activityIntent.putExtra("urlHash", urlHash);
-        }
+      context.startActivity(activityIntent);
 
-        context.startActivity(activityIntent);
-
-        //
-	    // relay the push notification data to the javascript in case the
-        // app is already running when this push is open.
+      //
+	   // relay the push notification data to the javascript in case the
+      // app is already running when this push is open.
 		ParsePushPlugin.jsCallback(getPushData(intent), "OPEN");
-    }
+   }
 
 	@Override
 	protected Notification getNotification(Context context, Intent intent){
+      //
+      // Build a notification entry for the tray
+      //
 		JSONObject pnData = getPushData(intent);
 		String pnTag = getNotificationTag(context, pnData);
 
@@ -116,14 +115,14 @@ public class ParsePushPluginReceiver extends ParsePushBroadcastReceiver
 		       .setNumber(nextCount(pnTag))
 		       .setContentIntent(contentIntent)
 		       .setDeleteIntent(deleteIntent)
-	           .setAutoCancel(true);
+	          .setAutoCancel(true);
 
 		int colorId = context.getResources().getIdentifier(RESOURCE_PUSH_ICON_COLOR, "color", context.getPackageName());
 		if( colorId != 0){
 			builder.setColor(context.getResources().getColor(colorId));
 		}
 
-	    return builder.build();
+	   return builder.build();
 	}
 
 	private static JSONObject getPushData(Intent intent){
@@ -164,8 +163,8 @@ public class ParsePushPluginReceiver extends ParsePushBroadcastReceiver
 	private static void resetCount(String pnTag){
 		try {
 			MSG_COUNTS.put(pnTag, 0);
-        } catch (JSONException e) {
+      } catch (JSONException e) {
             Log.e(LOGTAG, "JSONException while resetting pn count for tag: [" + pnTag + "]", e);
-        }
+      }
 	}
 }

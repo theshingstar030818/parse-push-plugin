@@ -6,60 +6,66 @@ var serviceName = 'ParsePushPlugin';
 //
 require('cordova/channel').onCordovaReady.subscribe(function() {
 	var jsCallback = function(pn, pushAction) {
+      if(ParsePushPlugin.DEBUG){
+         console.log("Cordova callback: " + pushAction + "|" + JSON.stringify(pn));
+      }
+      
 		if(pn !== null){
 			if(pushAction === 'OPEN'){
-				 //
-				 // trigger a callback when user click open a notification.
-				 // One usecase for this pertains a cordova app that is already running in the background.
-				 // Relaying a push OPEN action, allows the app to resume and use javascript to navigate
-				 // to a different screen.
-				 //
-				 ParsePushPlugin.trigger(ParsePushPlugin._openEvent, pn);
-			 } else{
-				 //
-				 //an eventKey can be registered with the register() function to trigger
-				 //additional javascript callbacks when a notification is received.
-				 //This helps modularizes notification handling for different aspects
-				 //of your javascript app, e.g., receivePN:chat, receivePN:system, etc.
-				 //
-				 var base = ParsePushPlugin._receiveEvent;
-				 var customEventKey = ParsePushPlugin._customEventKey;
-				 
-				 ParsePushPlugin.trigger(base, pn);
-				 if(customEventKey && pn[customEventKey]){
-					 ParsePushPlugin.trigger(base + ':' + pn[customEventKey], pn);
-				 }
-			 }
+				//
+				// trigger a callback when user click open a notification.
+				// One usecase for this pertains a cordova app that is already running in the background.
+				// Relaying a push OPEN action, allows the app to resume and use javascript to navigate
+				// to a different screen.
+				//
+            ParsePushPlugin.softTrigger(ParsePushPlugin._openEvent, pn);
+			} else{
+				//
+				//an eventKey can be registered with the register() function to trigger
+				//additional javascript callbacks when a notification is received.
+				//This helps modularizes notification handling for different aspects
+				//of your javascript app, e.g., receivePN:chat, receivePN:system, etc.
+				//
+				var base = ParsePushPlugin._receiveEvent;
+				var customEventKey = ParsePushPlugin._customEventKey;
+
+				ParsePushPlugin.softTrigger(base, pn);
+				if(customEventKey && pn[customEventKey]){
+					ParsePushPlugin.softTrigger(base + ':' + pn[customEventKey], pn);
+				}
+			}
 		}
    };
-   
+
    require('cordova/exec')(jsCallback, null, serviceName, 'registerCallback', []);
 });
 
 var ParsePushPlugin = {
-	 _openEvent: 'openPN',
-	 _receiveEvent: 'receivePN',
-	 _customEventKey: 'event', //default key for custom events associated with each PN, set this to anything you see fit
-	 
-    getInstallationId: function(successCb, errorCb) {
-       cordova.exec(successCb, errorCb, serviceName, 'getInstallationId', []);
-    },
+	_openEvent: 'openPN',
+	_receiveEvent: 'receivePN',
+	_customEventKey: 'event', //default key for custom events associated with each PN, set this to anything you see fit
 
-    getInstallationObjectId: function(successCb, errorCb) {
-       cordova.exec(successCb, errorCb, serviceName, 'getInstallationObjectId', []);
-    },
+   DEBUG: false,
 
-    getSubscriptions: function(successCb, errorCb) {
-       cordova.exec(successCb, errorCb, serviceName, 'getSubscriptions', []);
-    },
+   getInstallationId: function(successCb, errorCb) {
+      cordova.exec(successCb, errorCb, serviceName, 'getInstallationId', []);
+   },
 
-    subscribe: function(channel, successCb, errorCb) {
-       cordova.exec(successCb, errorCb, serviceName, 'subscribe', [ channel ]);
-    },
+   getInstallationObjectId: function(successCb, errorCb) {
+      cordova.exec(successCb, errorCb, serviceName, 'getInstallationObjectId', []);
+   },
 
-    unsubscribe: function(channel, successCb, errorCb) {
-       cordova.exec(successCb, errorCb, serviceName, 'unsubscribe', [ channel ]);
-    }
+   getSubscriptions: function(successCb, errorCb) {
+      cordova.exec(successCb, errorCb, serviceName, 'getSubscriptions', []);
+   },
+
+   subscribe: function(channel, successCb, errorCb) {
+      cordova.exec(successCb, errorCb, serviceName, 'subscribe', [ channel ]);
+   },
+
+   unsubscribe: function(channel, successCb, errorCb) {
+      cordova.exec(successCb, errorCb, serviceName, 'unsubscribe', [ channel ]);
+   },
 };
 
 //
@@ -67,7 +73,7 @@ var ParsePushPlugin = {
 // push notification onReceive events
 function poorManExtend(object, source){
 	object || (object = {});
-	
+
 	for (var prop in source) {
 	    if(source.hasOwnProperty(prop)) {
 	       object[prop] = source[prop];
@@ -101,7 +107,6 @@ var EventMixin = {
         calls[event] = {tail: tail, next: list ? list.next : node};
         event = events.shift();
       }
-
       return this;
     },
 
@@ -157,9 +162,13 @@ var EventMixin = {
      * receive the true name of the event as the first argument).
      */
     trigger: function(events) {
+      if(this.DEBUG){
+         console.log("enter ParsePushPlugin.trigger: " + events);
+      }
+
       var event, node, calls, tail, args, all, rest;
       if (!(calls = this._callbacks)) {
-        return this;
+         return this;
       }
       all = calls.all;
       events = events.split(eventSplitter);
@@ -187,8 +196,28 @@ var EventMixin = {
         event = events.shift();
       }
 
+      if(this.DEBUG){
+         console.log("exit ParsePushPlugin.trigger: " + events);
+      }
       return this;
-    }
+   },
+
+   softTrigger: function(events){
+      //helps the cold-start case by allowing the main app some extra time
+      //to setup notification handlers.
+      //Note: this is a 95% solution and wouldn't work for extreme cases
+      //where the main app takes too long to setup handlers.
+      //
+      if(this._callbacks){
+         this.trigger.apply(this, arguments);
+      } else{
+         var self = this;
+         var triggerArgs = arguments;
+         window.setTimeout(function(){
+            self.trigger.apply(self, triggerArgs);
+         }, 200);
+      }
+   }
 };
 
 module.exports = poorManExtend(ParsePushPlugin, EventMixin);
