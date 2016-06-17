@@ -90,8 +90,8 @@ void MethodSwizzle(Class c, SEL originalSelector) {
       //
       ParsePushPlugin* pluginInstance = [self getParsePluginInstance];
 
-      NSString *appId     = [pluginInstance getSettingForKey:@"ParseAppId"];
-      NSString *serverUrl = [pluginInstance getSettingForKey:@"ParseServerUrl"];
+      NSString *appId     = [pluginInstance getConfigForKey:@"ParseAppId"];
+      NSString *serverUrl = [pluginInstance getConfigForKey:@"ParseServerUrl"];
 
       if(!serverUrl.length){
          NSException* invalidSettingException = [NSException

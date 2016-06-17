@@ -100,47 +100,47 @@
 
 - (void)jsCallback: (NSDictionary*)userInfo withAction: (NSString*)pnAction
 {
-    //
-    // Trigger javascript callback because a PN has been received or opened
-    //
-    //
+   //
+   // format the pn payload to be just 1 level deep and consistent with other platform versions of this plugin
+   NSMutableDictionary* pnPayload = [NSMutableDictionary dictionaryWithDictionary:userInfo];
+   [pnPayload addEntriesFromDictionary:pnPayload[@"aps"]];
+   [pnPayload removeObjectForKey:@"aps"];
 
-    if(self.callbackId){
-        //
-        // format the pn payload to be just 1 level deep and consistent with other platform versions of this plugin
-        NSMutableDictionary* pnPayload = [NSMutableDictionary dictionaryWithDictionary:userInfo];
-        [pnPayload addEntriesFromDictionary:pnPayload[@"aps"]];
-        [pnPayload removeObjectForKey:@"aps"];
+   NSArray* callbackArgs = [NSArray arrayWithObjects:pnPayload, pnAction, nil];
+   CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsMultipart:callbackArgs];
+   [pluginResult setKeepCallbackAsBool:YES];
 
-        NSArray* callbackArgs = [NSArray arrayWithObjects:pnPayload, pnAction, nil];
-        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsMultipart:callbackArgs];
-
-        [pluginResult setKeepCallbackAsBool:YES];
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
-    } else{
-        //callback has not been registered by the js side,
-        //put userInfo into queue. Will be flushed when callback is registered
-        if(self.pnQueue.count <= 10){
-            NSMutableDictionary* userInfoWithPnAction = [NSMutableDictionary dictionaryWithDictionary:userInfo];
-            userInfoWithPnAction[@"pnAction"] = pnAction;
-            [self.pnQueue addObject:userInfoWithPnAction];
-        } //if more than 10 items, stop queuing
-    }
+   if(self.callbackId){
+      [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
+   } else{
+      //
+      //callback has not been registered by the js side,
+      //queue things up so it can be flushed when js callback is registered.
+      //cap queue size at reasonable number
+      //
+      if(self.pnQueue.count <= 10){
+         [self.pnQueue addObject:pluginResult];
+      }
+   }
 }
 
-- (void)flushPushNotificationQueue{
-    while(self.pnQueue && self.pnQueue.count){
-        //
-        // de-queue the oldest pn and trigger callback
-        NSDictionary* userInfo = self.pnQueue[0];
-        [self.pnQueue removeObjectAtIndex:0];
-
-        [self jsCallback:userInfo withAction:userInfo[@"pnAction"]];
-    }
-}
-
-- (NSString *)getSettingForKey:(NSString *)key
+- (void)flushPushNotificationQueue
 {
+   while(self.pnQueue && self.pnQueue.count){
+      //
+      // de-queue the oldest pn and trigger callback
+      CDVPluginResult* pluginResult = self.pnQueue[0];
+      [self.pnQueue removeObjectAtIndex:0];
+
+      [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
+   }
+}
+
+- (NSString *)getConfigForKey:(NSString *)key
+{
+   //
+   // get config.xml <preference> settings
+   //
    return [self.commandDelegate.settings objectForKey:[key lowercaseString]];
 }
 

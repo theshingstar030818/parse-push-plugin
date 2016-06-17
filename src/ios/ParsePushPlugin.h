@@ -21,6 +21,6 @@
 // methods internal to plugin
 - (void)pluginInitialize;
 - (void)jsCallback: (NSDictionary*)userInfo withAction: (NSString*)pnAction;
-- (NSString *) getSettingForKey:(NSString *) key;
+- (NSString *) getConfigForKey:(NSString *) key;
 + (void)saveDeviceTokenToInstallation: (NSData*)deviceToken;
 @end
