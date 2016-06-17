@@ -146,9 +146,9 @@
 
 + (void)saveDeviceTokenToInstallation: (NSData*)deviceToken
 {
-    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
-    [currentInstallation setDeviceTokenFromData:deviceToken];
-    [currentInstallation saveInBackground];
+   PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+   [currentInstallation setDeviceTokenFromData:deviceToken];
+   [currentInstallation saveInBackground];
 }
 
 @end
