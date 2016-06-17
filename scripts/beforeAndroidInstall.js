@@ -20,6 +20,8 @@ module.exports = function(context) {
    if(applicationNode.get('android:name') === undefined){
       applicationNode.set('android:name', DefaultApplicationName);
       androidManifest.save();
+   } else{
+      console.warn("It looks like your application's android:name has already been set. If you have not set it up for Parse.Push, please refer to the Advanced Configuration section of this plugin's README.");
    }
 
    return true;
