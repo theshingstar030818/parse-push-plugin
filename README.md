@@ -14,6 +14,10 @@ How Is This Fork Different?
 
 **Works with hosted Parse.com and open source parse-sever**
 
+**Simple Setup**
+
+Just `cordova plugin add`, set a couple of `config.xml` tags and you're ready to go.
+
 **Can handle cold start**
 
 **Simple API**
@@ -34,10 +38,10 @@ ParsePushPlugin.on('receivePN', function(pn){
 });
 
 //
-// Custom events: If your pn content contains an `event` key, e.g.,
-// `{alert: "sup", event:"chat", customKey1:"foo", customKey2:"bar", ...}`,
-// ParsePushPlugin triggers a custom event that you can handle separately from the main
-// receivePN stream. This helps modularizing different types of communications via push.
+// Use custom events to simulate separate communication channels using push notification.
+// Just set an 'event' key in the push payload made from your server. If you set {event: "x"},
+// you'll be able to catch it via "receivePn:x"
+//
 ParsePushPlugin.on('receivePN:chat', function(pn){
 	console.log('yo i can also use custom event to keep things like chat modularized');
 });
@@ -55,7 +59,6 @@ ParsePushPlugin.on('openPN', function(pn){
 ```
 
 
-
 **Multiple notifications**
 
 Android: to prevent flooding the notification tray, this plugin retains only the last PN with the same `title` field.
@@ -66,8 +69,8 @@ iOS: iOS handles the notification tray.
 
 **Foreground vs. Background**
 
-Android: Only add an entry to the notification tray if the application is not running in foreground.
-The actual PN payload is always forwarded to your javascript when it is received.
+Android: Mimics the iOS behavior and create a notification when app is off or in background.
+When app is in foreground, PN payloads are forwarded via the `receivePN` and `receivePN:customEvt` events.
 
 iOS: Forward the PN payload to javascript in foreground mode. When app inactive or in background, iOS
 holds PNs in the tray. Only when the user opens these PNs would we have access and forward them to javascript.
@@ -75,9 +78,10 @@ holds PNs in the tray. Only when the user opens these PNs would we have access a
 
 **Navigate to a specific view when user opens a notification**
 
+If your app is already on (or in the background), you can simply perform page switching in javascript.
 Simply add a `urlHash` field in your PN payload that contains either a url hash, i.e. #myhash,
-or a url parameter string, i.e. ?param1=a&param2=b. If your app is already running, you can always
-handle page transition via javascript.
+or a url parameter string, i.e. ?param1=a&param2=b. Then catch that field via the `openPN` event and
+go from there.
 
 ```javascript
 ParsePushPlugin.on('openPN', function(pn){
@@ -87,9 +91,16 @@ ParsePushPlugin.on('openPN', function(pn){
 });
 ```
 
-Android: If `urlHash` starts with "#" or "?", this plugin will pass it along as an extra in the
-android intent to launch your MainActivity. For the cold start case, you can change your initial url
-in  `MainActivity.onCreate()`:
+For cold start, you can also let your cordova app finish loading and use javascript to handle page switching.
+You can also carry out the page switching while the splashscreen is still visible, thus eliminating any flicker
+at the start.
+
+Directly launching a non-default url via native code is also possible. Here are some hints on how
+to do that:
+
+*Android:* If `urlHash` starts with "#" or "?", this plugin will pass it along as an extra in the
+android intent to launch your MainActivity. You can then launch the custom url in
+`MainActivity.onCreate` this way:
 
 ```java
 @Override
@@ -104,7 +115,9 @@ public void onCreate(Bundle savedInstanceState)
 }
 ```
 
-iOS: You can process your notification payload in `AppDelegate.didReceiveRemoteNotification` and launch the specified URL from there.
+*iOS:* On cold start via notification, `didFinishLaunchingWithOptions` and this plugin's `didLaunchViaNotification`
+have access to the payload. Those 2 functions are good starting points for launching custom url.
+
 
 
 Installation
