@@ -278,9 +278,9 @@ Advanced Configuration
 The actual code that handles Parse platform initialization is in [ParsePushApplication.java](src/android/ParsePushApplication.java).
 
 Android knows to use this class due to the attribute `android:name` in `<application>` in 'platforms/android/AndroidManifest.xml'.
-To preserve your customizations, this plugin sets `android:name="com.phonegap.parsepushplugin.ParsePushApplication"`  
+To preserve your customizations, this plugin sets `android:name="github.taivo.parsepushplugin.ParsePushApplication"`  
 if and only if `android:name` is not already defined. It does this during plugin installation. Similarly, when the plugin is
-uninstalled, `android:name` will be removed only if its content matches `com.phonegap.parsepushplugin.ParsePushApplication` exactly.
+uninstalled, `android:name` will be removed only if its content matches `github.taivo.parsepushplugin.ParsePushApplication` exactly.
 
 If you use your own Application class, don't forget to update `android:name` to point to it.
 
