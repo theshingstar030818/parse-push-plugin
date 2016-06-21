@@ -43,6 +43,7 @@ public class ParsePushPluginReceiver extends ParsePushBroadcastReceiver
 			// (older messages with the same tag and notification id will be replaced)
 			NotificationManager notifManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 			notifManager.notify(getNotificationTag(context, intent), 0, getNotification(context, intent));
+         setResultCode(Activity.RESULT_OK);
 		}
 	}
 
