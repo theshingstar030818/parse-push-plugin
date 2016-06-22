@@ -22,7 +22,6 @@ import org.json.JSONException;
 public class ParsePushPluginReceiver extends ParsePushBroadcastReceiver
 {
 	public static final String LOGTAG = "ParsePushPluginReceiver";
-	public static final String PARSE_DATA_KEY = "com.parse.Data";
 	public static final String RESOURCE_PUSH_ICON_COLOR = "parse_push_icon_color";
 
 	private static JSONObject MSG_COUNTS = new JSONObject();
@@ -129,7 +128,7 @@ public class ParsePushPluginReceiver extends ParsePushBroadcastReceiver
 	private static JSONObject getPushData(Intent intent){
 		JSONObject pnData = null;
 		try {
-            pnData = new JSONObject(intent.getStringExtra(PARSE_DATA_KEY));
+            pnData = new JSONObject(intent.getStringExtra(KEY_PUSH_DATA));
         } catch (JSONException e) {
             Log.e(LOGTAG, "JSONException while parsing push data:", e);
         } finally{
