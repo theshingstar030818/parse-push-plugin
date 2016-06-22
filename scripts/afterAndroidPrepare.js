@@ -4,6 +4,7 @@ module.exports = function(context) {
    //
 
    var path = context.requireCordovaModule('path');
+   var ET = context.requireCordovaModule('elementtree');
    var ConfigFile = context.requireCordovaModule("cordova-common").ConfigFile;
 
    //
@@ -22,16 +23,15 @@ module.exports = function(context) {
    //
    var androidPrjDir = path.join(context.opts.projectRoot, 'platforms/android');
    var androidManifest = new ConfigFile(androidPrjDir, 'android', 'AndroidManifest.xml');
-   var manifestGcmIdNode = androidManifest.data.find('application/meta-data[@android:name="com.parse.push.gcm_sender_id"]');
+
+   var applicationNode = androidManifest.data.find('application');
+   var manifestGcmIdNode = applicationNode.find('meta-data[@android:name="com.parse.push.gcm_sender_id"]');
 
    if(!manifestGcmIdNode){
-      console.error("<meta-data android:name='com.parse.push.gcm_sender_id' > setting does not exist. Check your AndroidManifest.xml ");
-      return false;
+      manifestGcmIdNode = new ET.Element('meta-data', {'android:name': 'com.parse.push.gcm_sender_id'});
+      applicationNode.append( manifestGcmIdNode );
    }
 
-   //
-   // The value format is "id:$GCM_SENDER_ID"
-   //
    manifestGcmIdNode.set('android:value', 'id:' + configXmlGcmIdNode.get('value'));
    androidManifest.save();
 
