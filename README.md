@@ -310,13 +310,33 @@ your customization.
 
 Troubleshooting
 ---------------
-Android: Starting with the Parse Android SDK v1.10.1 update, your app may crash at start and the log says
-something about a missing method in OkHttpClient. Just update the cordova libs of your project
-via `cordova platform update android`. If your previous cordova libs are old, you may run into
-further compilation errors that has to do with the new cordova libs setting your android target
-to be 22 or higher. Look at file `platforms/android/project.properties` and make sure that is
+####Android:
+
+- If you run into this error during build
+
+   ```
+   > Could not resolve all dependencies for configuration ':_debugCompile'.
+      > Could not find any version that matches com.android.support:support-v4:+.
+        Searched in the following locations:
+            https://repo1.maven.org/maven2/com/android/support/support-v4/maven-metadata.xml
+            https://repo1.maven.org/maven2/com/android/support/support-v4/
+        Required by:
+            :android:unspecified
+   ```
+
+   Update your android SDK installation to include android-extra:
+
+   ```bash
+
+   android update sdk --no-ui --filter extra
+
+   ```
+
+
+- Starting with the Parse Android SDK v1.10.1 update, your app may crash at start and the log says something about a missing method in OkHttpClient. Just update the cordova libs of your project
+via `cordova platform update android`. If your previous cordova libs are old, you may run into further compilation errors that has to do with the new cordova libs setting your android target to be 22 or higher. Look at file `platforms/android/project.properties` and make sure that is
 consistent with your `config.xml`
 
-iOS: This plugin takes advantage of the `cordova.exec` bridge. If calls to `cordova.exec` only gets triggered
-after pressing your device's Home button, try inspecting your Content-Security-Policy. Your `frame-src` must allow
-`gap:` because the cordova bridge on iOS works via Iframe.
+####iOS:
+
+This plugin takes advantage of the `cordova.exec` bridge. If calls to `cordova.exec` only gets triggered after pressing your device's Home button, try inspecting your Content-Security-Policy. Your `frame-src` must allow `gap:` because the cordova bridge on iOS works via Iframe.

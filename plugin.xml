@@ -47,9 +47,10 @@
          <uses-permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" />
       </config-file>
 
-      <source-file src="src/android/parse/parse-android-1.13.0.jar" target-dir="libs" framework="true" />
-      <source-file src="src/android/parse/bolts-tasks-1.4.0.jar" target-dir="libs" framework="true" />
-      <source-file src="src/android/parse/android-support-v4.jar" target-dir="libs" framework="true" />
+      <framework src="com.parse:parse-android:1.13.0" />
+      <framework src="com.parse.bolts:bolts-android:1.4.0" />
+      <framework src="com.android.support:support-v4:+" />
+
       <source-file src="src/android/ParsePushPlugin.java" target-dir="src/github/taivo/parsepushplugin" />
       <source-file src="src/android/ParsePushPluginReceiver.java" target-dir="src/github/taivo/parsepushplugin" />
       <source-file src="src/android/ParsePushConfigReader.java" target-dir="src/github/taivo/parsepushplugin" />
