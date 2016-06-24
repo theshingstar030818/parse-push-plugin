@@ -1,137 +1,76 @@
 Parse.Push Plugin
 ==============================
 
-Parse.Push plugin for Phonegap/Cordova/ionic. Works for both hosted Parse.com and open source parse-server.
+Parse.Push plugin for Cordova/Phonegap/ionic. Works for both hosted Parse.com and open source parse-server.
 
-[Parse.com's](http://parse.com) Javascript API has no mechanism to register a device for or receive push notifications, which
-makes it fairly useless for PN in Phonegap/Cordova. This plugin bridges the gap by leveraging native Parse.com SDKs
-to register/receive PNs and expose a simple API to Javascript.
+---------------------------------------------------------------------
 
-* Phonegap/Cordova > 3.0
+## Highlights
 
-How Is This Fork Different?
---------------------------
+#### Work with [Parse.com](https://parse.com) and [parse-sever](https://github.com/ParsePlatform/parse-server)
 
-**Works with hosted Parse.com and open source parse-sever**
+#### Simple Setup
 
-**Simple Setup**
+   1. `cordova plugin add`
+   2. Set a couple of `config.xml` tags.
+   3. There is no 3, you're done!
 
-Just `cordova plugin add`, set a couple of `config.xml` tags and you're ready to go.
+#### Handle cold start out-of-the-box
 
-**Can handle cold start**
+#### Simple API
 
-**Simple API**
+   - **getInstallationId**( successCB, errorCB )
+   - **getSubscriptions**( successCB, errorCB )
+   - **subscribe**( channel, successCB, errorCB )
+   - **unsubscribe**( channel, successCB, errorCB )
 
-* **getInstallationId**( successCB, errorCB )
-* **getSubscriptions**( successCB, errorCB )
-* **subscribe**( channel, successCB, errorCB )
-* **unsubscribe**( channel, successCB, errorCB )
+#### Notification events
 
-**Manage push notification via events anywhere in your code**
+   Conveniently set handlers for `openPN, receivePN, receivePN:customEvt` anywhere in your javascript code.
 
-ParsePushPlugin makes these notification events available: `openPN, receivePN, receivePN:customEvt`.
-To handle notification events in JS, do this:
+   ```javascript
 
-```javascript
-ParsePushPlugin.on('receivePN', function(pn){
-	console.log('yo i got this push notification:' + JSON.stringify(pn));
-});
+   ParsePushPlugin.on('receivePN', function(pn){
+	   console.log('yo i got this push notification:' + JSON.stringify(pn));
+   });
 
-//
-// Use custom events to simulate separate communication channels using push notification.
-// Just set an 'event' key in the push payload made from your server. If you set {event: "x"},
-// you'll be able to catch it via "receivePn:x"
-//
-ParsePushPlugin.on('receivePN:chat', function(pn){
-	console.log('yo i can also use custom event to keep things like chat modularized');
-});
-ParsePushPlugin.on('receivePN:system-maintenance', function(pn){
-	console.log('yo, here is a system maintenance payload');
-});
+   //
+   // Use custom events to simulate separate communication channels using push notification.
+   // Just set an 'event' key in the push payload made from your server. If you set {event: "x"},
+   // you'll be able to catch it via "receivePn:x"
+   //
+   ParsePushPlugin.on('receivePN:chat', function(pn){
+	   console.log('yo i can also use custom event to keep things like chat modularized');
+   });
+   ParsePushPlugin.on('receivePN:system-maintenance', function(pn){
+	   console.log('yo, here is a system maintenance payload');
+   });
 
-//
-// When you open a notification from the system tray, `openPN` is also triggered.
-// You can use it to do things like navigating to a different page or refreshing data.
-ParsePushPlugin.on('openPN', function(pn){
-	//you can do things like navigating to a different view here
-	console.log('Yo, I get this when the user taps open a notification from the tray');
-});
-```
+   //
+   // When you open a notification from the system tray, `openPN` is also triggered.
+   // You can use it to do things like navigating to a different page or refreshing data.
+   ParsePushPlugin.on('openPN', function(pn){
+	   //you can do things like navigating to a different view here
+	   console.log('Yo, I get this when the user taps open a notification from the tray');
+   });
 
+   ```
 
-**Multiple notifications**
+#### Multiple notifications
 
-Android: to prevent flooding the notification tray, this plugin retains only the last PN with the same `title` field.
-For messages without the `title` field, the application name is used. A count of unopened PNs is shown.
-
-iOS: iOS handles the notification tray.
+   *Android*: to prevent flooding the notification tray, this plugin retains only the last PN with the same `title` field. For messages without the `title` field, the application name is used. A count of unopened PNs is shown.
 
 
-**Foreground vs. Background**
+#### Foreground vs. Background
 
-Android: Mimics the iOS behavior and create a notification when app is off or in background.
-When app is in foreground, PN payloads are forwarded via the `receivePN` and `receivePN:customEvt` events.
+   *Android*: Mimics the iOS behavior and create a notification in the system tray when app is off or in background. When app is in foreground, PN payloads are forwarded via the `receivePN` and `receivePN:customEvt` events.
 
-iOS: Forward the PN payload to javascript in foreground mode. When app inactive or in background, iOS
-holds PNs in the tray. Only when the user opens these PNs would we have access and forward them to javascript.
+   *iOS*: Forward the PN payload to javascript in foreground mode. When app inactive or in background, iOS holds PNs in the tray. Only when the user opens these PNs would we have access and forward them to javascript.
 
 
-**Navigate to a specific view when user opens a notification**
+## Installation
 
-If your app is already on (or in the background), you can simply perform page switching in javascript.
-Simply add a `urlHash` field in your PN payload that contains either a url hash, i.e. #myhash,
-or a url parameter string, i.e. ?param1=a&param2=b. Then catch that field via the `openPN` event and
-go from there.
-
-```javascript
-ParsePushPlugin.on('openPN', function(pn){
-	if(pn.urlHash){
-		window.location.hash = hash;
-	}
-});
-```
-
-For cold start, you can also let your cordova app finish loading and use javascript to handle page switching.
-You can also carry out the page switching while the splashscreen is still visible, thus eliminating any flicker
-at the start.
-
-Directly launching a non-default url via native code is also possible. Here are some hints on how
-to do that:
-
-*Android:* If `urlHash` starts with "#" or "?", this plugin will pass it along as an extra in the
-android intent to launch your MainActivity. You can then launch the custom url in
-`MainActivity.onCreate` this way:
-
-```java
-@Override
-public void onCreate(Bundle savedInstanceState)
-{
-    //
-    // your code...
-    //
-
-    String urlHash = intent.hasExtra("urlHash") ? intent.getStringExtra("urlHash") : "";
-    loadUrl(launchUrl + urlHash);
-}
-```
-
-*iOS:* On cold start via notification, `didFinishLaunchingWithOptions` and this plugin's `didLaunchViaNotification`
-have access to the payload. Those 2 functions are good starting points for launching custom url.
-
-
-
-Installation
-------------
-
-Read the [Parse server push guide](https://github.com/ParsePlatform/parse-server/wiki/Push) for an overview of the Push configuration.
-
-####Install Push Certificates on Server:
-
-- Hosted Parse.com
-   - iOS
-      1. Create SSL push certificate with Apple. You may find  [this tutorial useful](https://github.com/ParsePlatform/PushTutorial/tree/master/iOS). All steps prior to adding code to your iOS application are applicable.
-      2. Use Parse Dashboard to upload the generated `p12` push certificate.
-   - Android - no need for certificate setup. Parse.com uses its own push credentials.
+#### Install Push Certificates on Server:
 
 - Open Source parse-server
    1. Setup `parse-server`
@@ -167,19 +106,23 @@ Read the [Parse server push guide](https://github.com/ParsePlatform/parse-server
       ```
    4. Restart your `parse-server` for the new settings to take effect.
 
+- Hosted Parse.com
+   - iOS
+      1. Create SSL push certificate with Apple. You may find  [this tutorial useful](https://github.com/ParsePlatform/PushTutorial/tree/master/iOS). All steps prior to adding code to your iOS application are applicable.
+      2. Use Parse Dashboard to upload the generated `p12` push certificate.
+   - Android - no need for certificate setup. Parse.com uses its own push credentials.
 
-####Add Plugin
 
-For both Android and iOS, run
+#### Add Plugin
 
-```
+```bash
 cordova plugin add https://github.com/taivo/parse-push-plugin
 
 ```
 
 After adding the plugin to your project, create the following tags in `config.xml`:
 
-- For open source parse-server
+   - For open source parse-server
 
    ```xml
    <preference name="ParseAppId" value="your-parse-app-id" />
@@ -193,7 +136,7 @@ After adding the plugin to your project, create the following tags in `config.xm
    <preference name="ParseGcmSenderId" value="gcm-sender-id" />
    ```
 
-- For legacy Parse.com
+   - For legacy Parse.com
 
    ```xml
    <preference name="ParseAppId" value="your-parse-app-id" />
@@ -207,19 +150,45 @@ You're all set. The plugin takes care of initializing Parse platform using the `
 To customize push notifications, initialize Parse platform yourself, or use your own `MainApplication.java` in Android,
 see the [Advanced Configuration](#advanced-configuration) section.
 
-Usage
------
 
-When your app starts, ParsePushPlugin automatically obtains and stores necessary device tokens to your native `ParseInstallation`.
-This plugin also registers a javascript callback that will be triggered when a push notification is received or opened on the native side.
-This setup enables the following simple API and event handling.
+## Usage
 
-**API**
+When your app starts, ParsePushPlugin automatically obtains and stores necessary device tokens to your native `ParseInstallation`. It also registers a javascript callback that will be triggered when a push notification is opened or received.
 
+#### Receiving push notifications
+
+Anywhere in your code, you can set a listener for notification events using the ParsePushPlugin object.
+
+```javascript
+if(window.ParsePushPlugin){
+	ParsePushPlugin.on('receivePN', function(pn){
+		alert('yo i got this push notification:' + JSON.stringify(pn));
+	});
+
+	//
+	//you can also listen to your own custom events
+	// Note: to push custom event, include 'event' key in your push payload,
+   // e.g. {alert: "sup", event:'chat'}
+	ParsePushPlugin.on('receivePN:chat', chatEventHandler);
+	ParsePushPlugin.on('receivePN:serverMaintenance', serverMaintenanceHandler);
+
+   //
+   // When the app is off or in background, push notifications get added
+   // to the notification tray. When a user open a notification, you
+   // can catch it via openPN
+   ParsePushPlugin.on('openPN', function(pn){
+		alert('a notification was opened:' + JSON.stringify(pn));
+	});
+}
+```
+
+#### Subscriptions and Installation Id
 
 ```javascript
 ParsePushPlugin.getInstallationId(function(id) {
-    alert(id);
+   // note that the javascript client has its own installation id,
+   // which is different from the device installation id.
+    alert("device installationId: " + id);
 }, function(e) {
     alert('error');
 });
@@ -243,36 +212,50 @@ ParsePushPlugin.unsubscribe('SampleChannel', function(msg) {
 });
 ```
 
+#### Navigate to a specific view when user opens a notification
 
-**Receiving push notifications**
+If your app is already on (or in the background), you can simply perform page switching in javascript. Just add a `urlHash` field in your PN payload that contains either a url hash, i.e. #myhash, or a url parameter string, i.e. ?param1=a&param2=b. Then catch that field via the `openPN` event and go from there.
 
-Anywhere in your code, you can set a listener for notification events using the ParsePushPlugin object (it extends Parse.Events).
 ```javascript
-if(window.ParsePushPlugin){
-	ParsePushPlugin.on('receivePN', function(pn){
-		alert('yo i got this push notification:' + JSON.stringify(pn));
-	});
+ParsePushPlugin.on('openPN', function(pn){
+	if(pn.urlHash){
+		window.location.hash = hash;
+	}
+});
+```
 
-	//
-	//you can also listen to your own custom events
-	// Note: to push custom event, include 'event' key in your push payload,
-   // e.g. {alert: "sup", event:'chat'}
-	ParsePushPlugin.on('receivePN:chat', chatEventHandler);
-	ParsePushPlugin.on('receivePN:serverMaintenance', serverMaintenanceHandler);
+For cold start, you can also let your cordova app finish loading and use javascript to handle page switching. Carry out this type of page switching while the spashscreen is still visible for a better user experience.
+
+Directly launching a non-default url via native code is also possible. Here are some hints on how to do that:
+
+*Android*: If `urlHash` starts with "#" or "?", this plugin will pass it along as an extra in the android intent to launch your MainActivity. You can then launch the custom url in `MainActivity.onCreate` this way:
+
+```java
+@Override
+public void onCreate(Bundle savedInstanceState)
+{
+    //
+    // your code...
+    //
+
+    String urlHash = intent.hasExtra("urlHash") ? intent.getStringExtra("urlHash") : "";
+    loadUrl(launchUrl + urlHash);
 }
 ```
 
+*iOS*: On cold start via notification, `didFinishLaunchingWithOptions` and this plugin's `didLaunchViaNotification`
+have access to the payload. Those 2 functions are good starting points for launching custom url.
 
-**Silent Notifications**
 
-For Android, a silent notification can be sent by omitting the `title` and `alert` fields in the
-JSON payload. This means the push notification will not be shown in the system tray, but its JSON
-payload will still be delivered to your `receivePN` and `receivePN:customEvt` handlers.
+#### Silent Notifications
+
+For Android, a silent notification can be sent by omitting the `title` and `alert` fields in the JSON payload. This means the push notification will not be shown in the system tray, but its JSON payload will still be delivered to your `receivePN` and `receivePN:customEvt` handlers.
 
 
 Advanced Configuration
 ----------------------
-####Android:
+
+#### Android:
 
 The actual code that handles Parse platform initialization is in [ParsePushApplication.java](src/android/ParsePushApplication.java).
 
@@ -296,20 +279,19 @@ The comments contain all the explanations and hints you will need. Mimic the cod
    ```
 
 
-####iOS:
+#### iOS:
 
 If you want to customize your notification settings, use the method `didFinishLaunchingWithOptions`
 in [AppDelegate+parsepush.m](src/ios/AppDelegate+parsepush.m) as a guide to modify the same method in
 your `platforms/ios/ProjectName/Classes/AppDelegate.m`.
 
-When you initialize Parse from `platforms/ios/ProjectName/Classes/AppDelegate.m`, this plugin will
-skip it's own version of Parse initialization and notification setup, that way it won't override
-your customization.
+When you initialize Parse from your own `platforms/ios/ProjectName/Classes/AppDelegate.m`, this plugin will
+skip it's version of Parse initialization and notification setup, that way it won't override your customization.
 
 
-Troubleshooting
----------------
-####Android:
+## Troubleshooting
+
+#### Android:
 
 - If you run into this error during build
 
@@ -336,6 +318,6 @@ Troubleshooting
 via `cordova platform update android`. If your previous cordova libs are old, you may run into further compilation errors that has to do with the new cordova libs setting your android target to be 22 or higher. Look at file `platforms/android/project.properties` and make sure that is
 consistent with your `config.xml`
 
-####iOS:
+#### iOS:
 
 This plugin takes advantage of the `cordova.exec` bridge. If calls to `cordova.exec` only gets triggered after pressing your device's Home button, try inspecting your Content-Security-Policy. Your `frame-src` must allow `gap:` because the cordova bridge on iOS works via Iframe.
