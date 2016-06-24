@@ -42,6 +42,14 @@ public class ParsePushPluginReceiver extends ParsePushBroadcastReceiver
 			// (older messages with the same tag and notification id will be replaced)
 			NotificationManager notifManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 			notifManager.notify(getNotificationTag(context, intent), 0, getNotification(context, intent));
+
+         //
+         // A user with Android 5.0.1 reports that notif is not created in tray when
+         // app is off (not background), trying method described here
+         // https://github.com/phonegap/phonegap-plugin-push/issues/211 by @vikasing
+         // to see if it works
+         //
+         intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
          setResultCode(Activity.RESULT_OK);
 		}
 	}
