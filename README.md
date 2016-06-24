@@ -170,43 +170,42 @@ Read the [Parse server push guide](https://github.com/ParsePlatform/parse-server
 
 ####Add Plugin
 
-- Hosted Parse.com
+For both Android and iOS, run
 
-   ```
-   cordova plugin add https://github.com/taivo/parse-push-plugin.git#parse-com
+```
+cordova plugin add https://github.com/taivo/parse-push-plugin
 
-   ```
+```
 
-   After this step, please use the `parse-com` branch's README to continue setting
-   up the plugin for use with hosted Parse.com.
+After adding the plugin to your project, create the following tags in `config.xml`:
 
-
-- Open Source parse-server
-   For both Android and iOS, run
-
-   ```
-   cordova plugin add https://github.com/taivo/parse-push-plugin
-
-   ```
-
-   After adding the plugin to your project, create the following tags in `config.xml`:
+- For open source parse-server
 
    ```xml
-   <!-- required -->
-   <preference name="ParseAppId" value="PARSE_APPID" />
-   <preference name="ParseServerUrl" value="http://PARSE_SERVER:1337/parse/" />
+   <preference name="ParseAppId" value="your-parse-app-id" />
+   <preference name="ParseServerUrl" value="http://your-parse-server:1337/parse/" />
 
-   <!-- required for Android -->
-   <preference name="ParseGcmSenderId" value="GCM_SENDER_ID" />
+   <!-- required for Android push notification
+      To get your GCM sender ID, enable GCM for your Android project in the Google Developer Console.
+      The sender id is your project number, and should be a large integer like 123427208255.
+      This is the same "senderId" to be used in your parse-server push configuration.
+   -->
+   <preference name="ParseGcmSenderId" value="gcm-sender-id" />
    ```
 
-   To get your GCM sender ID, enable GCM for your Android project in the Google Developer Console. Take note of your
-   project number. It should be a large integer like 123427208255. This project number is your GCM sender ID. It's the
-   same `senderId` used in parse-server push config.
+- For legacy Parse.com
 
-   You're all set. The plugin takes care of initializing Parse platform using the `config.xml` preferences mentioned above.
-   To customize push notifications, initialize Parse platform yourself, or use your own `MainApplication.java` in Android,
-   see the [Advanced Configuration](#advanced-configuration) section.
+   ```xml
+   <preference name="ParseAppId" value="your-parse-app-id" />
+   <preference name="ParseClientKey" value="your-parse-client-key" />
+
+   <!-- Note: for legacy parse.com, do not replace this string value. It must be "PARSE_DOT_COM"-->
+   <preference name="ParseServerUrl" value="PARSE_DOT_COM" />
+   ```
+
+You're all set. The plugin takes care of initializing Parse platform using the `config.xml` preferences mentioned above.
+To customize push notifications, initialize Parse platform yourself, or use your own `MainApplication.java` in Android,
+see the [Advanced Configuration](#advanced-configuration) section.
 
 Usage
 -----

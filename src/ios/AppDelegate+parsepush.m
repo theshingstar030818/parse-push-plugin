@@ -109,10 +109,22 @@ void MethodSwizzle(Class c, SEL originalSelector) {
          @throw invalidSettingException;
       }
 
-      [Parse initializeWithConfiguration:[ParseClientConfiguration configurationWithBlock:^(id<ParseMutableClientConfiguration> configuration) {
-         configuration.applicationId = appId;
-         configuration.server = serverUrl;
-      }]];
+      if( [@"PARSE_DOT_COM" caseInsensitiveCompare:serverUrl] == NSOrderedSame ) {
+         //
+         // initialize for use with parse.com
+         //
+         [Parse setApplicationId:appId clientKey:[pluginInstance getConfigForKey:@"ParseClientKey"]];
+      } else{
+         //
+         // initialize for use with opensource parse-server
+         //
+         [Parse initializeWithConfiguration:[ParseClientConfiguration configurationWithBlock:^(id<ParseMutableClientConfiguration> configuration) {
+            configuration.applicationId = appId;
+            configuration.server = serverUrl;
+         }]];
+      }
+
+
 
       UIUserNotificationType userNotificationTypes = (UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound);
       UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:userNotificationTypes categories:nil];
