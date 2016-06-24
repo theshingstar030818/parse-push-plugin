@@ -93,10 +93,10 @@ void MethodSwizzle(Class c, SEL originalSelector) {
       NSString *appId     = [pluginInstance getConfigForKey:@"ParseAppId"];
       NSString *serverUrl = [pluginInstance getConfigForKey:@"ParseServerUrl"];
 
-      if(!serverUrl.length){
+      if(!appId.length){
          NSException* invalidSettingException = [NSException
            exceptionWithName:@"invalidSettingException"
-           reason:@"Please set \"serverUrl\" with a preference tag in config.xml"
+           reason:@"Please set \"appId\" with a preference tag in config.xml"
            userInfo:nil];
          @throw invalidSettingException;
       }
