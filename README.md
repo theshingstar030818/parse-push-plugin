@@ -8,13 +8,13 @@ Parse.Push plugin for Cordova/Phonegap/ionic. Works for both hosted Parse.com an
 
 #### Work with [Parse.com](https://parse.com) and [parse-sever](https://github.com/ParsePlatform/parse-server)
 
+#### Handle cold start out-of-the-box
+
 #### Simple Setup
 
    1. `cordova plugin add`
    2. Set app id, server URL, and keys as `config.xml` `preference` tags.
    3. Done! No fuss with Objective C, AndroidManifest, or Java
-
-#### Handle cold start out-of-the-box
 
 #### Simple API
 
@@ -62,7 +62,7 @@ Parse.Push plugin for Cordova/Phonegap/ionic. Works for both hosted Parse.com an
 
 #### Foreground vs. Background
 
-   *Android*: Mimics the iOS behavior and create a notification in the system tray when app is off or in background. When app is in foreground, PN payloads are forwarded via the `receivePN` and `receivePN:customEvt` events.
+   *Android*: Mimic the iOS behavior and create a notification in the system tray when app is off or in background. When app is in foreground, PN payloads are forwarded via the `receivePN` and `receivePN:customEvt` events.
 
    *iOS*: Forward the PN payload to javascript in foreground mode. When app inactive or in background, iOS holds PNs in the tray. Only when the user opens these PNs would we have access and forward them to javascript.
 
@@ -119,7 +119,7 @@ cordova plugin add https://github.com/taivo/parse-push-plugin
 
 ```
 
-After adding the plugin to your project, create the following tags in `config.xml`:
+Create the following tags in `config.xml`:
 
    - For open source parse-server
 
