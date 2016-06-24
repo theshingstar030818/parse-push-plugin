@@ -43,14 +43,33 @@ public class ParsePushApplication extends Application {
          //
 
 
-         // Simple config reading: 1st null to detect R.xml.config resource id, 2nd null indicates no custom config param
-         ParsePushConfigReader config = new ParsePushConfigReader(getApplicationContext(), null, null);
+         // Simple config reading for opensource parse-server:
+         // 1st null to detect R.xml.config resource id, 2nd null indicates no custom config param
+         //ParsePushConfigReader config = new ParsePushConfigReader(getApplicationContext(), null, null);
+         //
+         //Parse.initialize(new Parse.Configuration.Builder(this)
+         //   .applicationId(config.getAppId())
+         //   .server(config.getServerUrl()) // The trailing slash is important, e.g., https://mydomain.com:1337/parse/
+         //   .build()
+         //);
 
-         Parse.initialize(new Parse.Configuration.Builder(this)
-            .applicationId(config.getAppId())
-            .server(config.getServerUrl()) // The trailing slash is important, e.g., https://mydomain.com:1337/parse/
-            .build()
-         );
+         //
+         // Support parse.com and opensource parse-server
+         // 1st null to detect R.xml.config
+         ParsePushConfigReader config = new ParsePushConfigReader(getApplicationContext(), null, new String[] {"ParseClientKey"});
+         if(config.getServerUrl().equalsIgnoreCase("PARSE_DOT_COM")){
+            //
+            //initialize for use with legacy parse.com
+            Parse.initialize(this, config.getAppId(), config.get("ParseClientKey"));
+         } else{
+            //
+            // initialize for use with opensource parse-server
+            Parse.initialize(new Parse.Configuration.Builder(this)
+               .applicationId(config.getAppId())
+               .server(config.getServerUrl()) // The trailing slash is important, e.g., https://mydomain.com:1337/parse/
+               .build()
+            );
+         }
 
          //
          // save installation. Parse.Push will need this to push to the correct device

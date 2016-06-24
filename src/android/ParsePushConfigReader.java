@@ -60,7 +60,7 @@ public final class ParsePushConfigReader {
       return configs.get(parseServerUrlKey);
    }
 
-   public String getConfigParam(String key){
+   public String get(String key){
       return configs.get(key);
    }
 
