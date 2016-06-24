@@ -3,7 +3,6 @@ Parse.Push Plugin
 
 Parse.Push plugin for Cordova/Phonegap/ionic. Works for both hosted Parse.com and open source parse-server.
 
----------------------------------------------------------------------
 
 ## Highlights
 
@@ -12,8 +11,8 @@ Parse.Push plugin for Cordova/Phonegap/ionic. Works for both hosted Parse.com an
 #### Simple Setup
 
    1. `cordova plugin add`
-   2. Set a couple of `config.xml` tags.
-   3. There is no 3, you're done!
+   2. Set app id, server URL, and keys as `config.xml` `preference` tags.
+   3. Done! No fuss with Objective C, AndroidManifest, or Java
 
 #### Handle cold start out-of-the-box
 
@@ -26,7 +25,7 @@ Parse.Push plugin for Cordova/Phonegap/ionic. Works for both hosted Parse.com an
 
 #### Notification events
 
-   Conveniently set handlers for `openPN, receivePN, receivePN:customEvt` anywhere in your javascript code.
+   Handle `openPN, receivePN, receivePN:customEvt` anywhere in your javascript code.
 
    ```javascript
 
@@ -37,7 +36,7 @@ Parse.Push plugin for Cordova/Phonegap/ionic. Works for both hosted Parse.com an
    //
    // Use custom events to simulate separate communication channels using push notification.
    // Just set an 'event' key in the push payload made from your server. If you set {event: "x"},
-   // you'll be able to catch it via "receivePn:x"
+   // you'll be able to catch it via "receivePN:x"
    //
    ParsePushPlugin.on('receivePN:chat', function(pn){
 	   console.log('yo i can also use custom event to keep things like chat modularized');
@@ -160,55 +159,61 @@ When your app starts, ParsePushPlugin automatically obtains and stores necessary
 Anywhere in your code, you can set a listener for notification events using the ParsePushPlugin object.
 
 ```javascript
-if(window.ParsePushPlugin){
-	ParsePushPlugin.on('receivePN', function(pn){
-		alert('yo i got this push notification:' + JSON.stringify(pn));
-	});
+$ionicPlatform.ready(function(){
+   if(window.ParsePushPlugin){
+   	ParsePushPlugin.on('receivePN', function(pn){
+   		alert('yo i got this push notification:' + JSON.stringify(pn));
+   	});
 
-	//
-	//you can also listen to your own custom events
-	// Note: to push custom event, include 'event' key in your push payload,
-   // e.g. {alert: "sup", event:'chat'}
-	ParsePushPlugin.on('receivePN:chat', chatEventHandler);
-	ParsePushPlugin.on('receivePN:serverMaintenance', serverMaintenanceHandler);
+   	//
+   	//you can also listen to your own custom events
+   	// Note: to push custom event, include 'event' key in your push payload,
+      // e.g. {alert: "sup", event:'chat'}
+   	ParsePushPlugin.on('receivePN:chat', chatEventHandler);
+   	ParsePushPlugin.on('receivePN:serverMaintenance', serverMaintenanceHandler);
 
-   //
-   // When the app is off or in background, push notifications get added
-   // to the notification tray. When a user open a notification, you
-   // can catch it via openPN
-   ParsePushPlugin.on('openPN', function(pn){
-		alert('a notification was opened:' + JSON.stringify(pn));
-	});
-}
+      //
+      // When the app is off or in background, push notifications get added
+      // to the notification tray. When a user open a notification, you
+      // can catch it via openPN
+      ParsePushPlugin.on('openPN', function(pn){
+   		alert('a notification was opened:' + JSON.stringify(pn));
+   	});
+   }
+});
 ```
 
 #### Subscriptions and Installation Id
 
 ```javascript
-ParsePushPlugin.getInstallationId(function(id) {
-   // note that the javascript client has its own installation id,
-   // which is different from the device installation id.
-    alert("device installationId: " + id);
-}, function(e) {
-    alert('error');
-});
+$ionicPlatform.ready(function(){
+   if(window.ParsePushPlugin){
+      ParsePushPlugin.getInstallationId(function(id) {
+         // note that the javascript client has its own installation id,
+         // which is different from the device installation id.
+          alert("device installationId: " + id);
+      }, function(e) {
+          alert('error');
+      });
 
-ParsePushPlugin.getSubscriptions(function(subscriptions) {
-    alert(subscriptions);
-}, function(e) {
-    alert('error');
-});
+      ParsePushPlugin.getSubscriptions(function(subscriptions) {
+          alert(subscriptions);
+      }, function(e) {
+          alert('error');
+      });
 
-ParsePushPlugin.subscribe('SampleChannel', function(msg) {
-    alert('OK');
-}, function(e) {
-    alert('error');
-});
+      ParsePushPlugin.subscribe('SampleChannel', function(msg) {
+          alert('OK');
+      }, function(e) {
+          alert('error');
+      });
 
-ParsePushPlugin.unsubscribe('SampleChannel', function(msg) {
-    alert('OK');
-}, function(e) {
-    alert('error');
+      ParsePushPlugin.unsubscribe('SampleChannel', function(msg) {
+          alert('OK');
+      }, function(e) {
+          alert('error');
+      });
+   }
 });
 ```
 
