@@ -10,6 +10,7 @@
 // methods exposed to JS
 - (void)registerCallback: (CDVInvokedUrlCommand*)command;
 
+- (void)initialize: (CDVInvokedUrlCommand *)command;
 - (void)getInstallationId: (CDVInvokedUrlCommand*)command;
 - (void)getInstallationObjectId: (CDVInvokedUrlCommand*)command;
 

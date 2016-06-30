@@ -90,8 +90,9 @@ void MethodSwizzle(Class c, SEL originalSelector) {
       //
       ParsePushPlugin* pluginInstance = [self getParsePluginInstance];
 
-      NSString *appId     = [pluginInstance getConfigForKey:@"ParseAppId"];
-      NSString *serverUrl = [pluginInstance getConfigForKey:@"ParseServerUrl"];
+      NSString *appId      = [pluginInstance getConfigForKey:@"ParseAppId"];
+      NSString *serverUrl  = [pluginInstance getConfigForKey:@"ParseServerUrl"];
+      NSString *shouldInit = [pluginInstance getConfigForKey:@"ParseAutoRegistration"];
 
       if(!appId.length){
          NSException* invalidSettingException = [NSException
@@ -124,11 +125,12 @@ void MethodSwizzle(Class c, SEL originalSelector) {
          }]];
       }
 
-
-      UIUserNotificationType userNotificationTypes = (UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound);
-      UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:userNotificationTypes categories:nil];
-      [application registerUserNotificationSettings:settings];
-      [application registerForRemoteNotifications];
+      if (!shouldInit.length || [shouldInit isEqualToString:@"true"]){
+        UIUserNotificationType userNotificationTypes = (UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound);
+        UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:userNotificationTypes categories:nil];
+        [application registerUserNotificationSettings:settings];
+        [application registerForRemoteNotifications];
+      }
 	}
 
    return isOk;
