@@ -30,6 +30,22 @@
     }
 }
 
+- (void)initialize:(CDVInvokedUrlCommand *)command
+{
+    CDVPluginResult* pluginResult = nil;   
+    
+    NSString *shouldInit = [self getConfigForKey:@"ParseAutoRegistration"];
+    if ([shouldInit isEqualToString:@"false"]){
+        UIUserNotificationType userNotificationTypes = (UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound);
+        UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:userNotificationTypes categories:nil];
+        [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
+        [[UIApplication sharedApplication] registerForRemoteNotifications];
+    }
+    
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
 - (void)getInstallationId:(CDVInvokedUrlCommand*) command
 {
     [self.commandDelegate runInBackground:^{

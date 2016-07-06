@@ -27,6 +27,7 @@ public class ParsePushPlugin extends CordovaPlugin {
    private static final String ACTION_SUBSCRIBE = "subscribe";
    private static final String ACTION_UNSUBSCRIBE = "unsubscribe";
    private static final String ACTION_REGISTER_CALLBACK = "registerCallback";
+   private static final String ACTION_INITIALIZE = "initialize";
 
    private static CallbackContext gEventCallback = null;
    private static Queue<PluginResult> pnQueue = new LinkedList();
@@ -66,6 +67,10 @@ public class ParsePushPlugin extends CordovaPlugin {
       }
       if (action.equals(ACTION_UNSUBSCRIBE)) {
          this.unsubscribe(args.getString(0), callbackContext);
+         return true;
+      }
+      if (action.equals(ACTION_INITIALIZE)) {
+         this.doInitialization(callbackContext);
          return true;
       }
       return false;
@@ -111,6 +116,10 @@ public class ParsePushPlugin extends CordovaPlugin {
    private void unsubscribe(final String channel, final CallbackContext callbackContext) {
     	ParsePush.unsubscribeInBackground(channel);
          callbackContext.success();
+   }
+
+   private void doInitialization(final CallbackContext callbackContext) {
+      callbackContext.success();
    }
 
    /*
