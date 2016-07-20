@@ -6,7 +6,7 @@ Parse.Push plugin for Cordova/Phonegap/ionic. Works for both hosted Parse.com an
 
 ## Highlights
 
-#### Work with [Parse.com](https://parse.com) and [parse-sever](https://github.com/ParsePlatform/parse-server)
+#### Work with [Parse.com](https://parse.com) and [parse-server](https://github.com/ParsePlatform/parse-server)
 
 #### Handle cold start out-of-the-box
 
