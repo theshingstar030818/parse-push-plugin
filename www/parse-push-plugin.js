@@ -5,6 +5,7 @@ var serviceName = 'ParsePushPlugin';
 // when a PN event occurs
 //
 require('cordova/channel').onCordovaReady.subscribe(function() {
+	console.log('YO YO YO');
 	var jsCallback = function(pn, pushAction) {
       if(ParsePushPlugin.DEBUG){
          console.log("Cordova callback: " + pushAction + "|" + JSON.stringify(pn));
