@@ -22,6 +22,7 @@ Parse.Push plugin for Cordova/Phonegap/ionic. Works for both hosted Parse.com an
    - **getSubscriptions**( successCB, errorCB )
    - **subscribe**( channel, successCB, errorCB )
    - **unsubscribe**( channel, successCB, errorCB )
+   - **register( successCB, errorCB ) //optional
 
 #### Notification events
 
@@ -286,7 +287,13 @@ The comments contain all the explanations and hints you will need. Mimic the cod
 
 #### iOS:
 
-If you want to customize your notification settings, use the method `didFinishLaunchingWithOptions`
+By default, `ParsePushPlugin` automatically registers your device for push notification on app startup. This means
+your app will ask for push notification permission at the very beginning of the first app start. For UX reason,
+you may want to delay asking the user for that permission until you absolutely need it. To do so,
+add `<preference name="ParseAutoRegistration" value="false" />` to `config.xml`
+and manually call `ParsePushPlugin.register(successCB, errorCB)` in your javascript.
+
+If you want to completely customize your notification settings, use the method `didFinishLaunchingWithOptions`
 in [AppDelegate+parsepush.m](src/ios/AppDelegate+parsepush.m) as a guide to modify the same method in
 your `platforms/ios/ProjectName/Classes/AppDelegate.m`.
 
