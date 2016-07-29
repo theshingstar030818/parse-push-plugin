@@ -5,12 +5,10 @@
 
 @implementation ParsePushPlugin
 
-@synthesize callbackId;
-
-
 - (void)pluginInitialize {
     //store userInfo dictionaries if js callback is not yet registered.
     self.pnQueue = [NSMutableArray new];
+    self.hasRegistered = false;
 }
 
 - (void)registerCallback: (CDVInvokedUrlCommand*)command
@@ -30,19 +28,11 @@
     }
 }
 
-- (void)initialize:(CDVInvokedUrlCommand *)command
+- (void)register:(CDVInvokedUrlCommand *)command
 {
-    CDVPluginResult* pluginResult = nil;   
-    
-    NSString *shouldInit = [self getConfigForKey:@"ParseAutoRegistration"];
-    if ([shouldInit isEqualToString:@"false"]){
-        UIUserNotificationType userNotificationTypes = (UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound);
-        UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:userNotificationTypes categories:nil];
-        [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
-        [[UIApplication sharedApplication] registerForRemoteNotifications];
-    }
-    
-    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self registerForPN];
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
@@ -112,6 +102,23 @@
     [currentInstallation saveInBackground];
     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+
+- (void)registerForPN {
+    //
+    // carries out the actual device registration for push notification
+    //
+    UIApplication *application = [UIApplication sharedApplication];
+
+    if(!self.hasRegistered){
+        UIUserNotificationType userNotificationTypes = (UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound);
+        UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:userNotificationTypes categories:nil];
+        [application registerUserNotificationSettings:settings];
+        [application registerForRemoteNotifications];
+
+        self.hasRegistered = true;
+    }
 }
 
 - (void)jsCallback: (NSDictionary*)userInfo withAction: (NSString*)pnAction

@@ -2,6 +2,5 @@
 
 @interface AppDelegate (parsepush)
 
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo;
 
 @end

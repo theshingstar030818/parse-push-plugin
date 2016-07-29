@@ -71,9 +71,7 @@ void MethodSwizzle(Class c, SEL originalSelector) {
 
       ParsePushPlugin* pluginInstance = [self getParsePluginInstance];
       [pluginInstance jsCallback:unwrappedInfo withAction:@"OPEN"];
-   } else{
-      NSLog(@"cold-start notification has no userInfo");
-   }
+  } //else no userInfo -> noop
 }
 
 - (BOOL)swizzled_application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions
@@ -92,7 +90,7 @@ void MethodSwizzle(Class c, SEL originalSelector) {
 
       NSString *appId      = [pluginInstance getConfigForKey:@"ParseAppId"];
       NSString *serverUrl  = [pluginInstance getConfigForKey:@"ParseServerUrl"];
-      NSString *shouldInit = [pluginInstance getConfigForKey:@"ParseAutoRegistration"];
+      NSString *autoReg = [pluginInstance getConfigForKey:@"ParseAutoRegistration"];
 
       if(!appId.length){
          NSException* invalidSettingException = [NSException
@@ -125,11 +123,14 @@ void MethodSwizzle(Class c, SEL originalSelector) {
          }]];
       }
 
-      if (!shouldInit.length || [shouldInit isEqualToString:@"true"]){
-        UIUserNotificationType userNotificationTypes = (UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound);
-        UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:userNotificationTypes categories:nil];
-        [application registerUserNotificationSettings:settings];
-        [application registerForRemoteNotifications];
+      if(!autoReg.length || [autoReg caseInsensitiveCompare:@"true"] || [application isRegisteredForRemoteNotifications]){
+          // if autoReg is true or nonexistent (defaults to true)
+          // or app already registered for PN, do/redo registration
+          //
+          // Note: redo registration because APNS device token can change and Apple
+          // suggests re-registering on each app start. registerForPN() is idempotent so
+          // no worries if it gets called multiple times.
+          [pluginInstance registerForPN];
       }
 	}
 
@@ -146,7 +147,6 @@ void MethodSwizzle(Class c, SEL originalSelector) {
     // Save device token
     [ParsePushPlugin saveDeviceTokenToInstallation:newDeviceToken];
 }
-
 
 - (void)swizzled_application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
 {
