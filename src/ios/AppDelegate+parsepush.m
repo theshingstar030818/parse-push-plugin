@@ -139,6 +139,7 @@ void MethodSwizzle(Class c, SEL originalSelector) {
 
 - (void)swizzled_application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)newDeviceToken
 {
+    NSLog(@"PN registration successful. Saving device token to installation");
     //
     // Call existing method in case it's already defined in main project's AppDelegate
     [self swizzled_application:application didRegisterForRemoteNotificationsWithDeviceToken:newDeviceToken];
