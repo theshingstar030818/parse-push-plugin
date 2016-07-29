@@ -27,7 +27,7 @@ public class ParsePushPlugin extends CordovaPlugin {
    private static final String ACTION_SUBSCRIBE = "subscribe";
    private static final String ACTION_UNSUBSCRIBE = "unsubscribe";
    private static final String ACTION_REGISTER_CALLBACK = "registerCallback";
-   private static final String ACTION_INITIALIZE = "initialize";
+   private static final String ACTION_REGISTER_FOR_PN = "register";
 
    private static CallbackContext gEventCallback = null;
    private static Queue<PluginResult> pnQueue = new LinkedList();
@@ -42,11 +42,11 @@ public class ParsePushPlugin extends CordovaPlugin {
       if (action.equals(ACTION_REGISTER_CALLBACK)){
     	   gEventCallback = callbackContext;
 
-         if(!pnQueue.isEmpty()){
-            flushPNQueue();
-         }
-    		return true;
-    	}
+           if(!pnQueue.isEmpty()){
+              flushPNQueue();
+           }
+    	   return true;
+      }
 
       if (action.equals(ACTION_GET_INSTALLATION_ID)) {
          this.getInstallationId(callbackContext);
@@ -69,8 +69,8 @@ public class ParsePushPlugin extends CordovaPlugin {
          this.unsubscribe(args.getString(0), callbackContext);
          return true;
       }
-      if (action.equals(ACTION_INITIALIZE)) {
-         this.doInitialization(callbackContext);
+      if (action.equals(ACTION_REGISTER_FOR_PN)) {
+         this.registerDeviceForPN(callbackContext);
          return true;
       }
       return false;
@@ -118,8 +118,11 @@ public class ParsePushPlugin extends CordovaPlugin {
          callbackContext.success();
    }
 
-   private void doInitialization(final CallbackContext callbackContext) {
-      callbackContext.success();
+   private void registerDeviceForPN(final CallbackContext callbackContext) {
+       //
+       // just a stub to keep API consistent with iOS.
+       // Device registration is automatically done by the Parse SDK for Android
+       callbackContext.success();
    }
 
    /*

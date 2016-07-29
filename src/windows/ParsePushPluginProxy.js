@@ -59,7 +59,7 @@ cordova.commandProxy.add("ParsePushPlugin", {
             successCb()
         }, errorCb);
     },
-    initialize: function(successCb, errorCb){
+    register: function(successCb, errorCb){
         //noop
     }
 });
