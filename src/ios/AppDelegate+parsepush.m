@@ -90,6 +90,7 @@ void MethodSwizzle(Class c, SEL originalSelector) {
 
       NSString *appId      = [pluginInstance getConfigForKey:@"ParseAppId"];
       NSString *serverUrl  = [pluginInstance getConfigForKey:@"ParseServerUrl"];
+      NSString *clientKey  = [pluginInstance getConfigForKey:@"ParseClientKey"];
       NSString *autoReg = [pluginInstance getConfigForKey:@"ParseAutoRegistration"];
 
       if(!appId.length){
@@ -112,7 +113,7 @@ void MethodSwizzle(Class c, SEL originalSelector) {
          //
          // initialize for use with parse.com
          //
-         [Parse setApplicationId:appId clientKey:[pluginInstance getConfigForKey:@"ParseClientKey"]];
+         [Parse setApplicationId:appId clientKey:clientKey];
       } else{
          //
          // initialize for use with opensource parse-server
@@ -120,6 +121,7 @@ void MethodSwizzle(Class c, SEL originalSelector) {
          [Parse initializeWithConfiguration:[ParseClientConfiguration configurationWithBlock:^(id<ParseMutableClientConfiguration> configuration) {
             configuration.applicationId = appId;
             configuration.server = serverUrl;
+            configuration.clientKey = clientKey;
          }]];
       }
 
