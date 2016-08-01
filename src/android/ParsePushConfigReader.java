@@ -29,8 +29,8 @@ public final class ParsePushConfigReader {
    //
    private static final String parseAppIdKey = "ParseAppId";
    private static final String parseServerUrlKey = "ParseServerUrl";
-   
-   // ParseClientKey is not required by parse server, but can be required for some environments
+
+   // ParseClientKey is not required by parse server, but can be required by some environments
    private static final String parseClientKeyKey = "ParseClientKey";
 
 
