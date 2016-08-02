@@ -22,7 +22,7 @@ Parse.Push plugin for Cordova/Phonegap/ionic. Works for both hosted Parse.com an
    - **getSubscriptions**( successCB, errorCB )
    - **subscribe**( channel, successCB, errorCB )
    - **unsubscribe**( channel, successCB, errorCB )
-   - **register( successCB, errorCB ) //optional
+   - **register**( successCB, errorCB ) //optional, see [Advanced Configuration](#advanced-configuration)
 
 #### Notification events
 
@@ -128,6 +128,11 @@ Create the following tags in `config.xml`:
    <preference name="ParseAppId" value="your-parse-app-id" />
    <preference name="ParseServerUrl" value="http://your-parse-server:1337/parse/" />
 
+   <!-- if your parse-server config requires a client key, set this.
+     If not, skip this preference
+   -->
+   <preference name="ParseClientKey" value="your-parse-client-key" />
+
    <!-- required for Android push notification
       To get your GCM sender ID, enable GCM for your Android project in the Google Developer Console.
       The sender id is your project number, and should be a large integer like 123427208255.
@@ -146,9 +151,9 @@ Create the following tags in `config.xml`:
    <preference name="ParseServerUrl" value="PARSE_DOT_COM" />
    ```
 
-You're all set. The plugin takes care of initializing Parse platform using the `config.xml` preferences mentioned above.
-To customize push notifications, initialize Parse platform yourself, or use your own `MainApplication.java` in Android,
-see the [Advanced Configuration](#advanced-configuration) section.
+You're all set. The plugin takes care of initializing Parse platform using the `config.xml` preferences mentioned above. The plugin will also take care of saving your installation to the database.
+
+To customize push notifications, initialize Parse platform yourself, or use your own `MainApplication.java` in Android, see the [Advanced Configuration](#advanced-configuration) section.
 
 
 ## Usage
@@ -302,6 +307,19 @@ skip it's version of Parse initialization and notification setup, that way it wo
 
 
 ## Troubleshooting
+
+#### General:
+
+- Parse uses the term "client key" to specify a key for both Android and iOS. This is different from the Javascript key.
+In the javascript portion of your Cordova/Phonegap/Ionic app, use the Javascript key. This has nothing to do with the plugin.
+In the `config.xml` preference `ParseClientKey`, use Android and iOS client key. Note that for open source [parse-server](https://github.com/ParsePlatform/parse-server), these keys are optional.
+
+- For legacy [Parse.com](https://parse.com), the appropriate key is required depending on your client platform, e.g.,
+Javascript, Android or iOS client, dotNet, REST. For open source [parse-server](https://github.com/ParsePlatform/parse-server),
+a key is only required if you have configured your server with it. In the past, our Android users have
+reported strange errors in their logcat relating to missing permission declarations. It turns out those error messages were red herrings.
+The real problem involved a parse-server that required client keys and a missing `ParseClientKey` preference in `config.xml`.
+
 
 #### Android:
 
