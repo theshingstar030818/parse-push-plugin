@@ -30,6 +30,9 @@ public final class ParsePushConfigReader {
    private static final String parseAppIdKey = "ParseAppId";
    private static final String parseServerUrlKey = "ParseServerUrl";
 
+   // ParseClientKey is not required by parse server, but can be required by some environments
+   private static final String parseClientKeyKey = "ParseClientKey";
+
 
    private List<String> supportedKeys = new ArrayList(Arrays.asList(parseAppIdKey, parseServerUrlKey));
    private Map<String, String> configs;
@@ -58,6 +61,10 @@ public final class ParsePushConfigReader {
 
    public String getServerUrl(){
       return configs.get(parseServerUrlKey);
+   }
+
+   public String getClientKey(){
+       return configs.get(parseClientKeyKey);
    }
 
    public String get(String key){

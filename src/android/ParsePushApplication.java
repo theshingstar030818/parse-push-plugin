@@ -60,13 +60,14 @@ public class ParsePushApplication extends Application {
          if(config.getServerUrl().equalsIgnoreCase("PARSE_DOT_COM")){
             //
             //initialize for use with legacy parse.com
-            Parse.initialize(this, config.getAppId(), config.get("ParseClientKey"));
+            Parse.initialize(this, config.getAppId(), config.getClientKey());
          } else{
             //
             // initialize for use with opensource parse-server
             Parse.initialize(new Parse.Configuration.Builder(this)
                .applicationId(config.getAppId())
                .server(config.getServerUrl()) // The trailing slash is important, e.g., https://mydomain.com:1337/parse/
+               .clientKey(config.getClientKey()) // Can be null 
                .build()
             );
          }
