@@ -128,9 +128,8 @@ Create the following tags in `config.xml`:
    <preference name="ParseAppId" value="your-parse-app-id" />
    <preference name="ParseServerUrl" value="http://your-parse-server:1337/parse/" />
 
-   <!-- if your parse-server config requires a client key, set this.
-     If not, skip this preference
-   -->
+   <!-- If your parse-server config requires a client key, set this.
+     If not, skip this preference -->
    <preference name="ParseClientKey" value="your-parse-client-key" />
 
    <!-- required for Android push notification
@@ -147,11 +146,11 @@ Create the following tags in `config.xml`:
    <preference name="ParseAppId" value="your-parse-app-id" />
    <preference name="ParseClientKey" value="your-parse-client-key" />
 
-   <!-- Note: for legacy parse.com, do not replace this string value. It must be "PARSE_DOT_COM"-->
+   <!-- Do not replace this string value. It must be "PARSE_DOT_COM"-->
    <preference name="ParseServerUrl" value="PARSE_DOT_COM" />
    ```
 
-You're all set. The plugin takes care of initializing Parse platform using the `config.xml` preferences mentioned above. The plugin will also take care of saving your installation to the database.
+You're all set. The plugin takes care of initializing Parse platform using the `config.xml` preferences mentioned above. It also saves your installation to the database automatically.
 
 To customize push notifications, initialize Parse platform yourself, or use your own `MainApplication.java` in Android, see the [Advanced Configuration](#advanced-configuration) section.
 
@@ -312,7 +311,7 @@ skip it's version of Parse initialization and notification setup, that way it wo
 
 - Parse uses the term "client key" to specify a key for both Android and iOS. This is different from the Javascript key.
 In the javascript portion of your Cordova/Phonegap/Ionic app, use the Javascript key. This has nothing to do with the plugin.
-In the `config.xml` preference `ParseClientKey`, use Android and iOS client key. Note that for open source [parse-server](https://github.com/ParsePlatform/parse-server), these keys are optional.
+In the `config.xml` preference `ParseClientKey`, use the Android and iOS client key. Note that for open source [parse-server](https://github.com/ParsePlatform/parse-server), these keys are optional.
 
 - For legacy [Parse.com](https://parse.com), the appropriate key is required depending on your client platform, e.g.,
 Javascript, Android or iOS client, dotNet, REST. For open source [parse-server](https://github.com/ParsePlatform/parse-server),
