@@ -22,6 +22,7 @@ Parse.Push plugin for Cordova/Phonegap/ionic. Works for both hosted Parse.com an
    - **getSubscriptions**( successCB, errorCB )
    - **subscribe**( channel, successCB, errorCB )
    - **unsubscribe**( channel, successCB, errorCB )
+   - **resetBadge**( successCB, errorCB )
    - **register**( successCB, errorCB ) //optional, see [Advanced Configuration](#advanced-configuration)
 
 #### Notification events

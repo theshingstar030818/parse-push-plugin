@@ -16,6 +16,7 @@
 - (void)getSubscriptions: (CDVInvokedUrlCommand *)command;
 - (void)subscribe: (CDVInvokedUrlCommand *)command;
 - (void)unsubscribe: (CDVInvokedUrlCommand *)command;
+- (void)resetBadge: (CDVInvokedUrlCommand *)command;
 
 //
 // methods exposed to JS but not intended for users (not part of API)
