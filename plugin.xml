@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<plugin xmlns="http://www.apache.org/cordova/ns/plugins/1.0" id="parse-push-plugin" version="1.0.4">
+<plugin xmlns="http://www.apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android" id="parse-push-plugin" version="1.0.5">
    <name>ParsePushPlugin</name>
    <description>Parse.Push plugin for phonegap/cordova/ionic framework</description>
 	<keywords>cordova,phonegap,ionic framework, parse server, parse push, push notification</keywords>
@@ -17,7 +17,7 @@
       </config-file>
       <config-file target="AndroidManifest.xml" parent="/manifest/application">
          <service android:name="com.parse.PushService" />
-         <receiver android:exported="false" android:name="github.taivo.parsepushplugin.ParsePushPluginReceiver" android:exported="false">
+         <receiver android:exported="false" android:name="github.taivo.parsepushplugin.ParsePushPluginReceiver">
             <intent-filter>
                <action android:name="com.parse.push.intent.RECEIVE" />
                <action android:name="com.parse.push.intent.DELETE" />
