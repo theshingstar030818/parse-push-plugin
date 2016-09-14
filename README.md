@@ -146,8 +146,11 @@ Create the following tags in `config.xml`:
    -->
    <preference name="ParseGcmSenderId" value="gcm-sender-id" />
 
-   <!-- As standard, this plugin only shows the most recent PN in the android notifications tray along with a count of unopened PNs. If you would like to override this behaviour and show all PNs in the tray, then add this preference. 
-     If not, skip this preference-->
+   <!-- As standard, this plugin only shows the most recent PN in 
+      the android notifications tray along with a count of unopened 
+      PNs. If you would like to override this behaviour and show all 
+      PNs in the tray, then add this preference. 
+      If not, skip this preference -->
    <preference name="ParseMultiNotifications" value="true" />
    ```
 
@@ -160,8 +163,11 @@ Create the following tags in `config.xml`:
    <!-- Do not replace this string value. It must be "PARSE_DOT_COM"-->
    <preference name="ParseServerUrl" value="PARSE_DOT_COM" />
 
-   <!-- As standard, this plugin only shows the most recent PN in the android notifications tray along with a count of unopened PNs. If you would like to override this behaviour and show all PNs in the tray, then add this preference. 
-     If not, skip this preference-->
+   <!-- As standard, this plugin only shows the most recent PN in 
+      the android notifications tray along with a count of unopened
+      PNs. If you would like to override this behaviour and show all
+      PNs in the tray, then add this preference. 
+      If not, skip this preference -->
    <preference name="ParseMultiNotifications" value="true" />
    ```
 
