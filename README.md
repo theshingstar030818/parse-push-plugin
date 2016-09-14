@@ -61,6 +61,12 @@ Parse.Push plugin for Cordova/Phonegap/ionic. Works for both hosted Parse.com an
 
    *Android*: to prevent flooding the notification tray, this plugin retains only the last PN with the same `title` field. For messages without the `title` field, the application name is used. A count of unopened PNs is shown.
 
+   You can override this feature, however, by adding the following to `config.xml`:
+
+   ```xml
+   <preference name="ParseMultiNotifications" value="true" />
+   ```
+
 
 #### Foreground vs. Background
 
@@ -139,6 +145,10 @@ Create the following tags in `config.xml`:
       This is the same "senderId" to be used in your parse-server push configuration.
    -->
    <preference name="ParseGcmSenderId" value="gcm-sender-id" />
+
+   <!-- As standard, this plugin only shows the most recent PN in the android notifications tray along with a count of unopened PNs. If you would like to override this behaviour and show all PNs in the tray, then add this preference. 
+     If not, skip this preference-->
+   <preference name="ParseMultiNotifications" value="true" />
    ```
 
    - For legacy Parse.com
@@ -149,6 +159,10 @@ Create the following tags in `config.xml`:
 
    <!-- Do not replace this string value. It must be "PARSE_DOT_COM"-->
    <preference name="ParseServerUrl" value="PARSE_DOT_COM" />
+
+   <!-- As standard, this plugin only shows the most recent PN in the android notifications tray along with a count of unopened PNs. If you would like to override this behaviour and show all PNs in the tray, then add this preference. 
+     If not, skip this preference-->
+   <preference name="ParseMultiNotifications" value="true" />
    ```
 
 You're all set. The plugin takes care of initializing Parse platform using the `config.xml` preferences mentioned above. It also saves your installation to the database automatically.
