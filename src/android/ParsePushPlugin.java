@@ -188,6 +188,7 @@ public class ParsePushPlugin extends CordovaPlugin {
    public void onDestroy() {
       gWebView = null;
     	gForeground = false;
+      gEventCallback = null;
 
     	super.onDestroy();
    }
