@@ -10,6 +10,9 @@ import android.app.PendingIntent;
 import android.app.Notification;
 import android.app.NotificationManager;
 
+import github.taivo.parsepushplugin.ParsePushConfigReader;
+import github.taivo.parsepushplugin.ParsePushConfigException;
+
 import android.support.v4.app.NotificationCompat;
 
 import android.net.Uri;
@@ -40,15 +43,24 @@ public class ParsePushPluginReceiver extends ParsePushBroadcastReceiver
  	      // relay the push notification data to the javascript
  		   ParsePushPlugin.jsCallback( getPushData(intent) );
       } else {
-		   //
-			// only create entry for notification tray if plugin/application is
-			// not running in foreground.
-			//
-			// use tag + notification id=0 to limit the number of notifications on the tray
-			// (older messages with the same tag and notification id will be replaced)
-			NotificationManager notifManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-			notifManager.notify(getNotificationTag(context, intent), 0, getNotification(context, intent));
-
+       //
+       // only create entry for notification tray if plugin/application is
+       // not running in foreground.
+       //
+       // So first we check if the user has set the configuration to have multiple 
+       // notifications show in the tray (i.e. set <preference name="ParseMultiNotifications" value="true" />)
+       ParsePushConfigReader config = new ParsePushConfigReader(context, null, new String[] {"ParseMultiNotifications"});
+       String parseMulti = config.get("ParseMultiNotifications");
+       if(parseMulti != null && !parseMulti.isEmpty() && parseMulti.equals("true")){
+         // If the user wants multiple notifications in the tray, then we let ParsePushBroadcastReceiver
+         // handle it from here
+         super.onPushReceive(context, intent);
+       } else {
+    			// use tag + notification id=0 to limit the number of notifications in the tray
+    			// (older messages with the same tag and notification id will be replaced)
+    			NotificationManager notifManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+    			notifManager.notify(getNotificationTag(context, intent), 0, getNotification(context, intent));
+        }
          //
          // A user with Android 5.0.1 reports that notif is not created in tray when
          // app is off (not background), trying method described here
