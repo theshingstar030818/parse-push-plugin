@@ -25,6 +25,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 
 import java.util.List;
+import java.util.Random;
 
 
 public class ParsePushPluginReceiver extends ParsePushBroadcastReceiver
@@ -47,7 +48,7 @@ public class ParsePushPluginReceiver extends ParsePushBroadcastReceiver
       // only create entry for notification tray if plugin/application is
       // not running in foreground.
       //
-      // So first we check if the user has set the configuration to have multiple 
+      // So first we check if the user has set the configuration to have multiple
       // notifications show in the tray (i.e. set <preference name="ParseMultiNotifications" value="true" />)
       ParsePushConfigReader config = new ParsePushConfigReader(context, null, new String[] {"ParseMultiNotifications"});
       String parseMulti = config.get("ParseMultiNotifications");
@@ -69,7 +70,7 @@ public class ParsePushPluginReceiver extends ParsePushBroadcastReceiver
         //
         intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
         setResultCode(Activity.RESULT_OK);
-      } 
+      }
 		}
 	}
 
@@ -157,7 +158,7 @@ public class ParsePushPluginReceiver extends ParsePushBroadcastReceiver
              } catch (JSONException e) {
                   Log.e(LOGTAG, "JSONException while parsing Increment:", e);
              }
- 
+
              try {
                  if (pnData.getInt("badge") >= 0) {
                      badgeCount = pnData.getInt("badge");
@@ -165,7 +166,7 @@ public class ParsePushPluginReceiver extends ParsePushBroadcastReceiver
              } catch (JSONException e) {
                   Log.e(LOGTAG, "JSONException while parsing badge:", e);
              }
-             
+
             setBadge(context, badgeCount);
          }
 
@@ -284,7 +285,7 @@ public class ParsePushPluginReceiver extends ParsePushBroadcastReceiver
 	             return className;
 	         }
 	    }
-	    
+
 	    return null;
 	 }
 }
