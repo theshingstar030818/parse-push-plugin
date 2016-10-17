@@ -7,7 +7,7 @@ module.exports = function(context) {
    var ET = context.requireCordovaModule('elementtree');
    var ConfigFile = context.requireCordovaModule("cordova-common").ConfigFile;
 
-   var configXml = new ConfigFile(context.opts.projectRoot, null, 'config.xml');
+   var configXml = new ConfigFile(context.opts.projectRoot, null, './config.xml');
 
    //
    // detect parse.com or parse-server mode
