@@ -38,22 +38,31 @@ NS_ASSUME_NONNULL_BEGIN
 PF_TV_UNAVAILABLE PF_WATCH_UNAVAILABLE @interface PFInstallation : PFObject<PFSubclassing>
 
 ///--------------------------------------
-/// @name Accessing the Current Installation
+#pragma mark - Accessing the Current Installation
 ///--------------------------------------
 
 /**
  Gets the currently-running installation from disk and returns an instance of it.
 
- If this installation is not stored on disk, returns a `PFInstallation`
- with `deviceType` and `installationId` fields set to those of the
- current installation.
+ If this installation is not stored on disk this method will create a new `PFInstallation`
+ with `deviceType` and `installationId` fields set to those of the current installation.
 
- @result Returns a `PFInstallation` that represents the currently-running installation.
+ @result Returns a `PFInstallation` that represents the currently-running installation if it could be loaded from disk, otherwise - `nil`.
  */
-+ (instancetype)currentInstallation;
++ (nullable instancetype)currentInstallation;
+
+/**
+ *Asynchronously* loads the currently-running installation from disk and returns an instance of it.
+
+ If this installation is not stored on disk this method will create a new `PFInstallation`
+ with `deviceType` and `installationId` fields set to those of the current installation.
+
+ @result Returns a task that incapsulates the current installation.
+ */
++ (BFTask<__kindof PFInstallation *> *)getCurrentInstallationInBackground;
 
 ///--------------------------------------
-/// @name Installation Properties
+#pragma mark - Installation Properties
 ///--------------------------------------
 
 /**
@@ -84,7 +93,7 @@ PF_TV_UNAVAILABLE PF_WATCH_UNAVAILABLE @interface PFInstallation : PFObject<PFSu
 /**
  The channels for the `PFInstallation`.
  */
-@property (nullable, nonatomic, copy) NSArray PF_GENERIC(NSString *)*channels;
+@property (nullable, nonatomic, copy) NSArray<NSString *> *channels;
 
 /**
  Sets the device token string property from an `NSData`-encoded token.
@@ -94,7 +103,7 @@ PF_TV_UNAVAILABLE PF_WATCH_UNAVAILABLE @interface PFInstallation : PFObject<PFSu
 - (void)setDeviceTokenFromData:(nullable NSData *)deviceTokenData;
 
 ///--------------------------------------
-/// @name Querying for Installations
+#pragma mark - Querying for Installations
 ///--------------------------------------
 
 /**

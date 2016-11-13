@@ -9,7 +9,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class PFQuery PF_GENERIC(PFGenericObject : PFObject *);
+@class PFQuery<PFGenericObject : PFObject *>;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
  include `PFObject+Subclass.h` in their implementation file.
  This ensures the methods in the Subclass category of `PFObject` are exposed in its subclasses only.
  */
-@protocol PFSubclassing
+@protocol PFSubclassing <NSObject>
 
 @required
 
@@ -55,7 +55,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  @return A new `PFObject` without data.
  */
-+ (instancetype)objectWithoutDataWithObjectId:(nullable NSString *)objectId;
++ (instancetype)objectWithoutDataWithObjectId:(nullable NSString *)objectId PF_SWIFT_UNAVAILABLE;
 
 /**
  Create a query which returns objects of this type.
