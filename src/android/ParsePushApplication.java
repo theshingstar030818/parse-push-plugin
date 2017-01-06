@@ -5,6 +5,8 @@ import android.app.Application;
 import com.parse.Parse;
 import com.parse.Parse.Configuration.Builder;
 import com.parse.ParseInstallation;
+import com.parse.SaveCallback;
+import com.parse.ParseException;
 
 import github.taivo.parsepushplugin.ParsePushConfigReader;
 import github.taivo.parsepushplugin.ParsePushConfigException;
@@ -74,7 +76,16 @@ public class ParsePushApplication extends Application {
 
          //
          // save installation. Parse.Push will need this to push to the correct device
-         ParseInstallation.getCurrentInstallation().saveInBackground();
+         ParseInstallation.getCurrentInstallation().saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException ex) {
+               if (null != ex) {
+                  Log.e(LOGTAG, ex.toString());
+               } else {
+                  Log.d(LOGTAG, "Installation saved");
+               }
+            }
+         });
 
       } catch(ParsePushConfigException ex){
          Log.e(LOGTAG, ex.toString());
