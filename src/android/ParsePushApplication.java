@@ -5,6 +5,8 @@ import android.app.Application;
 import com.parse.Parse;
 import com.parse.Parse.Configuration.Builder;
 import com.parse.ParseInstallation;
+import com.parse.SaveCallback;
+import com.parse.ParseException;
 
 import github.taivo.parsepushplugin.ParsePushConfigReader;
 import github.taivo.parsepushplugin.ParsePushConfigException;
@@ -61,20 +63,33 @@ public class ParsePushApplication extends Application {
             //
             //initialize for use with legacy parse.com
             Parse.initialize(this, config.getAppId(), config.getClientKey());
-         } else{
+         } else {
+            Log.d(LOGTAG, "ServerUrl " + config.getServerUrl());
+            Log.d(LOGTAG, "NOTE: The trailing slash is important, e.g., https://mydomain.com:1337/parse/");
+            Log.d(LOGTAG, "NOTE: Set the clientKey if your server requires it, otherwise it can be null");
             //
             // initialize for use with opensource parse-server
             Parse.initialize(new Parse.Configuration.Builder(this)
                .applicationId(config.getAppId())
-               .server(config.getServerUrl()) // The trailing slash is important, e.g., https://mydomain.com:1337/parse/
-               .clientKey(config.getClientKey()) // Can be null 
+               .server(config.getServerUrl())
+               .clientKey(config.getClientKey())
                .build()
             );
          }
 
+         Log.d(LOGTAG, "Saving Installation in background");
          //
          // save installation. Parse.Push will need this to push to the correct device
-         ParseInstallation.getCurrentInstallation().saveInBackground();
+         ParseInstallation.getCurrentInstallation().saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException ex) {
+               if (null != ex) {
+                  Log.e(LOGTAG, ex.toString());
+               } else {
+                  Log.d(LOGTAG, "Installation saved");
+               }
+            }
+         });
 
       } catch(ParsePushConfigException ex){
          Log.e(LOGTAG, ex.toString());
