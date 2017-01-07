@@ -125,7 +125,7 @@ void MethodSwizzle(Class c, SEL originalSelector) {
          }]];
       }
 
-      if(!autoReg.length || [autoReg caseInsensitiveCompare:@"true"] != -1 || [application isRegisteredForRemoteNotifications]){
+      if(!autoReg.length || [autoReg caseInsensitiveCompare:@"true"] == 0 || [application isRegisteredForRemoteNotifications]){
           // if autoReg is true or nonexistent (defaults to true)
           // or app already registered for PN, do/redo registration
           //
