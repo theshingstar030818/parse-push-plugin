@@ -1,7 +1,8 @@
 #import <Cordova/CDV.h>
 #import "AppDelegate.h"
+#import <UserNotifications/UserNotifications.h>
 
-@interface ParsePushPlugin: CDVPlugin
+@interface ParsePushPlugin: CDVPlugin <UNUserNotificationCenterDelegate>
 
 @property bool hasRegistered;
 @property (copy) NSString* callbackId;
