@@ -93,7 +93,7 @@ function poorManExtend(object, source){
 var eventSplitter = /\s+/;
 var slice = Array.prototype.slice;
 var EventMixin = {
-   _coldStartDelayMs: 200,
+   _coldStartDelayMs: 300,
 	on: function(events, callback, context) {
 
       var calls, event, node, tail, list;
