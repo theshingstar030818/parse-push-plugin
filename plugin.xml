@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<plugin xmlns="http://www.apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android" id="parse-push-plugin" version="1.0.6">
+<plugin xmlns="http://www.apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android" id="parse-push-plugin" version="1.0.7">
    <name>ParsePushPlugin</name>
    <description>Parse.Push plugin for phonegap/cordova/ionic framework</description>
 	<keywords>cordova,phonegap,ionic framework, parse server, parse push, push notification</keywords>
@@ -65,6 +65,12 @@
             <param name="ios-package" value="ParsePushPlugin" />
             <param name="onload" value="true" />
          </feature>
+      </config-file>
+      <config-file target="*-Debug.plist" parent="aps-environment">
+      	<string>development</string>
+      </config-file>
+      <config-file target="*-Release.plist" parent="aps-environment">
+      	<string>production</string>
       </config-file>
       <header-file src="src/ios/ParsePushPlugin.h" />
       <source-file src="src/ios/ParsePushPlugin.m" />
