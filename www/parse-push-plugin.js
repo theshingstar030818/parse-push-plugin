@@ -11,7 +11,7 @@ require('cordova/channel').onCordovaReady.subscribe(function() {
       }
 
 		if(pn !== null){
-			if(pushAction === 'OPEN'){
+			if(pushAction === 'OPEN' || pn.OPEN){
 				//
 				// trigger a callback when user click open a notification.
 				// One usecase for this pertains a cordova app that is already running in the background.
