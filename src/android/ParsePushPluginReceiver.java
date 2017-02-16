@@ -27,6 +27,14 @@ import android.content.pm.ResolveInfo;
 import java.util.List;
 import java.util.Random;
 
+import android.content.SharedPreferences;
+
+import org.apache.cordova.CallbackContext;
+import org.apache.cordova.PluginResult;
+import org.json.JSONArray;
+
+import me.leolin.shortcutbadger.ShortcutBadger;
+
 
 public class ParsePushPluginReceiver extends ParsePushBroadcastReceiver
 {
@@ -35,6 +43,8 @@ public class ParsePushPluginReceiver extends ParsePushBroadcastReceiver
 
 	private static JSONObject MSG_COUNTS = new JSONObject();
 	private static int badgeCount = 0;
+
+	private static final String KEY = "badge";
 
 
 	@Override
@@ -167,7 +177,7 @@ public class ParsePushPluginReceiver extends ParsePushBroadcastReceiver
                   Log.e(LOGTAG, "JSONException while parsing badge:", e);
              }
 
-            setBadge(context, badgeCount);
+            setBadge(badgeCount, context);
          }
 
 		builder.setSmallIcon(getSmallIconId(context, intent))
@@ -232,44 +242,37 @@ public class ParsePushPluginReceiver extends ParsePushBroadcastReceiver
 	  * Badge Counter methods. This will display badge counters on Samsung and Sony launchers.
 	  */
 
-	 public static void resetBadge(Context context) {
-	     badgeCount = 0;
-	     setBadgeSamsung(context, 0);
-	     setBadgeSony(context, 0);
-	 }
+	  /**
+     * Sets the badge of the app icon.
+     *
+     * @param args
+     * The new badge number
+     * @param ctx
+     * The application context
+     */
+    public static void setBadge (int badgeCount, Context ctx) {
+        int badge = badgeCount;
 
-	 public static void setBadge(Context context, int count) {
-	     setBadgeSamsung(context, count);
-	     setBadgeSony(context, count);
-	 }
+        saveBadge(badge, ctx);
+        ShortcutBadger.applyCount(ctx, badge);
+    }
+	 
+	public static void resetBadge (Context ctx) {
+        saveBadge(0, ctx);
+        ShortcutBadger.removeCount(ctx);
+    }
 
-	 public static void setBadgeSamsung(Context context, int count) {
-	     String launcherClassName = getLauncherClassName(context);
-	     if (launcherClassName == null) {
-	         return;
-	     }
-	     Intent intent = new Intent("android.intent.action.BADGE_COUNT_UPDATE");
-	     intent.putExtra("badge_count", count);
-	     intent.putExtra("badge_count_package_name", context.getPackageName());
-	     intent.putExtra("badge_count_class_name", launcherClassName);
-	     context.sendBroadcast(intent);
-	     Log.d("PushReceiver", "Samsung: "+context.getPackageName()+" "+launcherClassName);
-	 }
+	private static void saveBadge (int badge, Context ctx) {
+        SharedPreferences.Editor editor = getSharedPreferences(ctx).edit();
 
-	 public static void setBadgeSony(Context context, int count) {
-	     String launcherClassName = getLauncherClassName(context);
+        editor.putInt(KEY, badge);
+        editor.apply();
+    }
 
-	     Intent intent = new Intent();
-	     intent.setAction("com.sonyericsson.home.action.UPDATE_BADGE");
-	     intent.putExtra("com.sonyericsson.home.intent.extra.badge.ACTIVITY_NAME", launcherClassName);
-	     intent.putExtra("com.sonyericsson.home.intent.extra.badge.SHOW_MESSAGE", count>0);
-	     intent.putExtra("com.sonyericsson.home.intent.extra.badge.MESSAGE", ""+count);
-	     intent.putExtra("com.sonyericsson.home.intent.extra.badge.PACKAGE_NAME", context.getPackageName());
-
-	     context.sendBroadcast(intent);
-	     Log.d("PushReceiver", "Sony: " + context.getPackageName() + " " + launcherClassName);
-	 }
-
+	private static SharedPreferences getSharedPreferences (Context context) {
+        return context.getSharedPreferences(KEY, Context.MODE_PRIVATE);
+    }
+	
 	 public static String getLauncherClassName(Context context) {
 
 	     PackageManager pm = context.getPackageManager();
