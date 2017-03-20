@@ -46,6 +46,7 @@
       <framework src="com.parse:parse-android:1.13.0" />
       <framework src="com.parse.bolts:bolts-android:1.4.0" />
       <framework src="com.android.support:support-v4:+" />
+      <framework src="me.leolin:ShortcutBadger:1.1.13@aar" />
 
       <source-file src="src/android/ParsePushPlugin.java" target-dir="src/github/taivo/parsepushplugin" />
       <source-file src="src/android/ParsePushPluginReceiver.java" target-dir="src/github/taivo/parsepushplugin" />

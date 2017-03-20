@@ -35,6 +35,7 @@ public class ParsePushPlugin extends CordovaPlugin {
 
    private static CordovaWebView gWebView;
    private static boolean gForeground = false;
+   private static boolean helperPause = false;
 
    public static final String LOGTAG = "ParsePushPlugin";
 
@@ -137,13 +138,21 @@ public class ParsePushPlugin extends CordovaPlugin {
       jsCallback(_json, "RECEIVE");
    }
 
-   public static void jsCallback(JSONObject _json, String pushAction){
+public static void jsCallback(JSONObject _json, String pushAction){
       List<PluginResult> cbParams = new ArrayList<PluginResult>();
     	cbParams.add(new PluginResult(PluginResult.Status.OK, _json));
     	cbParams.add(new PluginResult(PluginResult.Status.OK, pushAction));
-
-    	PluginResult dataResult = new PluginResult(PluginResult.Status.OK, cbParams);
-      dataResult.setKeepCallback(true);
+		//avoid blank
+		PluginResult dataResult;
+		if (pushAction.equals("OPEN")) {
+			if (helperPause)
+				dataResult = new PluginResult(PluginResult.Status.OK, _json);
+			else
+				dataResult = new PluginResult(PluginResult.Status.OK, cbParams);
+		} else {
+			dataResult = new PluginResult(PluginResult.Status.OK, _json); 
+		}
+	  dataResult.setKeepCallback(true);
 
 
       if(gEventCallback != null){
@@ -158,6 +167,7 @@ public class ParsePushPlugin extends CordovaPlugin {
          }
       }
    }
+
 
    private static void flushPNQueue(){
       while(!pnQueue.isEmpty() && gEventCallback != null){
@@ -175,6 +185,7 @@ public class ParsePushPlugin extends CordovaPlugin {
    public void onPause(boolean multitasking) {
       super.onPause(multitasking);
       gForeground = false;
+      helperPause = true;
    }
 
    @Override
@@ -189,6 +200,7 @@ public class ParsePushPlugin extends CordovaPlugin {
       gWebView = null;
     	gForeground = false;
       gEventCallback = null;
+      helperPause = false;
 
     	super.onDestroy();
    }
