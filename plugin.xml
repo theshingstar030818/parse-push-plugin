@@ -43,10 +43,9 @@
          <uses-permission android:name="${applicationId}.permission.C2D_MESSAGE" />
       </config-file>
 
-      <framework src="com.parse:parse-android:1.13.0" />
-      <framework src="com.parse.bolts:bolts-android:1.4.0" />
+      <framework src="com.parse:parse-android:1.15.7" />
       <framework src="com.android.support:support-v4:+" />
-      <framework src="me.leolin:ShortcutBadger:1.1.13@aar" />
+      <framework src="me.leolin:ShortcutBadger:1.1.17@aar" />
 
       <source-file src="src/android/ParsePushPlugin.java" target-dir="src/github/taivo/parsepushplugin" />
       <source-file src="src/android/ParsePushPluginReceiver.java" target-dir="src/github/taivo/parsepushplugin" />
