@@ -1,8 +1,5 @@
 module.exports = function (context) {
-  //
-  // Copy gcm sender id from config.xml into AndroidManifest
-  //
-
+  var fs = context.requireCordovaModule('fs');
   var path = context.requireCordovaModule('path');
   var ET = context.requireCordovaModule('elementtree');
   var ConfigFile = context.requireCordovaModule("cordova-common").ConfigFile;
@@ -14,9 +11,10 @@ module.exports = function (context) {
   var androidManifest = new ConfigFile(androidPrjDir, 'android', 'AndroidManifest.xml');
   var applicationNode = androidManifest.data.find('application');
 
-  // detect android notification icon
+  // detect Parse notification icon
   var parsePushNotificationIcon = configXml.data.find('preference[@name="ParseNotificationIcon"]').get('value');
   if (!!parsePushNotificationIcon) {
+    // add to AndroidManifest.xml
     var manifestPushNotificationIconNode = applicationNode.find('meta-data[@android:name="com.parse.push.notification_icon"]');
 
     if (!manifestPushNotificationIconNode) {
@@ -24,16 +22,28 @@ module.exports = function (context) {
       applicationNode.append(manifestPushNotificationIconNode);
     }
     manifestPushNotificationIconNode.set('android:resource', '@drawable/' + parsePushNotificationIcon);
+
+    // COPY ICON
+    // create target path
+    var iconTargetPath = path.join(context.opts.projectRoot, 'platforms', 'android', 'res', 'drawable');
+    try {
+      fs.mkdirSync(iconTargetPath);
+    } catch (err) {
+      // Directory already exists
+    }
+
+    // copy icon to android folder
+    fs
+      .createReadStream(path.join(context.opts.projectRoot, 'resources', parsePushNotificationIcon + '.png'))
+      .pipe(fs.createWriteStream(path.join(iconTargetPath, parsePushNotificationIcon + '.png')));
   }
 
-  //
+  // Copy gcm sender id from config.xml into AndroidManifest
   // detect parse.com or parse-server mode
   var parseServerUrl = configXml.data.find('preference[@name="ParseServerUrl"]').get('value');
 
   if (parseServerUrl.toUpperCase() !== "PARSE_DOT_COM") {
-    //
     //opensource parse-server requires own GcmSenderId, so copy it from config.xml to AndroidManifest
-    //
     var configXmlGcmIdNode = configXml.data.find('preference[@name="ParseGcmSenderId"]');
     if (!configXmlGcmIdNode) {
       console.error("ParseGcmSenderId is not set in config.xml");
