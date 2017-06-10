@@ -105,11 +105,11 @@ public class ParsePushPlugin extends CordovaPlugin {
       cordova.getThreadPool().execute(new Runnable() {
          public void run() {
             List<String> subscriptions = ParseInstallation.getCurrentInstallation().getList("channels");
-            String subscriptionsString = "";
+            JSONArray subscriptionsArray = new JSONArray();
             if (subscriptions != null) {
-               subscriptionsString = subscriptions.toString();
+               subscriptionsArray = new JSONArray(subscriptions);
             }
-            callbackContext.success(subscriptionsString);
+            callbackContext.success(subscriptionsArray);
          }
       });
    }
@@ -150,7 +150,7 @@ public static void jsCallback(JSONObject _json, String pushAction){
 			else
 				dataResult = new PluginResult(PluginResult.Status.OK, cbParams);
 		} else {
-			dataResult = new PluginResult(PluginResult.Status.OK, _json); 
+			dataResult = new PluginResult(PluginResult.Status.OK, _json);
 		}
 	  dataResult.setKeepCallback(true);
 
