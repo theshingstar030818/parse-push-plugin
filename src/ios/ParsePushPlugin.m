@@ -192,14 +192,20 @@
     UIApplication *application = [UIApplication sharedApplication];
     [self jsCallback:notification.request.content.userInfo withAction:(application.applicationState == UIApplicationStateActive) ? @"RECEIVE" : @"OPEN"];
 
-    completionHandler(UNNotificationPresentationOptionAlert);
+    // do not show notifications into the system tray if the application is in foreground
+    if (application.applicationState == UIApplicationStateActive) {
+        completionHandler(UNNotificationPresentationOptionNone);
+    }
+    else {
+        completionHandler(UNNotificationPresentationOptionAlert);
+    }
 }
 
 -(void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)())completionHandler {
     NSLog(@"User info %@", response.notification.request.content.userInfo);
-    
+
     [self jsCallback:response.notification.request.content.userInfo withAction: @"OPEN"];
-    
+
     completionHandler();
 }
 
