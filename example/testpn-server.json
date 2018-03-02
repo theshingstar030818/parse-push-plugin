@@ -1,0 +1,16 @@
+{
+   "appId": "TESTPN",
+   "masterKey": "testpn-maestro-keeeee",
+   "cloud": "./testpn-cloudcode/main.js",
+   "push": {
+      "ios":{
+         "pfx": "$RELATIVE_PATH_TO_YOUR_p12_FILE",
+         "bundleId": "com.taivo.testpn",
+         "production": false
+      },
+      "android":{
+         "senderId": "$GCM_SENDER_ID",
+         "apiKey": "$GOOGLE_API_KEY_FOR_PUSH"
+      }
+   }
+}

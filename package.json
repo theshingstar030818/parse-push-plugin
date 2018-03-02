@@ -1,0 +1,33 @@
+{
+  "name": "parse-push-plugin",
+  "version": "1.0.7",
+  "description": "Parse.Push plugin for phonegap/cordova/ionic",
+  "cordova": {
+    "id": "parse-push-plugin",
+    "platforms": [
+      "android",
+      "ios"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/taivo/parse-push-plugin.git"
+  },
+  "keywords": [
+    "cordova",
+    "phonegap",
+    "ionic framework",
+    "parse server",
+    "parse push",
+    "push notification",
+    "ecosystem:cordova",
+    "cordova-android",
+    "cordova-ios"
+  ],
+  "author": "Tai Vo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/taivo/parse-push-plugin/issues"
+  },
+  "homepage": "https://github.com/taivo/parse-push-plugin#readme"
+}
