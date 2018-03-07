@@ -11,7 +11,6 @@ import android.app.Notification;
 import android.app.NotificationManager;
 
 import github.taivo.parsepushplugin.ParsePushConfigReader;
-import github.taivo.parsepushplugin.ParsePushConfigException;
 
 import android.support.v4.app.NotificationCompat;
 
@@ -28,10 +27,6 @@ import java.util.List;
 import java.util.Random;
 
 import android.content.SharedPreferences;
-
-import org.apache.cordova.CallbackContext;
-import org.apache.cordova.PluginResult;
-import org.json.JSONArray;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
 
