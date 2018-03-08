@@ -11,7 +11,6 @@ import android.app.Notification;
 import android.app.NotificationManager;
 
 import github.taivo.parsepushplugin.ParsePushConfigReader;
-import github.taivo.parsepushplugin.ParsePushConfigException;
 
 import android.support.v4.app.NotificationCompat;
 
@@ -28,10 +27,6 @@ import java.util.List;
 import java.util.Random;
 
 import android.content.SharedPreferences;
-
-import org.apache.cordova.CallbackContext;
-import org.apache.cordova.PluginResult;
-import org.json.JSONArray;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
 
@@ -64,11 +59,17 @@ public class ParsePushPluginReceiver extends ParsePushBroadcastReceiver {
         // If the user wants multiple notifications in the tray, then we let ParsePushBroadcastReceiver
         // handle it from here
         super.onPushReceive(context, intent);
-      } else {
-        // use tag + notification id=0 to limit the number of notifications in the tray
-        // (older messages with the same tag and notification id will be replaced)
-        NotificationManager notifManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notifManager.notify(getNotificationTag(context, intent), 0, getNotification(context, intent));
+      }
+      else {
+        // check if this is a silent notification
+        Notification notification = getNotification(context, intent);
+
+        if (notification != null) {
+          // use tag + notification id=0 to limit the number of notifications in the tray
+          // (older messages with the same tag and notification id will be replaced)
+          NotificationManager notifManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+          notifManager.notify(getNotificationTag(context, intent), 0, notification);
+        }
 
         //
         // A user with Android 5.0.1 reports that notif is not created in tray when
@@ -145,6 +146,9 @@ public class ParsePushPluginReceiver extends ParsePushBroadcastReceiver {
 
     NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
 
+    // check if this is a silent notification
+    boolean isSilent = !pnData.has("title") && !pnData.has("alert");
+
     if (pnData.has("title")) {
       builder.setTicker(pnData.optString("title")).setContentTitle(pnData.optString("title"));
     } else if (pnData.has("alert")) {
@@ -187,7 +191,11 @@ public class ParsePushPluginReceiver extends ParsePushBroadcastReceiver {
       builder.setColor(context.getResources().getColor(colorId));
     }
 
-    return builder.build();
+    if (!isSilent) {
+      return builder.build();
+    }
+
+    return null;
   }
 
   private static JSONObject getPushData(Intent intent) {
