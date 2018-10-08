@@ -114,7 +114,9 @@
 
             [center requestAuthorizationWithOptions:(UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionBadge) completionHandler:^(BOOL granted, NSError * _Nullable error){
                 if( !error ){
-                    [application registerForRemoteNotifications];
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [application registerForRemoteNotifications];
+                    });
                 }
             }];
 
