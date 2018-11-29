@@ -39,6 +39,8 @@ import me.leolin.shortcutbadger.ShortcutBadger;
 public class ParsePushPluginReceiver extends ParsePushBroadcastReceiver {
   public static final String LOGTAG = "ParsePushPluginReceiver";
   public static final String RESOURCE_PUSH_ICON_COLOR = "parse_push_icon_color";
+  private static final String DEFAULT_CHANNEL_ID = "parse_push";
+  private static final String DEFAULT_CHANNEL_TITLE = "Default Channel";
 
   private static JSONObject MSG_COUNTS = new JSONObject();
   private static int badgeCount = 0;
@@ -188,7 +190,18 @@ public class ParsePushPluginReceiver extends ParsePushBroadcastReceiver {
     PendingIntent deleteIntent = PendingIntent.getBroadcast(context, deleteIntentRequestCode, dIntent,
         PendingIntent.FLAG_UPDATE_CURRENT);
 
-    NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+    int importance = NotificationManager.IMPORTANCE_HIGH;
+    NotificationManager notifManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+    NotificationChannel mChannel = notifManager.getNotificationChannel(DEFAULT_CHANNEL_ID);
+
+    if (mChannel == null) {
+      mChannel = new NotificationChannel(DEFAULT_CHANNEL_ID, DEFAULT_CHANNEL_TITLE, importance);
+      mChannel.enableVibration(true);
+      mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+      notifManager.createNotificationChannel(mChannel);
+    }
+
+    NotificationCompat.Builder builder = new NotificationCompat.Builder(context, DEFAULT_CHANNEL_ID);
 
     // check if this is a silent notification
     boolean isSilent = !pnData.has("title") && !pnData.has("alert");
