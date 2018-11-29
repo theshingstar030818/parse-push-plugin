@@ -7,7 +7,7 @@ module.exports = function (context) {
   var configXml = new ConfigFile(context.opts.projectRoot, null, './config.xml');
 
   // find the meta-data node in AndroidManifest.xml
-  var androidPrjDir = path.join(context.opts.projectRoot, 'platforms/android');
+  var androidPrjDir = path.join(context.opts.projectRoot, 'platforms/android/app/src/main');
   var androidManifest = new ConfigFile(androidPrjDir, 'android', 'AndroidManifest.xml');
   var applicationNode = androidManifest.data.find('application');
 
@@ -25,7 +25,7 @@ module.exports = function (context) {
 
     // COPY ICON
     // create target path
-    var iconTargetPath = path.join(context.opts.projectRoot, 'platforms', 'android', 'res', 'drawable');
+    var iconTargetPath = path.join(context.opts.projectRoot, 'platforms', 'android', 'app', 'src', 'main', 'res', 'drawable');
     try {
       fs.mkdirSync(iconTargetPath);
     } catch (err) {

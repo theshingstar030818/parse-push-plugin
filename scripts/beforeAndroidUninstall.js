@@ -9,7 +9,7 @@ module.exports = function(context) {
    var path = context.requireCordovaModule('path');
    var ConfigFile = context.requireCordovaModule("cordova-common").ConfigFile;
 
-   var androidPrjDir = path.join(context.opts.projectRoot, 'platforms/android');
+   var androidPrjDir = path.join(context.opts.projectRoot, 'platforms/android/app/src/main');
    var androidManifest = new ConfigFile(androidPrjDir, 'android', 'AndroidManifest.xml');
 
 

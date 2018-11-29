@@ -292,7 +292,7 @@ Advanced Configuration
 
 The actual code that handles Parse platform initialization is in [ParsePushApplication.java](src/android/ParsePushApplication.java).
 
-Android knows to use this class due to the attribute `android:name` in `<application>` in 'platforms/android/AndroidManifest.xml'.
+Android knows to use this class due to the attribute `android:name` in `<application>` in 'platforms/android/app/src/main/AndroidManifest.xml'.
 To preserve your customizations, this plugin sets `android:name="github.taivo.parsepushplugin.ParsePushApplication"`  
 if and only if `android:name` is not already defined. It does this during plugin installation. Similarly, when the plugin is
 uninstalled, `android:name` will be removed only if its content matches `github.taivo.parsepushplugin.ParsePushApplication` exactly.
@@ -317,7 +317,7 @@ You can provide a property `ParseNotificationIcon` in `config.xml` to provide a 
     <preference name="ParseNotificationIcon" value="android_notification_icon" />
 ```
 
-The icon has to be in folder `resources` in project root and with extension `.png`. The icon is then copied to `platforms/android/res/drawable/<PROVIDED-NAME>.png`. For details, how to design the icon have a look at https://clevertap.com/blog/fixing-notification-icon-for-android-lollipop-and-above/
+The icon has to be in folder `resources` in project root and with extension `.png`. The icon is then copied to `platforms/android/app/src/main/res/drawable/<PROVIDED-NAME>.png`. For details, how to design the icon have a look at https://clevertap.com/blog/fixing-notification-icon-for-android-lollipop-and-above/
 
 #### iOS:
 
