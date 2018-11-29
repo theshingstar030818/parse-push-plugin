@@ -190,18 +190,23 @@ public class ParsePushPluginReceiver extends ParsePushBroadcastReceiver {
     PendingIntent deleteIntent = PendingIntent.getBroadcast(context, deleteIntentRequestCode, dIntent,
         PendingIntent.FLAG_UPDATE_CURRENT);
 
-    int importance = NotificationManager.IMPORTANCE_HIGH;
-    NotificationManager notifManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-    NotificationChannel mChannel = notifManager.getNotificationChannel(DEFAULT_CHANNEL_ID);
+    NotificationCompat.Builder builder;
 
-    if (mChannel == null) {
-      mChannel = new NotificationChannel(DEFAULT_CHANNEL_ID, DEFAULT_CHANNEL_TITLE, importance);
-      mChannel.enableVibration(true);
-      mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
-      notifManager.createNotificationChannel(mChannel);
+    if (android.os.Build.VERSION.SDK_INT < 26){
+      builder = new NotificationCompat.Builder(context); 
+    }else{
+      int importance = NotificationManager.IMPORTANCE_HIGH;
+      NotificationManager notifManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+      NotificationChannel mChannel = notifManager.getNotificationChannel(DEFAULT_CHANNEL_ID);
+
+      if (mChannel == null) {
+        mChannel = new NotificationChannel(DEFAULT_CHANNEL_ID, DEFAULT_CHANNEL_TITLE, importance);
+        mChannel.enableVibration(true);
+        mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+        notifManager.createNotificationChannel(mChannel);
+      }
+      builder = new NotificationCompat.Builder(context, DEFAULT_CHANNEL_ID);
     }
-
-    NotificationCompat.Builder builder = new NotificationCompat.Builder(context, DEFAULT_CHANNEL_ID);
 
     // check if this is a silent notification
     boolean isSilent = !pnData.has("title") && !pnData.has("alert");
